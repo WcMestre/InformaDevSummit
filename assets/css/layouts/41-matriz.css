@@ -1,0 +1,204 @@
+/* ==========================================================================
+   41 · LAYOUT matriz — tabela de dupla entrada ("quem recebe o quê").
+   Linhas × colunas (até 5 × 5, sem contar os cabeçalhos), cada célula com um ESTADO: ícone + rótulo, nunca só cor.
+   Tabela semântica: <table> com <th scope="col|row|colgroup">; sem JS e sem CSV (o HTML já é o dado).
+   Compõe .cab · .kicker · .sub · .corpo · .sr-only · .ico (núcleo).
+   Modelo e anatomia: conteudo/modelos/41-matriz.html
+
+   Estados (data-estado no td.matriz-celula):
+     sim   · check · borda contínua, fundo verde suave  (recebe, usa, fica logada: o verbo vai no rótulo)
+     nao   · x     · borda tracejada, fundo vermelho suave
+     nd    · traço · sem preenchimento, borda pontilhada (informação ausente: o traço é desenhado, o texto é só para leitor de tela)
+   Ordem: escopo → cabeçalho da tela → tabela (cantos, grupos, colunas, linhas) → células → legenda.
+   ========================================================================== */
+
+/* ---- escopo e medidas (px do palco; só tokens do núcleo, os locais abaixo são derivados deles) ---- */
+.slide[data-layout="matriz"]{
+  --mz-linha-larg:360px;                     /* largura da coluna de títulos das linhas */
+  --mz-cel-alt:124px;                        /* altura de cada linha de células */
+  --mz-vao:12px;                             /* espaço entre células */
+  --mz-ico:56px;                             /* diâmetro do selo de ícone */
+  --mz-sim-fundo:rgba(63,174,107,.15);       /* --ok do núcleo a 15% */
+  --mz-nao-fundo:rgba(239,106,94,.14);       /* --perigo do núcleo a 14% */
+  --mz-tinta:var(--azul-950);                /* ícone escuro sobre o selo colorido */
+}
+
+/* 4 e 5 linhas: a altura da célula cede (a fonte não muda) para a tabela caber na área útil */
+.slide[data-layout="matriz"]:has(tbody tr:nth-child(4)){--mz-cel-alt:104px;--mz-ico:52px}
+.slide[data-layout="matriz"]:has(tbody tr:nth-child(5)){--mz-cel-alt:84px;--mz-ico:48px}
+
+/* o cabeçalho é compacto aqui: a tabela precisa de altura (mesmo critério do fluxo e do quadro) */
+.slide[data-layout="matriz"] .cab{margin-bottom:24px}
+.slide[data-layout="matriz"] .kicker{margin-bottom:12px}
+.slide[data-layout="matriz"] .sub{max-width:none;margin-top:8px;font-size:var(--t-corpo);line-height:1.3}
+.slide[data-layout="matriz"] .corpo{justify-content:flex-start;gap:var(--gap)}
+
+/* ---- tabela ---- */
+.slide[data-layout="matriz"] .matriz-tabela{
+  table-layout:fixed;
+  border-collapse:separate;
+  border-spacing:var(--mz-vao);
+  margin:calc(var(--mz-vao) * -1);           /* o espaçamento externo da tabela não desalinha com o título */
+  width:calc(100% + var(--mz-vao) * 2);
+}
+.slide[data-layout="matriz"] .matriz-col-linha{width:var(--mz-linha-larg)}
+
+/* canto vazio (acima dos títulos das linhas) */
+.slide[data-layout="matriz"] .matriz-canto{padding:0}
+
+/* grupo de colunas: um rótulo com filete, nunca só cor */
+.slide[data-layout="matriz"] .matriz-grupo{
+  padding:0 0 10px;
+  border-bottom:3px solid var(--card-brd);
+  text-align:left;
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+}
+.slide[data-layout="matriz"] .matriz-grupo--destaque{
+  border-bottom-color:var(--laranja);
+  color:var(--laranja-claro);
+}
+
+/* título de coluna */
+.slide[data-layout="matriz"] .matriz-col{
+  padding:6px 8px 4px;
+  text-align:left;
+  vertical-align:middle;
+  font-weight:400;
+}
+.slide[data-layout="matriz"] .matriz-col-nome{
+  display:block;
+  font-family:var(--serif);
+  font-size:var(--t-lead);
+  font-weight:600;
+  line-height:1.12;
+  color:var(--ink);
+}
+.slide[data-layout="matriz"] .matriz-col-nota{
+  display:block;
+  margin-top:6px;
+  font-family:var(--mono);
+  font-size:var(--t-min);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+}
+
+/* título de linha */
+.slide[data-layout="matriz"] .matriz-linha{
+  padding:0 24px;
+  text-align:left;
+  vertical-align:middle;
+  font-weight:400;
+  background:var(--card-forte);
+  border:1px solid var(--card-brd);
+  border-left:4px solid var(--laranja);
+  border-radius:var(--raio);
+}
+.slide[data-layout="matriz"] .matriz-linha-txt{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  font-family:var(--serif);
+  font-size:var(--t-lead);
+  font-weight:600;
+  line-height:1.12;
+  color:var(--ink);
+}
+.slide[data-layout="matriz"] .matriz-linha-txt .ico{font-size:36px;color:var(--laranja-claro)}
+
+/* ---- células ---- */
+.slide[data-layout="matriz"] .matriz-celula{
+  height:var(--mz-cel-alt);
+  padding:0 20px;
+  vertical-align:middle;
+  border:2px solid var(--card-brd);
+  border-radius:var(--raio);
+}
+.slide[data-layout="matriz"] .matriz-conteudo{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.slide[data-layout="matriz"] .matriz-ico{
+  flex:none;
+  display:grid;
+  place-items:center;
+  width:var(--mz-ico);
+  height:var(--mz-ico);
+  border-radius:50%;
+  font-size:34px;
+}
+.slide[data-layout="matriz"] .matriz-ico .ico{stroke-width:3}
+.slide[data-layout="matriz"] .matriz-rotulo{
+  font-size:var(--t-peq);
+  font-weight:500;
+  line-height:1.15;
+  color:var(--ink);
+}
+
+/* sim: check */
+.slide[data-layout="matriz"] .matriz-celula[data-estado="sim"]{
+  border-style:solid;
+  border-color:var(--ok);
+  background:var(--mz-sim-fundo);
+}
+.slide[data-layout="matriz"] .matriz-celula[data-estado="sim"] .matriz-ico{
+  background:var(--ok);
+  color:var(--mz-tinta);
+}
+
+/* nao: x, borda tracejada */
+.slide[data-layout="matriz"] .matriz-celula[data-estado="nao"]{
+  border-style:dashed;
+  border-color:var(--perigo);
+  background:var(--mz-nao-fundo);
+}
+.slide[data-layout="matriz"] .matriz-celula[data-estado="nao"] .matriz-ico{
+  background:transparent;
+  border:3px solid var(--perigo);
+  color:var(--perigo);
+}
+
+/* nd: sem informação, só um traço desenhado (o texto "não informado" é para leitor de tela) */
+.slide[data-layout="matriz"] .matriz-celula[data-estado="nd"]{
+  border-style:dotted;
+  border-color:var(--line);
+  background:transparent;
+}
+.slide[data-layout="matriz"] .matriz-conteudo--nd{justify-content:center}
+.slide[data-layout="matriz"] .matriz-traco{
+  display:block;
+  width:40px;
+  height:4px;
+  border-radius:2px;
+  background:var(--ink-dim);
+}
+
+/* ---- legenda: forma + rótulo, nunca só cor ---- */
+.slide[data-layout="matriz"] .matriz-legenda{
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:12px 40px;
+  font-size:var(--t-peq);
+  color:var(--ink-dim);
+}
+.slide[data-layout="matriz"] .matriz-legenda li{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.slide[data-layout="matriz"] .matriz-legenda .matriz-ico{
+  width:40px;
+  height:40px;
+  font-size:26px;
+}
+.slide[data-layout="matriz"] .matriz-legenda .matriz-ico--sim{background:var(--ok);color:var(--mz-tinta)}
+.slide[data-layout="matriz"] .matriz-legenda .matriz-ico--nao{border:3px solid var(--perigo);color:var(--perigo)}
+.slide[data-layout="matriz"] .matriz-legenda .matriz-traco{width:28px;margin:0 6px}

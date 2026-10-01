@@ -1,0 +1,127 @@
+<!--
+  LAYOUT  encerramento  — fecho do evento: mensagem final, próximos passos com responsável e prazo a preencher, marca e contato.
+  Anatomia (variante padrão — a deste modelo):
+    .encerramento-fecho (coluna esquerda)   .cab (.kicker + h1 = mensagem de fechamento em serif grande; <em> em laranja)
+                        · .sub (uma frase de recapitulação) · .encerramento-assinatura = logo oficial grande + <address> institucional
+    .encerramento-passos (coluna direita, card)  h2.rotulo "Próximos passos" · ol.encerramento-lista com 3 a 5 .encerramento-passo:
+                        número · .encerramento-acao (o passo) · .encerramento-campos = DOIS espaços em branco (Responsável · Prazo),
+                        desenhados como linha/traço (.encerramento-traco): responsáveis NASCEM em branco, nunca nomes.
+  Atributos: id, data-layout="encerramento", data-variante, data-bloco (o do último bloco: "final"), data-min, [data-modelo]
+  Variantes: padrão (sem data-variante; este modelo) — estática, sem CSV; quem assume um passo o registra na tela de Compromissos
+             (quadro → decisoes.csv) ou a sala preenche a linha ao vivo no quadro da sala.
+             resumo (data-variante="resumo") — resumo LIDO AO VIVO dos CSV (só leitura, não grava). Duas telas reais, exceções de 1 tela, sem
+             apresentação (apres 0 + def 5): conteudo/slides/60-fechamento-encerramento.html (bloco "fechamento", 11:55, resumo da manhã; propostas
+             e compromissos dos blocos anteriores) e conteudo/slides/99-fechamento-dia.html (bloco "fechamento-dia", 16:55, resumo do dia; tudo o
+             que veio antes; a frase final é a despedida do evento).
+  Anatomia da variante resumo (comportamento em assets/js/layouts/90-encerramento.js):
+    .encerramento-resumo > .encerramento-topo  [.cab (.kicker "Fechamento · Resumo da manhã" + h1 "O que decidimos <em>nesta manhã</em>" + .sub; no dia: "Fechamento · Resumo do dia" + "O que decidimos <em>hoje</em>", sem .sub)
+                                                · .encerramento-assinatura (.encerramento-marca: logo + <address class="encerramento-contato">; .encerramento-frase: da manhã "Obrigado pela manhã de trabalho." — neutra, sem fato novo e sem hora; do dia "Obrigado por participar do 1º Informa DEV Summit." — a despedida do evento, só no último bloco)]
+                         > .encerramento-corpo (2 colunas; todo texto lido entra por textContent)
+        .encerramento-esq  .encerramento-versao  decisões das propostas (card único; o JS escolhe o modo em data-modo, o HTML traz os dois):
+                                                 .encerramento-topo-card > h2.rotulo[data-campo="decisao-rotulo"] (modo único: "<nome do bloco> · proposta"; lista: "Propostas · decisões")
+                                                 + p.encerramento-decididas[data-campo="decisao-total"] ("N de M com decisão", só na lista)
+                                                 · modo ÚNICO (1 proposta; aspecto da manhã) div.encerramento-unica[data-campo="unica"]: .encerramento-veredito (ícone + Aceita | Ajustada | Recusada | Sem decisão)
+                                                   · .encerramento-maos "Mãos: Aceitar N · Ajustar N · Recusar N" · .encerramento-ajuste (só com decisão "ajustar") · .encerramento-dica (só sem decisão)
+                                                 · modo LISTA (2 ou mais; o do dia) ul.encerramento-props[data-campo="props"] > li.encerramento-prop[data-estado=aceitar|ajustar|recusar|vazio]:
+                                                   .encerramento-selo (ícone: check · ajustar · x · relógio com contorno tracejado) · .encerramento-prop-nome (nome do bloco da proposta)
+                                                   · .encerramento-prop-veredito (Aceita | Ajustada | Recusada | Sem decisão) · .encerramento-prop-maos (rotuladas; só se houver mão)
+                                                   · .encerramento-prop-ajuste (rótulo "Ajuste" + 1 linha; só com decisão "ajustar")
+                           .encerramento-brain   só números agregados: .encerramento-total, .encerramento-lados (bem × melhorar), .encerramento-crit (criticidade 3); compacto no modo lista
+                           .encerramento-sug     h2[data-campo="sug-rotulo"] (rótulo do MODO: um assunto = "Sugestões da <nome do bloco>", ex. "Sugestões da Pipeline" na manhã;
+                                                 data-assunto-sugestoes="todos" = "Dúvidas e sugestões do dia") + total anotado + as 3 mais votadas (.encerramento-sug-lista;
+                                                 em "todos", cada item tem uma 2ª linha .encerramento-sug-meta com o rótulo curto do assunto de origem e o tipo), ou .encerramento-vazio
+        .encerramento-dir  .encerramento-comp    compromissos SÓ de assuntos de blocos ANTERIORES ao bloco desta tela (os da tarde não entram; assunto sem
+                                                 bloco no deck continua aparecendo): .encerramento-contador "N de M … completos", botão .encerramento-mais "+N abaixo",
+                                                 .encerramento-tabela[data-rolagem][tabindex=0][role=region][aria-label="Compromissos"] > table.encerramento-tab
+                                                 (Ação · Responsável · Prazo) agrupada por assunto: o assunto com pendência vem antes do completo (empate: ordem do deck) e,
+                                                 em cada assunto, o que falta (sem responsável ou prazo) vem primeiro. Lista longa (mais de 6 linhas, assuntos incluídos): o JS
+                                                 marca a tela com data-comp-colunas, acrescenta uma 2ª table.encerramento-tab e reparte os assuntos em DUAS COLUNAS de altura
+                                                 parecida (responsável e prazo empilhados à direita da ação), para caber sem rolar
+                           .encerramento-antes   "Antes de sair": 3 .encerramento-check[data-check] (compromissos · propostas · csv) com ícone + rótulo: "Todos os compromissos têm responsável e prazo" ·
+                                                 "Todas as propostas com decisão registrada" (uma proposta: o veredito dela; várias: "Pronto" ou "Faltam N") · csv ("Gravado em <pasta>/" · "CSV baixado" sem pasta e sem pendência · alerta "tecle D" se há dado por exportar)
+  Atributos da variante resumo: data-referencia="AAAA-MM-DD" (base do "D+N" do prazo; mesma análise do quadro) · data-proposta="<id da tela
+             proposta>" — OPCIONAL (retrocompatível): com ele a tela lê só aquela proposta (modo único); SEM ele lista TODAS as telas de layout
+             "proposta" de blocos ANTERIORES ao dela, na ordem do deck (descoberta automática em SUMMIT.slides; nada a manter à mão quando entra
+             uma proposta nova) · data-assunto-sugestoes="<assunto das anotações>" (pipeline na manhã: card "Sugestões da Pipeline") ou o valor
+             especial "todos" (o do dia: agrega as anotações de TODOS os assuntos de blocos anteriores; card "Dúvidas e sugestões do dia"; o montar.py
+             precisa aceitar "todos" em validar_encerramentos). Os data-bloco-* do bloco ficam na própria tela. Estado escrito pelo JS: data-modo (unico|lista|nenhum) no
+             card das decisões e na coluna esquerda; data-estado (aceitar|ajustar|recusar|vazio no modo único; completo|pendente na lista; ok|pendente
+             nas conferências), data-densidade na lista ("sem-maos", "minima") e data-itens (2|1) no card das sugestões — os degraus da coluna
+             esquerda quando 5 propostas com mãos e ajuste não cabem (um assunto: 3 → 2 → 1 sugestão, depois sem mãos, depois sem ajuste; em "todos" as
+             3 sugestões valem mais que as mãos: sem mãos primeiro, depois 2 sugestões, depois sem ajuste) —, data-comp-colunas na tela (lista longa de
+             compromissos: duas colunas), data-rotulado na lista das sugestões ("todos"), data-densidade="compacta" no card dos compromissos
+             (ação a 20 px), data-mais-baixo na tabela e data-medindo (a tela é exibida sem pintar só durante a medida).
+  Dados lidos (nunca gravados): propostas (linha com proposta = id da tela, por proposta) · decisoes (todas as linhas, por assunto; status ignorado) · anotacoes (assunto de data-assunto-sugestoes; "todos" = os assuntos de blocos anteriores) · brainstorming
+             (só contagens; nunca participante) · SUMMIT.dados.estado() (pasta conectada ou CSV baixado; nenhuma tabela suja/conflito/falhou). Atualiza ao abrir a tela
+             (summit:slide) e a cada mudança de tabela ou do CSV; só mexe no DOM quando o que mostra muda.
+  Estados: sem dados nada quebra — "Sem decisão" (relógio, contorno tracejado, atenção), "Nenhum compromisso registrado", "Nenhuma sugestão registrada", zeros no
+             brainstorming; sem nenhuma tela proposta antes dela, o card das decisões some e a conferência diz "Sem propostas". Responsável ou prazo vazios =
+             "a definir" com ícone de alerta. Cor nunca sozinha: ícone + rótulo. Escopo: propostas e compromissos só de blocos ANTERIORES ao bloco da tela
+             (o resumo das 11:55 não cobra a tarde; o das 16:55 cobra tudo); o casamento assunto × bloco ignora acento, caixa e hífen ("review-dos-prs" × "Review dos PRs").
+  Limites de texto: mensagem até ~40 caracteres (3 linhas a 80px); recapitulação até 2 linhas; cada passo até ~60 caracteres numa linha (2 linhas
+             aceitas com 3 a 4 passos). Com 5 passos os textos precisam caber numa linha.
+             resumo: o texto lido é encurtado na última palavra inteira que cabe + "…" (ajuste 2 linhas, sugestão 1 linha; ação 2 linhas e
+             responsável 1 linha na tabela; só palavra maior que a linha é cortada por caractere); em uma coluna cabem ~4 compromissos de
+             2 linhas sem rolar (grupos incluídos); com mais de 6 linhas (assuntos incluídos) a tabela vira DUAS COLUNAS de assuntos (ação até 3 linhas,
+             responsável até 2, a 22 px e 20 px na densidade compacta) e cabem os 9 compromissos de 6 assuntos do dia sem rolar — acima disso (~14),
+             rolagem interna (região focável: ↓ ↑ PageDown PageUp Home End) e "+N abaixo". Lista de propostas: até 5 linhas (nome do bloco em 1 linha ≤ ~24 caracteres; ajuste 1 linha, encurtado com "…"); com muitas
+             mãos e ajustes a coluna esquerda desce de degrau (menos sugestões, depois sem mãos, depois sem ajuste) em vez de estourar; piso de 22 px
+             (selos e rótulo "Ajuste" a 20 px). Impressão/PDF: a tabela mostra todos os compromissos, sem rolagem.
+  Regras: contato institucional (site e telefone) é fato da marca; nenhum nome de pessoa, cliente ou prazo inventado na tela. No resumo, responsável
+             e prazo vêm só do CSV (nascem em branco) e nunca aparece nome de pessoa junto de métrica (brainstorming é agregado).
+-->
+<section class="slide" id="modelo-encerramento" data-layout="encerramento" data-bloco="final" data-min="5" data-modelo>
+  <div class="encerramento-layout">
+
+    <div class="encerramento-fecho">
+      <header class="cab">
+        <p class="kicker anim d1">Encerramento</p>
+        <h1 class="anim d2">Mensagem de <em>fechamento</em> em uma frase</h1>
+        <p class="sub anim d3">Recapitulação em uma linha do que a sala construiu e do que acontece daqui para frente.</p>
+      </header>
+
+      <div class="encerramento-assinatura anim d6">
+        <svg class="logo" viewBox="0 0 503.94 164.06" role="img" aria-label="Informa Solutions"><use href="#logo-informa"/></svg>
+        <address class="encerramento-contato">
+          <p><span class="rotulo">Site</span>informa.solutions</p>
+          <p><span class="rotulo">Telefone</span>(17) 3354-2050</p>
+        </address>
+      </div>
+    </div>
+
+    <section class="encerramento-passos card card--destaque card--forte anim d4" aria-label="Próximos passos">
+      <h2 class="rotulo rotulo--laranja">Próximos passos</h2>
+      <ol class="encerramento-lista">
+        <li class="encerramento-passo">
+          <p class="encerramento-acao">Passo 1 — ação descrita em uma linha</p>
+          <div class="encerramento-campos">
+            <div class="encerramento-campo"><span class="encerramento-rot">Responsável</span><span class="encerramento-traco"></span></div>
+            <div class="encerramento-campo"><span class="encerramento-rot">Prazo</span><span class="encerramento-traco"></span></div>
+          </div>
+        </li>
+        <li class="encerramento-passo">
+          <p class="encerramento-acao">Passo 2 — ação descrita em uma linha</p>
+          <div class="encerramento-campos">
+            <div class="encerramento-campo"><span class="encerramento-rot">Responsável</span><span class="encerramento-traco"></span></div>
+            <div class="encerramento-campo"><span class="encerramento-rot">Prazo</span><span class="encerramento-traco"></span></div>
+          </div>
+        </li>
+        <li class="encerramento-passo">
+          <p class="encerramento-acao">Passo 3 — ação descrita em uma linha</p>
+          <div class="encerramento-campos">
+            <div class="encerramento-campo"><span class="encerramento-rot">Responsável</span><span class="encerramento-traco"></span></div>
+            <div class="encerramento-campo"><span class="encerramento-rot">Prazo</span><span class="encerramento-traco"></span></div>
+          </div>
+        </li>
+        <li class="encerramento-passo">
+          <p class="encerramento-acao">Passo 4 — ação descrita em uma linha</p>
+          <div class="encerramento-campos">
+            <div class="encerramento-campo"><span class="encerramento-rot">Responsável</span><span class="encerramento-traco"></span></div>
+            <div class="encerramento-campo"><span class="encerramento-rot">Prazo</span><span class="encerramento-traco"></span></div>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+  </div>
+</section>

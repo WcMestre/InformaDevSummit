@@ -1,0 +1,64 @@
+/* ==========================================================================
+   LAYOUT pausa — "Voltamos às HH:MM" enorme + contagem regressiva (assets/js/layouts/60-pausa.js).
+   Esquerda: hero (ícone, horário, contagem). Direita (opcional): "Na volta" e "Antes de sair".
+   Variantes: data-variante="cafe|almoco" (ícone) · data-lado="off" (hero centralizado, sem coluna direita).
+   Estados (data-estado, escrito pelo JS): contando · final (último minuto) · acabou ("Hora de voltar").
+   Ordem deste arquivo: variáveis → palco → hero → contagem → coluna direita → variantes → estados.
+   ========================================================================== */
+
+.slide[data-layout="pausa"]{
+  --pausa-hora:360px;      /* corpo do horário de volta: a peça principal da tela */
+  --pausa-icone:136px;
+  --pausa-lado:640px;
+}
+
+/* ---------- palco: hero + coluna ---------- */
+.slide[data-layout="pausa"] .pausa-palco{
+  flex:1;min-height:0;display:flex;align-items:center;gap:var(--gap-g)}
+.slide[data-layout="pausa"] .pausa-hero{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+
+/* ---------- hero ---------- */
+.slide[data-layout="pausa"] .pausa-topo{display:flex;align-items:center;gap:28px;margin-bottom:var(--gap)}
+.slide[data-layout="pausa"] .pausa-topo .kicker{margin:0}
+.slide[data-layout="pausa"] .pausa-icone{
+  flex:none;display:grid;place-items:center;width:var(--pausa-icone);height:var(--pausa-icone);border-radius:50%;
+  border:2px solid var(--laranja);background:rgba(247,148,29,.10);color:var(--laranja-claro)}
+.slide[data-layout="pausa"] .pausa-ico{font-size:calc(var(--pausa-icone) * .58);stroke-width:1.6}
+.slide[data-layout="pausa"] .pausa-ico--talher{display:none}
+
+.slide[data-layout="pausa"] .pausa-titulo{display:flex;flex-direction:column;align-items:flex-start;gap:0;font-weight:600;line-height:1}
+.slide[data-layout="pausa"] .pausa-volta-rot{font-size:var(--t-h2);font-weight:300;color:var(--ink-dim);letter-spacing:0}
+.slide[data-layout="pausa"] .pausa-hora{
+  font-size:var(--pausa-hora);font-style:normal;line-height:.95;letter-spacing:-.03em;color:var(--branco);
+  font-variant-numeric:lining-nums tabular-nums}
+
+/* ---------- contagem regressiva ---------- */
+.slide[data-layout="pausa"] .pausa-contagem{
+  display:inline-flex;align-items:center;gap:32px;margin-top:var(--gap);padding:18px 44px;
+  background:var(--card);border:2px solid var(--line);border-radius:var(--raio)}
+.slide[data-layout="pausa"] .pausa-contagem-rot{
+  font-family:var(--mono);font-size:var(--t-rotulo);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim)}
+.slide[data-layout="pausa"] .pausa-tempo{
+  font-family:var(--mono);font-size:var(--t-display);font-weight:500;line-height:1.1;letter-spacing:.02em;
+  color:var(--branco);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ---------- coluna direita ---------- */
+.slide[data-layout="pausa"] .pausa-lado{flex:none;width:var(--pausa-lado);display:flex;flex-direction:column;gap:var(--gap)}
+.slide[data-layout="pausa"] .pausa-lado h3{font-size:var(--t-lead);margin-bottom:12px}
+
+/* ---------- variantes ---------- */
+.slide[data-layout="pausa"][data-variante="almoco"] .pausa-ico--cafe{display:none}
+.slide[data-layout="pausa"][data-variante="almoco"] .pausa-ico--talher{display:block}
+
+.slide[data-layout="pausa"][data-lado="off"] .pausa-palco{justify-content:center}
+.slide[data-layout="pausa"][data-lado="off"] .pausa-hero{flex:none;align-items:center;text-align:center}
+.slide[data-layout="pausa"][data-lado="off"] .pausa-titulo{align-items:center}
+
+/* ---------- estados ---------- */
+.slide[data-layout="pausa"][data-estado="final"] .pausa-contagem{border-color:var(--alerta)}
+.slide[data-layout="pausa"][data-estado="final"] .pausa-tempo{color:var(--alerta)}
+
+.slide[data-layout="pausa"][data-estado="acabou"] .pausa-contagem{background:var(--laranja);border-color:var(--laranja);padding:14px 52px}
+.slide[data-layout="pausa"][data-estado="acabou"] .pausa-contagem-rot{display:none}
+.slide[data-layout="pausa"][data-estado="acabou"] .pausa-tempo{
+  font-family:var(--serif);font-size:var(--t-h1);font-weight:600;letter-spacing:-.01em;color:var(--azul-950)}

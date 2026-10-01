@@ -1,0 +1,119 @@
+<section class="slide" id="fechamento-dia-encerramento" data-layout="encerramento" data-variante="resumo" data-bloco="fechamento-dia"
+         data-bloco-nome="Fechamento do dia" data-bloco-curto="Fim do dia" data-bloco-ini="16:55" data-bloco-min="5" data-bloco-apres="0" data-bloco-def="5" data-min="5"
+         data-referencia="2026-10-02" data-assunto-sugestoes="todos">
+  <div class="encerramento-resumo">
+
+    <header class="encerramento-topo">
+      <div class="cab">
+        <p class="kicker anim d1">Fechamento · Resumo do dia</p>
+        <h1 class="anim d2">O que decidimos <em>hoje</em></h1>
+      </div>
+      <div class="encerramento-assinatura anim d6">
+        <div class="encerramento-marca">
+          <svg class="logo" viewBox="0 0 503.94 164.06" role="img" aria-label="Informa Solutions"><use href="#logo-informa"/></svg>
+          <address class="encerramento-contato">
+            <p>informa.solutions</p>
+            <p>(17) 3354-2050</p>
+          </address>
+        </div>
+        <p class="encerramento-frase">Obrigado por participar do 1º Informa DEV Summit.</p>
+      </div>
+    </header>
+
+    <div class="encerramento-corpo">
+
+      <div class="encerramento-esq">
+        <section class="card encerramento-card encerramento-versao anim d3" aria-label="Decisões das propostas" data-modo="lista" data-estado="vazio">
+          <div class="encerramento-topo-card">
+            <h2 class="rotulo rotulo--laranja" data-campo="decisao-rotulo">Propostas · decisões</h2>
+            <p class="encerramento-decididas" data-campo="decisao-total" data-estado="pendente" hidden><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg><span>0 de 0 com decisão</span></p>
+          </div>
+          <div class="encerramento-unica" data-campo="unica">
+            <p class="encerramento-veredito">
+              <span class="encerramento-selo"><svg class="ico" aria-hidden="true"><use href="#i-relogio"/></svg></span>
+              <span data-campo="veredito">Sem decisão</span>
+            </p>
+            <p class="encerramento-maos" data-campo="maos" hidden></p>
+            <p class="encerramento-ajuste" data-campo="ajuste" hidden></p>
+            <p class="encerramento-dica" data-campo="dica"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg><span>Registre na tela da proposta: aceitar, ajustar ou recusar.</span></p>
+          </div>
+          <ul class="encerramento-props" data-campo="props" aria-label="Decisão de cada proposta" hidden></ul>
+        </section>
+
+        <section class="card encerramento-card encerramento-brain anim d4" aria-label="Brainstorming: números da rodada">
+          <h2 class="rotulo rotulo--laranja">Brainstorming · números</h2>
+          <div class="encerramento-nums">
+            <p class="encerramento-total"><b class="num" data-campo="total">0</b><span data-campo="total-rot">apontamentos</span></p>
+            <ul class="encerramento-lados">
+              <li class="encerramento-lado" data-lado="bom">
+                <svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><b class="num" data-campo="bom">0</b><span>o que fazemos bem</span>
+              </li>
+              <li class="encerramento-lado" data-lado="melhorar">
+                <svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg><b class="num" data-campo="melhorar">0</b><span>o que podemos melhorar</span>
+              </li>
+            </ul>
+          </div>
+          <p class="encerramento-crit" data-campo="crit"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg><span>Nenhuma melhoria com criticidade 3</span></p>
+        </section>
+
+        <section class="card encerramento-card encerramento-sug anim d5" aria-label="Dúvidas e sugestões do dia: anotações da sala">
+          <div class="encerramento-topo-card">
+            <h2 class="rotulo rotulo--laranja" data-campo="sug-rotulo">Dúvidas e sugestões do dia</h2>
+            <p class="encerramento-sug-total" data-campo="sug-total">0 anotações</p>
+          </div>
+          <ol class="encerramento-sug-lista" data-campo="sug-lista"></ol>
+          <p class="encerramento-vazio" data-campo="sug-vazio"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg><span>Nenhuma sugestão registrada</span></p>
+        </section>
+      </div>
+
+      <div class="encerramento-dir">
+        <section class="card encerramento-card encerramento-comp anim d4" aria-label="Compromissos: ação, responsável e prazo">
+          <div class="encerramento-topo-card">
+            <h2 class="rotulo rotulo--laranja">Compromissos</h2>
+            <button type="button" class="encerramento-mais" data-acao="rolar" hidden><span data-campo="mais">+0 abaixo</span><svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg></button>
+            <p class="encerramento-contador" data-campo="contador" data-estado="pendente"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg><span>Nenhum compromisso registrado</span></p>
+          </div>
+          <div class="encerramento-tabela" data-campo="tabela" tabindex="0" role="region" aria-label="Compromissos">
+            <table class="encerramento-tab" data-campo="tab" hidden>
+              <caption class="sr-only">Compromissos registrados: ação, responsável e prazo</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Ação</th>
+                  <th scope="col">Responsável</th>
+                  <th scope="col">Prazo</th>
+                </tr>
+              </thead>
+              <tbody data-campo="linhas"></tbody>
+            </table>
+            <p class="encerramento-vazio" data-campo="comp-vazio"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg><span>Registre ação, responsável e prazo nas telas de Compromissos.</span></p>
+          </div>
+        </section>
+
+        <section class="card card--destaque card--forte encerramento-card encerramento-antes anim d5" aria-label="Antes de sair">
+          <div class="encerramento-topo-card">
+            <h2 class="rotulo rotulo--laranja">Antes de sair</h2>
+            <p class="encerramento-prontos" data-campo="prontos">0 de 3 prontos</p>
+          </div>
+          <ul class="encerramento-checks">
+            <li class="encerramento-check" data-check="compromissos" data-estado="pendente">
+              <svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg>
+              <span class="encerramento-check-txt">Todos os compromissos têm responsável e prazo</span>
+              <span class="encerramento-check-rot" data-campo="rotulo">Nenhum registrado</span>
+            </li>
+            <li class="encerramento-check" data-check="propostas" data-estado="pendente">
+              <svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg>
+              <span class="encerramento-check-txt">Todas as propostas com decisão registrada</span>
+              <span class="encerramento-check-rot" data-campo="rotulo">Sem decisão</span>
+            </li>
+            <li class="encerramento-check" data-check="csv" data-estado="pendente">
+              <svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg>
+              <span class="encerramento-check-txt">Dados gravados em CSV</span>
+              <span class="encerramento-check-rot" data-campo="rotulo">Tecle D: conectar pasta ou Baixar CSV</span>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,62 @@
+/* ==========================================================================
+   34 · LAYOUT numeros — painel de KPIs (3 ou 4 tiles).
+   Compõe .cab · .corpo · .card · .rotulo · .num · .fonte (30-componentes.css).
+   Variantes por data-n: 3 · 4 (colunas e tamanho do número).
+   Ordem: layout → tile → variantes.
+   Modelo: conteudo/modelos/34-numeros.html
+   ========================================================================== */
+
+/* ---- layout ---- */
+.slide[data-layout="numeros"]{
+  --numeros-n:3;                    /* número de colunas */
+  --numeros-valor:104px;            /* tamanho do número (acomoda ~8 caracteres em 3 colunas) */
+}
+.slide[data-layout="numeros"][data-n="4"]{
+  --numeros-n:4;
+  --numeros-valor:72px;
+}
+.slide[data-layout="numeros"] .sub{
+  text-wrap:pretty;
+}
+.slide[data-layout="numeros"] .numeros-grade{
+  flex:1;                           /* os tiles ocupam o corpo, até o limite abaixo */
+  max-height:560px;
+  display:grid;
+  grid-template-columns:repeat(var(--numeros-n),minmax(0,1fr));
+  gap:var(--gap);
+  align-items:stretch;
+}
+
+/* ---- tile ---- */
+.slide[data-layout="numeros"] .numeros-tile{
+  display:flex;
+  flex-direction:column;
+  min-height:460px;
+  padding:36px 36px 32px;
+}
+.slide[data-layout="numeros"][data-n="4"] .numeros-tile{
+  padding:32px 28px 28px;
+}
+.slide[data-layout="numeros"] .numeros-valor{
+  margin-top:20px;
+  margin-bottom:20px;
+  font-size:var(--numeros-valor);
+  white-space:nowrap;
+}
+.slide[data-layout="numeros"] .numeros-unidade{
+  font-size:.4em;
+  font-weight:500;
+  color:var(--laranja-claro);
+  letter-spacing:.02em;
+}
+.slide[data-layout="numeros"] .numeros-desc{
+  font-size:var(--t-corpo);
+  line-height:1.4;
+  color:var(--ink);
+}
+/* a origem fica ancorada ao pé do tile: todos os tiles alinham */
+.slide[data-layout="numeros"] .numeros-tile .fonte{
+  flex-wrap:wrap;
+  margin-top:auto;
+  padding-top:24px;
+}

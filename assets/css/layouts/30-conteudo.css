@@ -1,0 +1,74 @@
+/* ==========================================================================
+   30 · LAYOUT conteudo — tela de conteúdo padrão.
+   Compõe .cab · .corpo · .lista · .card · .rotulo · .fonte (30-componentes.css).
+   Variantes por data-variante: lista (padrão) · numerada · com-nota.
+   Ordem: layout → lista → nota (com-nota) → variantes.
+   Modelo: conteudo/modelos/30-conteudo.html
+   ========================================================================== */
+
+/* ---- layout: a lista vira linhas com filete; o corpo respira em vez de ficar colado no topo ---- */
+.slide[data-layout="conteudo"]{
+  --conteudo-linha:32px;            /* respiro vertical de cada item da lista */
+  --conteudo-nota-larg:520px;       /* largura do cartão de atenção (variante com-nota) */
+}
+.slide[data-layout="conteudo"] .sub{
+  text-wrap:pretty;                 /* evita a palavra órfã na segunda linha */
+}
+.slide[data-layout="conteudo"] .lista{
+  gap:0;
+  border-bottom:1px solid var(--line);
+}
+.slide[data-layout="conteudo"] .lista li{
+  padding-top:var(--conteudo-linha);
+  padding-bottom:var(--conteudo-linha);
+  border-top:1px solid var(--line);
+  font-size:var(--t-lead);
+}
+/* o marcador do componente acompanha o novo respiro do item */
+.slide[data-layout="conteudo"] .lista li::before{
+  top:calc(var(--conteudo-linha) + .52em);
+}
+.slide[data-layout="conteudo"] .lista--numerada li::before{
+  top:calc(var(--conteudo-linha) + 4px);
+}
+
+/* a origem do fato fica ancorada ao pé do corpo */
+.slide[data-layout="conteudo"] .corpo > .fonte{
+  margin-top:auto;
+}
+
+/* ---- variante: com-nota (lista + cartão de atenção) ---- */
+.slide[data-layout="conteudo"] .conteudo-grade{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) var(--conteudo-nota-larg);
+  gap:var(--gap-g);
+  align-items:stretch;              /* o cartão acompanha a altura da lista */
+}
+.slide[data-layout="conteudo"][data-variante="com-nota"]{
+  --conteudo-linha:40px;
+}
+.slide[data-layout="conteudo"][data-variante="com-nota"] .lista li{
+  font-size:var(--t-corpo);
+}
+.slide[data-layout="conteudo"][data-variante="com-nota"] .lista{
+  align-self:start;
+}
+.slide[data-layout="conteudo"] .conteudo-nota{
+  padding:36px 40px 40px;
+}
+.slide[data-layout="conteudo"] .conteudo-nota-topo{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:20px;
+}
+.slide[data-layout="conteudo"] .conteudo-nota-topo .rotulo{
+  margin-bottom:0;
+}
+.slide[data-layout="conteudo"] .conteudo-nota-ico{
+  font-size:44px;
+  color:var(--alerta);
+}
+.slide[data-layout="conteudo"] .conteudo-nota h4{
+  margin-bottom:12px;
+}

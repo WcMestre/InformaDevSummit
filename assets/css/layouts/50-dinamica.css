@@ -1,0 +1,148 @@
+/* ==========================================================================
+   50 · LAYOUT dinamica — condução de atividade cronometrada em UMA tela.
+   Anatomia e regras de texto: conteudo/modelos/50-dinamica.html
+   Comportamento (passos clicáveis, cronômetro, CSV): assets/js/layouts/50-dinamica.js
+
+   Grade (palco 1920×1080, área útil 1696×840):
+     cabeçalho compacto  →  OBJETIVO (faixa)  →  duas colunas 830 | 1fr
+       esquerda: Σ total · barra proporcional · passos (linhas com número, nome, formato, tempo)
+       direita : PRONTO QUANDO (card) · CONDUÇÃO (card: abrir · se travar · fechar)
+   Tudo escopado em .slide[data-layout="dinamica"]. Ordem: layout → blocos → estados → variantes.
+   ========================================================================== */
+
+.slide[data-layout="dinamica"]{
+  --dinamica-t-passo:30px;     /* nome do passo (legível a 8 m) */
+  --dinamica-t-detalhe:24px;   /* detalhe do passo (peso 400, cor --ink) */
+  --dinamica-t-apoio:26px;     /* condução, critérios e números da barra */
+  --dinamica-esq:830px;
+}
+/* degraus de densidade escritos pelo JS (ajustarTexto) quando o texto não cabe; piso 28px (passo) e 24px (apoio); passo 3 omite o detalhe */
+.slide[data-layout="dinamica"][data-ajuste-passo="1"]{--dinamica-t-passo:29px}
+.slide[data-layout="dinamica"][data-ajuste-passo="2"],
+.slide[data-layout="dinamica"][data-ajuste-passo="3"]{--dinamica-t-passo:28px}
+.slide[data-layout="dinamica"][data-ajuste-passo="3"] .passo-detalhe{display:none}
+.slide[data-layout="dinamica"][data-ajuste-apoio="1"]{--dinamica-t-apoio:25px}
+.slide[data-layout="dinamica"][data-ajuste-apoio="2"]{--dinamica-t-apoio:24px}
+
+/* ---------- cabeçalho compacto: o tempo vai para a barra, a dica para a linha do kicker ---------- */
+.slide[data-layout="dinamica"] .cab{margin-bottom:20px}
+.slide[data-layout="dinamica"] .dinamica-cab-topo{display:flex;align-items:flex-start;gap:var(--gap)}
+.slide[data-layout="dinamica"] .dinamica-dica{
+  margin-left:auto;padding-top:4px;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.03em;color:var(--ink-dim);text-align:right;white-space:nowrap}
+.slide[data-layout="dinamica"] .dinamica-desfazer:not([hidden]) + .dinamica-dica{margin-left:0}
+.slide[data-layout="dinamica"] .dinamica-dica kbd{margin:0 2px}
+
+.slide[data-layout="dinamica"] .dinamica-corpo{gap:20px}
+
+/* ---------- objetivo: a frase em destaque ---------- */
+.slide[data-layout="dinamica"] .dinamica-objetivo{
+  display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:36px;padding:16px 36px}
+.slide[data-layout="dinamica"] .dinamica-rotulo{margin:0;font-weight:500;line-height:1.3}
+.slide[data-layout="dinamica"] .dinamica-frase{
+  font-family:var(--serif);font-size:var(--t-lead);font-weight:500;line-height:1.3;letter-spacing:-.005em;color:var(--ink)}
+.slide[data-layout="dinamica"] .dinamica-frase em{font-style:italic;color:var(--laranja-claro)}
+
+/* ---------- colunas ---------- */
+.slide[data-layout="dinamica"] .dinamica-colunas{
+  flex:1;min-height:0;display:grid;grid-template-columns:var(--dinamica-esq) minmax(0,1fr);gap:var(--gap-g)}
+.slide[data-layout="dinamica"] .dinamica-esq,
+.slide[data-layout="dinamica"] .dinamica-dir{min-width:0;min-height:0;display:flex;flex-direction:column}
+
+/* ---------- coluna esquerda: total Σ ---------- */
+.slide[data-layout="dinamica"] .dinamica-resumo{display:flex;align-items:center;justify-content:space-between;gap:var(--gap);margin-bottom:14px}
+.slide[data-layout="dinamica"] .dinamica-total{
+  display:inline-flex;align-items:center;gap:12px;margin-left:auto;white-space:nowrap;
+  font-family:var(--mono);font-size:var(--t-peq);font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slide[data-layout="dinamica"] .dinamica-total .ico{font-size:30px}
+.slide[data-layout="dinamica"] .dinamica-total-ok{display:inline-flex;color:var(--ok)}
+.slide[data-layout="dinamica"] .dinamica-aviso{display:inline-flex;align-items:center;gap:10px;margin-right:24px;font-weight:600;color:var(--perigo)}
+/* conta errada: o aviso toma o lugar do rótulo "Passos" para a linha não quebrar */
+.slide[data-layout="dinamica"] .dinamica-resumo[data-conta="erro"] .dinamica-rotulo{display:none}
+
+/* ---------- barra proporcional (segmentos criados pelo JS; largura ∝ minutos) ---------- */
+.slide[data-layout="dinamica"] .dinamica-barra{display:flex;gap:6px;height:44px;margin-bottom:16px}
+.slide[data-layout="dinamica"] .dinamica-seg{
+  --seg:var(--ink-dim);flex:1 1 0;min-width:0;display:grid;place-items:center;border-radius:10px;
+  background:var(--seg);color:var(--azul-950);font-family:var(--mono);font-size:var(--dinamica-t-apoio);font-weight:700}
+.slide[data-layout="dinamica"] .dinamica-seg--individual{--seg:var(--f-individual)}
+.slide[data-layout="dinamica"] .dinamica-seg--subgrupos{--seg:var(--f-subgrupos)}
+.slide[data-layout="dinamica"] .dinamica-seg--plenaria{--seg:var(--f-plenaria)}
+.slide[data-layout="dinamica"] .dinamica-seg--falta{
+  background:repeating-linear-gradient(135deg,rgba(239,106,94,.22) 0 8px,transparent 8px 16px);
+  box-shadow:inset 0 0 0 2px var(--perigo)}
+.slide[data-layout="dinamica"] .dinamica-barra[data-conta="erro"]{outline:2px solid var(--perigo);outline-offset:5px;border-radius:12px}
+
+/* ---------- passos ---------- */
+.slide[data-layout="dinamica"] .dinamica-passos{
+  flex:1;min-height:0;display:flex;flex-direction:column;list-style:none;counter-reset:passo;border-top:1px solid var(--line)}
+.slide[data-layout="dinamica"] .passo{flex:1 1 0;min-height:0;display:flex;counter-increment:passo;border-bottom:1px solid var(--line)}
+.slide[data-layout="dinamica"] .passo-ac{
+  flex:1;min-width:0;display:grid;grid-template-columns:48px minmax(0,1fr) auto 100px;align-items:center;column-gap:20px;
+  position:relative;padding:0 20px 0 16px;border:0;border-radius:14px;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;
+  transition:background .2s}
+.slide[data-layout="dinamica"] .passo-ac:hover{background:var(--card)}
+.slide[data-layout="dinamica"] .passo-ac:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:-3px}
+
+.slide[data-layout="dinamica"] .passo-num{
+  width:48px;height:48px;display:grid;place-items:center;border-radius:50%;border:2px solid var(--laranja);
+  font-family:var(--mono);font-size:var(--t-rotulo);font-weight:500;color:var(--laranja-claro)}
+.slide[data-layout="dinamica"] .passo-num::before{content:counter(passo)}
+.slide[data-layout="dinamica"] .passo-num .ico{font-size:26px}
+
+.slide[data-layout="dinamica"] .passo-txt{min-width:0;display:flex;flex-direction:column;gap:2px}
+.slide[data-layout="dinamica"] .passo-nome{font-size:var(--dinamica-t-passo);font-weight:500;line-height:1.2;color:var(--ink)}
+.slide[data-layout="dinamica"] .passo-detalhe{font-size:var(--dinamica-t-detalhe);font-weight:400;line-height:1.25;color:var(--ink)}
+.slide[data-layout="dinamica"] .passo .chip{font-weight:700}   /* negrito >= 18,66px conta como texto grande (3:1) na auditoria */
+.slide[data-layout="dinamica"] .passo .chip--individual{color:var(--azul-950)}
+.slide[data-layout="dinamica"] .passo-tempo{
+  font-family:var(--mono);font-size:var(--t-peq);font-weight:500;color:var(--laranja-claro);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* "pausado": rótulo encaixado sob o tempo (coluna de 100px) — o play vazado do círculo é o ícone do estado */
+.slide[data-layout="dinamica"] .passo-pausa{
+  position:absolute;right:20px;bottom:6px;font-family:var(--mono);font-size:var(--t-min);font-weight:500;line-height:1;color:var(--laranja-claro)}
+.slide[data-layout="dinamica"] .passo[data-pausa] .passo-num{background:transparent;border-style:dashed;color:var(--laranja-claro)}
+
+/* ---------- desfazer: controle pequeno e rotulado na linha do kicker (só aparece depois de uma mudança de passo) ---------- */
+.slide[data-layout="dinamica"] .dinamica-desfazer{
+  margin-left:auto;padding:2px 18px;border:2px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);
+  font-family:var(--mono);font-size:var(--t-rotulo);font-weight:500;line-height:1.3;cursor:pointer;transition:background .2s}
+.slide[data-layout="dinamica"] .dinamica-desfazer:hover{background:var(--card-forte)}
+.slide[data-layout="dinamica"] .dinamica-desfazer:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:2px}
+.slide[data-layout="dinamica"] .dinamica-desfazer[hidden]{display:none}
+
+/* ---------- estados do passo (escritos pelo JS em data-estado; sempre com ícone, nunca só cor) ---------- */
+.slide[data-layout="dinamica"] .passo[data-estado="em-curso"] .passo-ac{
+  background:rgba(247,148,29,.14);box-shadow:inset 4px 0 0 var(--laranja)}
+.slide[data-layout="dinamica"] .passo[data-estado="em-curso"] .passo-num{background:var(--laranja);border-color:var(--laranja);color:var(--azul-950)}
+.slide[data-layout="dinamica"] .passo[data-estado="em-curso"] .passo-num::before,
+.slide[data-layout="dinamica"] .passo[data-estado="feito"] .passo-num::before{content:none}
+.slide[data-layout="dinamica"] .passo[data-estado="feito"] .passo-num{background:var(--ok);border-color:var(--ok);color:var(--azul-950)}
+.slide[data-layout="dinamica"] .passo[data-estado="feito"] .passo-nome,
+.slide[data-layout="dinamica"] .passo[data-estado="feito"] .passo-detalhe,
+.slide[data-layout="dinamica"] .passo[data-estado="feito"] .passo-tempo{color:var(--ink-dim)}
+.slide[data-layout="dinamica"] .passo[data-estado="feito"] .chip{background:transparent;border-color:var(--line);color:var(--ink-dim)}
+
+.slide[data-layout="dinamica"] .dinamica-seg[data-estado="em-curso"]{outline:3px solid var(--laranja);outline-offset:2px}
+.slide[data-layout="dinamica"] .dinamica-seg[data-estado="feito"]{background:var(--card-forte);color:var(--ink-dim);box-shadow:inset 0 0 0 2px var(--seg)}
+
+/* ---------- coluna direita: pronto quando + condução ---------- */
+.slide[data-layout="dinamica"] .dinamica-dir{gap:16px}
+.slide[data-layout="dinamica"] .dinamica-pronto,
+.slide[data-layout="dinamica"] .dinamica-conducao{padding:16px 32px}
+.slide[data-layout="dinamica"] .dinamica-pronto .dinamica-rotulo,
+.slide[data-layout="dinamica"] .dinamica-conducao .dinamica-rotulo{margin-bottom:10px}
+.slide[data-layout="dinamica"] .dinamica-conducao{flex:1;min-height:0;display:flex;flex-direction:column}
+
+.slide[data-layout="dinamica"] .dinamica-criterios{gap:6px}
+.slide[data-layout="dinamica"] .dinamica-criterios li{font-size:var(--dinamica-t-apoio);line-height:1.3}
+
+.slide[data-layout="dinamica"] .dinamica-etapas{flex:1;min-height:0;display:flex;flex-direction:column}
+.slide[data-layout="dinamica"] .etapa{
+  flex:1 1 auto;display:grid;grid-template-columns:160px minmax(0,1fr);column-gap:16px;align-items:start;padding:8px 0;border-top:1px solid var(--line)}
+.slide[data-layout="dinamica"] .etapa dt{
+  padding-top:2px;font-family:var(--mono);font-size:var(--t-rotulo);font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--laranja-claro)}
+.slide[data-layout="dinamica"] .etapa dd{font-size:var(--dinamica-t-apoio);line-height:1.3;color:var(--ink)}
+.slide[data-layout="dinamica"] .etapa-alavancas{list-style:none;display:flex;flex-direction:column;gap:6px}
+.slide[data-layout="dinamica"] .etapa-alavancas li{position:relative;padding-left:22px}
+.slide[data-layout="dinamica"] .etapa-alavancas li::before{
+  content:"";position:absolute;left:2px;top:.5em;width:9px;height:9px;border-radius:2px;background:var(--laranja);transform:rotate(45deg)}

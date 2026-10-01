@@ -1,0 +1,36 @@
+<section class="slide" id="a2-anotacoes" data-layout="quadro" data-bloco="a2" data-min="20" data-ordenar="votos"
+         data-tabela="anotacoes" data-assunto="pipeline">
+  <header class="cab">
+    <p class="kicker anim d1">Assunto 2 · Anotações</p>
+    <h2 class="anim d2">A pipeline pode <em>melhorar</em>?</h2>
+    <p class="sub anim d3">Nossa pipeline é orquestrada via Jenkins. Anote cada sugestão; mãos levantadas votam nas que seguem.</p>
+  </header>
+  <div class="corpo anim d4">
+    <div class="quadro">
+      <div class="quadro-rolagem">
+        <table class="quadro-tabela">
+          <caption class="sr-only">Anotações sobre a pipeline: texto, tipo e votos</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="quadro-col-num"><span class="sr-only">Nº</span></th>
+              <th scope="col" data-campo="texto" data-tipo="texto" data-dica="o que foi dito" data-exemplo="Anotação de exemplo">Anotação</th>
+              <th scope="col" data-campo="tipo" data-tipo="opcoes" data-opcoes="sugestao,duvida,risco" data-rotulos="Sugestão,Dúvida,Risco" data-exemplo="sugestao">Tipo</th>
+              <th scope="col" data-campo="votos" data-tipo="contador" data-exemplo="3">Votos</th>
+              <th scope="col" class="quadro-col-acoes"><span class="sr-only">Remover linha</span></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <footer class="quadro-rodape">
+        <p class="quadro-contador"><b data-quadro-n>0</b> <span data-quadro-rot>registradas</span></p>
+        <p class="quadro-gravacao" data-quadro-gravacao data-estado="navegador"><svg class="ico"><use href="#i-quadro"/></svg><span>salvo no navegador</span></p>
+        <p class="quadro-dica">Enter avança · Tab troca de campo · Esc sai</p>
+        <button type="button" class="quadro-btn quadro-btn--ordenar" data-acao="ordenar" aria-pressed="false"><svg class="ico"><use href="#i-ajustar"/></svg><span>Ordenar por votos</span></button>
+        <button type="button" class="quadro-btn quadro-btn--limpar" data-acao="limpar"><svg class="ico"><use href="#i-x"/></svg><span>Limpar quadro</span></button>
+        <button type="button" class="quadro-btn quadro-btn--mais" data-acao="adicionar"><svg class="ico"><use href="#i-mais"/></svg><span>linha</span></button>
+        <span class="sr-only" role="status" aria-live="polite" data-quadro-aviso></span>
+      </footer>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,76 @@
+<!--
+  LAYOUT  pausa  — intervalo (café ou almoço): "Voltamos às HH:MM" enorme + contagem regressiva ao vivo até esse horário.
+  JS: assets/js/layouts/60-pausa.js (relógio real; só conta com a tela ativa; ao zerar vira "Hora de voltar" e permanece assim).
+
+  Anatomia
+    .pausa-palco                  duas colunas: .pausa-hero (esquerda) + aside.pausa-lado (direita, opcional)
+    .pausa-hero                   .pausa-topo (.pausa-icone + .kicker)  ·  h2.pausa-titulo (.pausa-volta-rot + em.pausa-hora)  ·  .pausa-contagem
+    .pausa-contagem               role="timer": .pausa-contagem-rot ("faltam") + .pausa-tempo (mm:ss ou h:mm:ss; "Hora de voltar" ao zerar)
+    aside.pausa-lado              .card "Na volta" (o que vem a seguir)  +  .card "Antes de sair" (1 a 2 lembretes)
+
+  Atributos da tela
+    id, data-layout="pausa", data-bloco, [data-min], [data-modelo]
+    metadados do bloco (primeira tela do bloco): data-bloco-nome · -curto · -ini · -min · data-bloco-tipo="pausa"
+    data-volta="HH:MM"          horário de retorno. Fonte única: o JS escreve esse horário em .pausa-hora. Sem ele, usa data-bloco-ini + data-bloco-min.
+    data-variante="cafe|almoco" ícone (cafe = xícara, padrão · almoco = talher); o cronograma herda o ícone desta variante
+    data-lado="off"             sem a coluna da direita: o hero fica centralizado
+    data-estado                 escrito pelo JS: contando · final (último minuto) · acabou
+
+  Relógio: usa window.SUMMIT.agoraFn() (padrão: new Date()). Para testar sem esperar, substitua-a por uma função que devolva
+    um Date (ou milissegundos), por exemplo  SUMMIT.agoraFn = () => new Date(2026, 9, 2, 10, 58, 30)
+  Tabela CSV: nenhuma (tela de leitura e contagem; não grava estado).
+  Regras e limites: "Na volta" 1 título + até 2 linhas; "Antes de sair" 1 a 2 lembretes de até 2 linhas cada; sem JS a contagem mostra "--:--".
+-->
+<section class="slide" id="modelo-pausa" data-layout="pausa" data-variante="cafe" data-volta="11:15" data-bloco="intervalo" data-bloco-nome="Intervalo" data-bloco-curto="Intervalo" data-bloco-ini="11:00" data-bloco-min="15" data-bloco-tipo="pausa" data-min="2" data-modelo>
+  <div class="pausa-palco">
+    <div class="pausa-hero">
+      <div class="pausa-topo anim d1">
+        <span class="pausa-icone" aria-hidden="true">
+          <svg class="ico pausa-ico pausa-ico--cafe"><use href="#i-cafe"/></svg>
+          <svg class="ico pausa-ico pausa-ico--talher"><use href="#i-talher"/></svg>
+        </span>
+        <p class="kicker">Intervalo</p>
+      </div>
+      <h2 class="pausa-titulo anim d2"><span class="pausa-volta-rot">Voltamos às</span> <em class="pausa-hora">11:15</em></h2>
+      <div class="pausa-contagem anim d3" role="timer" aria-live="off">
+        <span class="pausa-contagem-rot">faltam</span>
+        <span class="pausa-tempo">--:--</span>
+      </div>
+      <p class="sr-only" role="status" data-pausa-status></p>
+    </div>
+    <aside class="pausa-lado" aria-label="Antes e depois do intervalo">
+      <div class="card card--destaque anim d4">
+        <span class="rotulo rotulo--laranja">Na volta</span>
+        <h3>Nome do <span class="ph">próximo assunto</span></h3>
+        <p class="corpo-txt">Uma frase sobre o que a sala vai fazer ao retomar.</p>
+      </div>
+      <div class="card anim d5">
+        <span class="rotulo">Antes de sair</span>
+        <ul class="lista">
+          <li>Primeiro lembrete antes de sair da sala.</li>
+          <li>Segundo lembrete (opcional).</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="slide" id="modelo-pausa-almoco" data-layout="pausa" data-variante="almoco" data-volta="13:00" data-bloco="intervalo" data-lado="off" data-min="2" data-modelo>
+  <div class="pausa-palco">
+    <div class="pausa-hero">
+      <div class="pausa-topo anim d1">
+        <span class="pausa-icone" aria-hidden="true">
+          <svg class="ico pausa-ico pausa-ico--cafe"><use href="#i-cafe"/></svg>
+          <svg class="ico pausa-ico pausa-ico--talher"><use href="#i-talher"/></svg>
+        </span>
+        <p class="kicker">Almoço</p>
+      </div>
+      <h2 class="pausa-titulo anim d2"><span class="pausa-volta-rot">Voltamos às</span> <em class="pausa-hora">13:00</em></h2>
+      <div class="pausa-contagem anim d3" role="timer" aria-live="off">
+        <span class="pausa-contagem-rot">faltam</span>
+        <span class="pausa-tempo">--:--</span>
+      </div>
+      <p class="sr-only" role="status" data-pausa-status></p>
+    </div>
+  </div>
+</section>

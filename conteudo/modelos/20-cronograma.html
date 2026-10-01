@@ -1,0 +1,56 @@
+<!--
+  LAYOUT  cronograma  — a agenda do dia na tela. NÃO é digitada: é GERADA em runtime a partir de SUMMIT.blocos
+  (registro dos data-bloco-* das telas), para nunca divergir do deck.   JS: assets/js/layouts/20-cronograma.js
+
+  Anatomia
+    .cab                      kicker · h2 · .sub  (o .sub some sozinho no modo colunas)
+    ol.cronograma-lista       GERADA. Até 9 blocos: uma li.cronograma-linha por bloco. 10 ou mais: DUAS COLUNAS (abaixo)
+    footer.cronograma-total   GERADO: horas efetivas (sem pausas), faixa do dia, legenda e aviso de horários
+
+  Cada li.cronograma-linha (gerada)
+    .cronograma-hora          início (.cronograma-ini) – fim (.cronograma-fim), calculados de ini + min
+    .cronograma-nome          [ícone cafe|talher|cadeado] .cronograma-titulo [.cronograma-selo "Intocável"]
+    .cronograma-divisao       assuntos: .cronograma-barra (segmentos proporcionais .cronograma-seg--apres / --def) + rótulos
+                              .cronograma-par "Apresentação N min" · "Definições M min"; pausa: barra listrada
+    .cronograma-min           duração do bloco
+    Uma coluna: a barra é fina e os rótulos por extenso ficam abaixo dela.
+    Duas colunas: os minutos vão DENTRO dos segmentos (forma + número: quadrado = apresentação, círculo = definições; a legenda
+    traz "Números em minutos") e os rótulos por extenso viram texto só para leitor de tela (.sr-only).
+
+  Modo colunas (10 ou mais blocos; data-densidade="colunas")
+    ol.cronograma-lista[data-faixa="sim|nao"] > li.cronograma-grupo (cabeçalho .cronograma-grupo-cab: período · faixa de horas ·
+    horas efetivas; ol.cronograma-grupo-lista com as linhas) · li.cronograma-linha[data-faixa="central"] · li.cronograma-grupo
+    A pausa mais longa (>= 30 min, o almoço) vira a FAIXA vertical entre as colunas; manhã à esquerda, tarde à direita.
+    Sem pausa longa (ou com mais de 7 linhas de um lado), o dia é cortado ao meio e as colunas viram "Parte 1" e "Parte 2".
+    Período do cabeçalho: Manhã (antes das 12h) · Tarde (12h às 18h) · Noite. data-cheio="sim" na lista = 7 linhas numa coluna
+    (14 blocos): linhas mais baixas. O aviso de horários que não encadeiam vai para o canto do cabeçalho (não rouba altura).
+
+  Atributos da li:   data-tipo="assunto | pausa | intocavel"   data-aviso="lacuna | sobreposicao" (só se os horários não encadeiam)
+  Atributos da tela: id, data-layout, data-bloco, [data-min], [data-modelo]
+    data-origem="manual"    desliga a geração: o conteúdo de .cronograma-lista e .cronograma-total passa a ser escrito à mão
+                            (mesmo markup acima). Sem esse atributo, o que estiver dentro é sobrescrito.
+    data-densidade          escrito pelo JS: amplo (até 6 blocos) · medio (7 a 9) · colunas (10 ou mais; esconde o .sub).
+                            data-linhas = nº de blocos.
+
+  Fonte dos dados (nos <section> de abertura de cada bloco):
+    data-bloco-nome · data-bloco-ini="HH:MM" · data-bloco-min · data-bloco-apres · data-bloco-def · data-bloco-tipo="pausa|intocavel"
+    Bloco sem ini encadeia no fim do anterior; bloco sem min é ignorado. Pausa com data-variante="almoco" (na tela pausa) usa o ícone talher.
+
+  Tabela CSV: nenhuma (tela de leitura). Sem JS mostra só o cabeçalho.
+  Regras e limites: nomes de bloco até ~30 caracteres (amplo/médio quebram em 2 linhas) e até ~20 em colunas (corta com
+  reticências e a auditoria acusa); testado de 1 a 14 blocos (projeto: 13, em colunas). Acima de 14 (7 por coluna) estoura a área útil
+  e a auditoria acusa — nesse caso use data-origem="manual" ou divida o dia.
+  Um bloco sem data-bloco-min é ignorado; sem nenhum bloco a tela mostra um aviso ("Nenhum bloco com duração...").
+  Horários que não encadeiam (lacuna ou sobreposição) ganham ícone de alerta na linha e um aviso (no rodapé; em colunas, no cabeçalho).
+-->
+<section class="slide" id="modelo-cronograma" data-layout="cronograma" data-bloco="abertura" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Agenda do dia</p>
+    <h2 class="anim d2">Cronograma do <em>dia</em></h2>
+    <p class="sub anim d3">Cada assunto divide o tempo entre apresentação e definições.</p>
+  </header>
+  <div class="corpo">
+    <ol class="cronograma-lista anim d4" aria-label="Agenda do dia"></ol>
+    <footer class="cronograma-total anim d5"></footer>
+  </div>
+</section>

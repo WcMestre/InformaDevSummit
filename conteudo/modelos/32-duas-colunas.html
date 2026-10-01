@@ -1,0 +1,116 @@
+<!--
+  LAYOUT  duas-colunas  — comparar ou contrapor duas coisas (opções, lados, formatos, hoje × proposta).
+  Estilos: assets/css/layouts/32-duas-colunas.css (escopado em .slide[data-layout="duas-colunas"]). Sem JS, sem CSV.
+
+  ANATOMIA
+    .cab    kicker · h2 (<em>) · .sub
+    .corpo  > .duas-grade  (duas colunas; a terceira, só em antes-depois, é a seta)
+
+  ATRIBUTOS   id, data-layout="duas-colunas", data-bloco, [data-min], [data-modelo], data-variante = 50-50 | 60-40 | antes-depois
+    50-50         dois .card.card--destaque de peso igual: .rotulo + h3 + ul.lista (3 itens)
+    60-40         coluna de texto (.duas-texto: h3 + .corpo-txt + ul.lista) + .card.card--forte.card--destaque com o ponto central
+    antes-depois  .duas-lado "Hoje" × .duas-lado "Proposta", com .duas-seta (ícone seta) no meio.
+                  Cada lado: .rotulo + .duas-trecho (TRECHO GRANDE em mono: um identificador, um formato, um nome de campo)
+                  + ul.lista.duas-explica com EXATAMENTE 3 linhas de explicação.
+                  O lado "Proposta" usa .duas-lado--proposta (trecho e filete laranja); o lado "Hoje" fica neutro.
+                  A diferença nunca é só de cor: há rótulo ("Hoje" / "Proposta"), seta de direção e borda própria.
+
+  CLASSES PRÓPRIAS   .duas-grade · .duas-texto · .duas-lado · .duas-lado--proposta · .duas-trecho · .duas-explica · .duas-seta
+  ENTRADAS           .anim .d1…d7 (cab d1–d3; colunas d4 e d5; seta d5)
+
+  LIMITES DE TEXTO (testados com +40% de texto)
+    título: até 2 linhas · sub: até 2 linhas
+    50-50 e 60-40: 3 itens por lista, cada um em até 2 linhas; h3 em 1 linha (~28 caracteres)
+    antes-depois: trecho mono até ~48 caracteres (quebra em 2 linhas, sem espaços também: overflow-wrap) ·
+                  cada linha de explicação em até 2 linhas (~34 caracteres por linha) · sempre 3 linhas por lado
+  REGRAS   só números internos com .fonte (origem · data); em comparação de formatos, o trecho é exemplo neutro, não dado real.
+-->
+<section class="slide" id="modelo-duas-colunas-50" data-layout="duas-colunas" data-variante="50-50" data-bloco="b1" data-min="5" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título da tela <em>comparando dois lados</em></h2>
+    <p class="sub anim d3">Dois blocos de mesmo peso: a sala lê um, lê o outro e compara.</p>
+  </header>
+  <div class="corpo">
+    <div class="g2 duas-grade">
+      <article class="card card--destaque anim d4">
+        <span class="rotulo rotulo--laranja">Lado A</span>
+        <h3>Título do bloco A</h3>
+        <ul class="lista">
+          <li>Primeiro ponto do bloco A, curto e direto.</li>
+          <li>Segundo ponto do bloco A, em até duas linhas.</li>
+          <li>Terceiro ponto do bloco A, fechando a ideia.</li>
+        </ul>
+      </article>
+      <article class="card card--destaque anim d5">
+        <span class="rotulo rotulo--laranja">Lado B</span>
+        <h3>Título do bloco B</h3>
+        <ul class="lista">
+          <li>Primeiro ponto do bloco B, curto e direto.</li>
+          <li>Segundo ponto do bloco B, em até duas linhas.</li>
+          <li>Terceiro ponto do bloco B, fechando a ideia.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="modelo-duas-colunas-60" data-layout="duas-colunas" data-variante="60-40" data-bloco="b1" data-min="5" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título da tela com <em>texto e destaque</em></h2>
+    <p class="sub anim d3">O texto explica; o cartão ao lado guarda a ideia que a sala precisa levar.</p>
+  </header>
+  <div class="corpo">
+    <div class="duas-grade">
+      <div class="duas-texto anim d4">
+        <h3>Título do texto</h3>
+        <p class="corpo-txt">Parágrafo de apoio, em até três linhas, que contextualiza o ponto e prepara a leitura da lista a seguir.</p>
+        <ul class="lista">
+          <li>Primeiro ponto de apoio ao texto.</li>
+          <li>Segundo ponto de apoio ao texto.</li>
+          <li>Terceiro ponto de apoio ao texto.</li>
+        </ul>
+      </div>
+      <aside class="card card--forte card--destaque anim d5" aria-label="Ponto central">
+        <span class="rotulo rotulo--laranja">Em destaque</span>
+        <h3>Ponto central da tela</h3>
+        <p class="corpo-txt dim">Explicação curta do ponto central, em até quatro linhas, para a sala guardar.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="modelo-duas-colunas-antes-depois" data-layout="duas-colunas" data-variante="antes-depois" data-bloco="b1" data-min="5" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Do formato de hoje ao <em>formato proposto</em></h2>
+    <p class="sub anim d3">Um trecho de cada lado para a sala enxergar a diferença.</p>
+  </header>
+  <div class="corpo">
+    <div class="duas-grade">
+      <article class="card duas-lado anim d4">
+        <span class="rotulo">Hoje</span>
+        <p class="duas-trecho">formato-de-hoje-000</p>
+        <ul class="lista duas-explica">
+          <li>Explicação 1 sobre o formato de hoje.</li>
+          <li>Explicação 2 sobre o formato de hoje.</li>
+          <li>Explicação 3 sobre o formato de hoje.</li>
+        </ul>
+      </article>
+      <span class="duas-seta anim d5">
+        <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-seta"/></svg>
+        <span class="sr-only">passa a ser</span>
+      </span>
+      <article class="card card--destaque duas-lado duas-lado--proposta anim d5">
+        <span class="rotulo rotulo--laranja">Proposta</span>
+        <p class="duas-trecho">formato-proposto-000</p>
+        <ul class="lista duas-explica">
+          <li>Explicação 1 sobre o formato proposto.</li>
+          <li>Explicação 2 sobre o formato proposto.</li>
+          <li>Explicação 3 sobre o formato proposto.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,138 @@
+<!--
+  LAYOUT  quadro  — tabela editável ao vivo, LIGADA A UMA TABELA CSV. A sala decide, o facilitador digita na tela projetada.
+  Estilo: assets/css/layouts/55-quadro.css · Comportamento: assets/js/layouts/55-quadro.js · Duas variantes-modelo neste arquivo:
+    1) modelo-quadro-compromissos  tabela `decisoes`  · Ação · Responsável · Prazo · Status   (fecha um assunto: saída em ação)
+    2) modelo-quadro-anotacoes     tabela `anotacoes` · Anotação · Tipo · Votos          (registro ao vivo + votação por mãos levantadas)
+
+  ANATOMIA (igual nas duas)
+    section.slide[data-layout="quadro"]
+      header.cab                   kicker · h2 · .sub (uma linha: diz o que registrar e quando o responsável entra)
+      div.corpo > div.quadro       cartão do quadro
+        div.quadro-rolagem         rolagem interna (cabeçalho sticky); o JS põe data-rolagem (rolagem intencional p/ a auditoria)
+          table.quadro-tabela      caption.sr-only · thead (colunas declaradas) · tbody (vazio: o JS preenche)
+        div.quadro-sobre           (gerado pelo JS, altura zero) "+N linhas abaixo" e o aviso "Linha removida · Desfazer" (role=status)
+        footer.quadro-rodape       contador "N registradas" · indicador de gravação · dica de teclas · [Ordenar por votos] · Limpar quadro · + linha
+    O <tbody> nasce VAZIO no HTML: linhas reais, linha-exemplo e convite "registrar a primeira linha" são gerados pelo JS.
+    O subtítulo (.sub) pode ter 2 linhas: neste layout ele é compacto (30 px, sem largura máxima) justamente para não roubar linhas.
+
+  ATRIBUTOS DA <section>
+    data-tabela      obrigatório  nome da tabela em dados/esquema.json (decisoes | anotacoes | …)
+    data-assunto     obrigatório  o quadro mostra/cria/limpa SÓ as linhas com `assunto` == este valor (se a tabela tem a coluna)
+    data-referencia  (compromissos) data do evento, AAAA-MM-DD: base do "D+N" do prazo. Sem ela, só dia da semana e avisos.
+    data-ordenar     opcional     campo de uma coluna "contador" (ex.: "votos"): liga o botão "Ordenar por votos" (alterna; só a ordem
+                                  na TELA — o CSV não é reordenado; não reordena enquanto alguém digita). O botão pode vir no HTML
+                                  (button[data-acao="ordenar"], como no modelo de anotações) ou é criado pelo JS no rodapé.
+    data-exemplo     opcional     texto da linha-exemplo na 1ª coluna de texto (se o <th> não trouxer o seu)
+    data-vazio       opcional     texto do convite com o quadro vazio (padrão: "Registrar a primeira linha")
+    data-bloco, data-min, data-modelo  (padrão do deck; em modelos, data-bloco="b1")
+
+  COLUNAS — um <th scope="col"> por campo, dentro de thead:
+    data-campo     coluna do CSV (item, responsavel, prazo, status, texto, tipo …)
+    data-tipo      texto | data | opcoes | contador
+    data-dica      texto | placeholder cinza da célula vazia
+    data-exemplo   todos     valor da linha-exemplo (prazo em ISO; opcoes = valor)
+    data-largura   texto     "estreita" (240px) em vez de ocupar o espaço que sobra
+    data-opcoes    opcoes    valores gravados, separados por vírgula ("sugestao,duvida,risco")
+    data-rotulos   opcoes    rótulos exibidos, na mesma ordem ("Sugestão,Dúvida,Risco")
+    data-compacto  opcoes    só a opção marcada mostra o rótulo (as demais viram ícone com nome acessível)
+    data-padrao    opcoes    valor de uma linha nova (padrão: a 1ª opção)
+    (contador)     data-campo="votos" data-tipo="contador" data-exemplo="3" : célula [−] N [+] (botões 52 px; 44 px na densidade
+                   compacta). Inteiro >= 0 gravado a cada toque em tabela.atualizar; nasce 0. Teclado: Enter avança (não vota),
+                   "+" e "−" votam com o foco no contador. É a VOTAÇÃO POR MÃOS LEVANTADAS: o facilitador conta as mãos e toca.
+                   A coluna precisa existir na tabela (`anotacoes.votos`); cabeçalho (rótulo) vem do <th>, não do JS.
+    th.quadro-col-num / th.quadro-col-acoes  colunas fixas: nº da linha e botão remover (sem data-campo)
+    Ícones das opções (sugestao, duvida, risco, aberto, andamento, concluido) vêm do JS; valor novo ganha um ícone neutro.
+
+  COMPORTAMENTO (ver o cabeçalho do JS)
+    Texto: contenteditable plaintext-only; grava ~0,35 s depois de digitar e ao sair do campo. Enter avança; Enter na última
+    célula da última linha cria linha (nunca empilha linhas em branco). Tab/Shift+Tab trocam de campo, Esc tira o foco.
+    Prazo: tripla dia/mês/ano (aaaa-mm-dd no CSV). Mostra D+N, dia da semana e, em fim de semana ou feriado nacional, um aviso
+    com ícone; o aviso NÃO bloqueia — a sala decide. Opções: grupo de botões com ícone + rótulo; setas trocam a opção.
+    Limpar quadro: 1º toque arma (4 s, barra visível), 2º toque apaga SÓ as linhas do assunto.
+    Remover linha e Limpar quadro: aparece "Linha removida · Desfazer" (ou "Quadro limpo: N linhas removidas · Desfazer") por 6 s;
+    Desfazer devolve as linhas com os mesmos ids e valores, na posição de antes. Serve também para as linhas pré-carregadas.
+    Densidade adaptativa: enquanto as linhas cabem, 64 px / texto 26 px; quando não cabem, 56 px / 24 px. O que ainda ficar fora
+    da vista é avisado por "+N linhas abaixo" (botão que rola) e degradê. Nunca há linha cortada sem aviso.
+    Linha em branco é descartada ao sair dela. Com o quadro vazio aparece a linha-exemplo (cinza, "exemplo"), que nunca é dado.
+
+  REGRAS E LIMITES
+    Responsável nasce em branco. Linha-exemplo e placeholders são neutros. Fato interno com número leva .fonte (não se aplica ao quadro vazio).
+    Cabem 8 linhas de 1 linha de texto sem rolar (subtítulo de até 2 linhas); célula com 2 linhas ou aviso de prazo deixa a linha
+    mais alta (aparece "+N linhas abaixo" antes). Ação/Anotação: até ~80 caracteres por linha de texto (quebra sozinha, sem cortar).
+    Responsável: ~24 caracteres. Sub: até 2 linhas (~100 caracteres por linha). Com data-ordenar o rodapé dispensa a dica de teclas.
+    Em 1366x768 a escala do palco é a mesma (tudo em px do palco): nada muda de proporção.
+-->
+
+<section class="slide" id="modelo-quadro-compromissos" data-layout="quadro" data-bloco="b1" data-min="5" data-modelo
+         data-tabela="decisoes" data-assunto="modelo" data-referencia="2026-10-02">
+  <header class="cab">
+    <p class="kicker anim d1">Compromissos · Assunto</p>
+    <h2 class="anim d2">Título da tela em <em>uma linha</em></h2>
+    <p class="sub anim d3">Uma linha por ação. O responsável entra só quando alguém assumir.</p>
+  </header>
+  <div class="corpo anim d4">
+    <div class="quadro">
+      <div class="quadro-rolagem">
+        <table class="quadro-tabela">
+          <caption class="sr-only">Compromissos do assunto: ação, responsável, prazo e status</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="quadro-col-num"><span class="sr-only">Nº</span></th>
+              <th scope="col" data-campo="item" data-tipo="texto" data-dica="o que será feito" data-exemplo="Ação de exemplo">Ação</th>
+              <th scope="col" data-campo="responsavel" data-tipo="texto" data-largura="estreita" data-dica="quem assume" data-exemplo="Nome">Responsável</th>
+              <th scope="col" data-campo="prazo" data-tipo="data" data-exemplo="2026-10-16">Prazo <span class="quadro-th-nota" data-nota-ref></span></th>
+              <th scope="col" data-campo="status" data-tipo="opcoes" data-opcoes="aberto,andamento,concluido" data-rotulos="Aberto,Andamento,Concluído" data-compacto data-exemplo="aberto">Status</th>
+              <th scope="col" class="quadro-col-acoes"><span class="sr-only">Remover linha</span></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <footer class="quadro-rodape">
+        <p class="quadro-contador"><b data-quadro-n>0</b> <span data-quadro-rot>registradas</span></p>
+        <p class="quadro-gravacao" data-quadro-gravacao data-estado="navegador"><svg class="ico"><use href="#i-quadro"/></svg><span>salvo no navegador</span></p>
+        <p class="quadro-dica">Enter avança · Tab troca de campo · Esc sai</p>
+        <button type="button" class="quadro-btn quadro-btn--limpar" data-acao="limpar"><svg class="ico"><use href="#i-x"/></svg><span>Limpar quadro</span></button>
+        <button type="button" class="quadro-btn quadro-btn--mais" data-acao="adicionar"><svg class="ico"><use href="#i-mais"/></svg><span>linha</span></button>
+        <span class="sr-only" role="status" aria-live="polite" data-quadro-aviso></span>
+      </footer>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="modelo-quadro-anotacoes" data-layout="quadro" data-bloco="b1" data-min="10" data-modelo
+         data-tabela="anotacoes" data-assunto="modelo" data-ordenar="votos">
+  <header class="cab">
+    <p class="kicker anim d1">Anotações · Assunto</p>
+    <h2 class="anim d2">Título da tela em <em>uma linha</em></h2>
+    <p class="sub anim d3">Uma linha por ideia, classificada como sugestão, dúvida ou risco. Mãos levantadas votam nas sugestões.</p>
+  </header>
+  <div class="corpo anim d4">
+    <div class="quadro">
+      <div class="quadro-rolagem">
+        <table class="quadro-tabela">
+          <caption class="sr-only">Anotações do assunto: texto, tipo e votos</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="quadro-col-num"><span class="sr-only">Nº</span></th>
+              <th scope="col" data-campo="texto" data-tipo="texto" data-dica="o que foi dito" data-exemplo="Anotação de exemplo">Anotação</th>
+              <th scope="col" data-campo="tipo" data-tipo="opcoes" data-opcoes="sugestao,duvida,risco" data-rotulos="Sugestão,Dúvida,Risco" data-exemplo="sugestao">Tipo</th>
+              <th scope="col" data-campo="votos" data-tipo="contador" data-exemplo="3">Votos</th>
+              <th scope="col" class="quadro-col-acoes"><span class="sr-only">Remover linha</span></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <footer class="quadro-rodape">
+        <p class="quadro-contador"><b data-quadro-n>0</b> <span data-quadro-rot>registradas</span></p>
+        <p class="quadro-gravacao" data-quadro-gravacao data-estado="navegador"><svg class="ico"><use href="#i-quadro"/></svg><span>salvo no navegador</span></p>
+        <p class="quadro-dica">Enter avança · Tab troca de campo · Esc sai</p>
+        <button type="button" class="quadro-btn quadro-btn--ordenar" data-acao="ordenar" aria-pressed="false"><svg class="ico"><use href="#i-ajustar"/></svg><span>Ordenar por votos</span></button>
+        <button type="button" class="quadro-btn quadro-btn--limpar" data-acao="limpar"><svg class="ico"><use href="#i-x"/></svg><span>Limpar quadro</span></button>
+        <button type="button" class="quadro-btn quadro-btn--mais" data-acao="adicionar"><svg class="ico"><use href="#i-mais"/></svg><span>linha</span></button>
+        <span class="sr-only" role="status" aria-live="polite" data-quadro-aviso></span>
+      </footer>
+    </div>
+  </div>
+</section>

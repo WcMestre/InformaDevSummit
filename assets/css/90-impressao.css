@@ -1,0 +1,16 @@
+/* ==========================================================================
+   90 · IMPRESSÃO / PDF — uma tela por página 1920×1080, sem moldura interativa.
+   ========================================================================== */
+@media print{
+  @page{size:1920px 1080px;margin:0}
+  html,body{height:auto;background:var(--azul-950);overflow:visible;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #stage{position:static;transform:none;width:1920px;height:auto;overflow:visible;background:none}
+  #deck{position:static}
+  .slide{display:flex !important;position:relative;inset:auto;width:1920px;height:1080px;break-after:page;page-break-after:always;
+    background:
+      radial-gradient(1200px 800px at 82% -10%, rgba(247,148,29,.09), transparent 60%),
+      radial-gradient(1000px 700px at 0% 110%, rgba(0,86,121,.55), transparent 55%),
+      linear-gradient(160deg,#063a52 0%, var(--azul-900) 45%, var(--azul-950) 100%)}
+  .anim{opacity:1 !important;transform:none !important;animation:none !important}
+  .moldura-topo,.trilha,.progresso,.dica,.visao,.ajuda,.apagao,.cron,.dados-painel{display:none !important}
+}

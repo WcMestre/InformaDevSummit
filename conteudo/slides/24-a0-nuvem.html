@@ -1,0 +1,80 @@
+<section class="slide" id="a0-nuvem" data-layout="nuvem" data-bloco="a0" data-rodada="1" data-tabela="brainstorming" data-min="20">
+
+  <div class="nuvem-topo">
+    <header class="cab">
+      <p class="kicker anim d1">Assunto 0 · Nuvem de palavras</p>
+      <h2 class="anim d2">O que <em>apareceu</em></h2>
+    </header>
+    <div class="nuvem-ctrl anim d3">
+      <p class="nuvem-stats" aria-live="polite">
+        <span class="nuvem-stat" data-stat="apontamentos"><b>0</b> apontamentos</span>
+        <span class="nuvem-stat" data-stat="participantes"><b>0</b> participantes</span>
+        <span class="nuvem-stat" data-stat="rodada">rodada <b>1</b></span>
+      </p>
+      <div class="nuvem-alterna" role="group" aria-label="O que a nuvem mostra">
+        <button type="button" class="nuvem-alterna-btn" data-modo="palavras" aria-pressed="true">Palavras</button>
+        <button type="button" class="nuvem-alterna-btn" data-modo="frases" aria-pressed="false">Frases</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="corpo nuvem-corpo">
+    <div class="nuvem-esq">
+
+      <div class="nuvem-area anim d4" data-estado="vazio">
+        <div class="nuvem-termos" role="list" aria-label="Nuvem de termos dos apontamentos"></div>
+        <div class="nuvem-vazio">
+          <svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>
+          <h3 class="nuvem-vazio-titulo">Sem apontamentos ainda</h3>
+          <p class="corpo-txt dim nuvem-vazio-texto">Volte à tela anterior e registre.</p>
+          <p class="nuvem-exemplo exemplo" aria-hidden="true">
+            <span class="exemplo-marca">exemplo</span>
+            <span class="nuvem-exemplo-a">citada 1 vez</span>
+            <span class="nuvem-exemplo-b">citada mais vezes</span>
+            <span class="nuvem-exemplo-c">mais crítica</span>
+          </p>
+        </div>
+        <div class="nuvem-dica" role="tooltip" hidden></div>
+        <span class="nuvem-termo nuvem-medida" aria-hidden="true"></span>
+      </div>
+
+      <div class="card nuvem-legenda anim d5">
+        <div class="nuvem-leg-item">
+          <span class="nuvem-selo nuvem-selo--bom"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span>
+          <h4>Azul: fazemos bem</h4>
+          <p>Vale 1 por citação. A mesma palavra nos dois lados vira duas entradas.</p>
+        </div>
+        <div class="nuvem-leg-item">
+          <span class="nuvem-selo nuvem-selo--melhorar"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg></span>
+          <h4>Vermelho: melhorar</h4>
+          <p>Vem sublinhado. Criticidade 1, 2 ou 3 vale 1, 2 ou 4 citações.</p>
+        </div>
+        <div class="nuvem-leg-item">
+          <span class="nuvem-selo nuvem-selo--tamanho">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V14M12 19V9M19 19V4"/></svg>
+          </span>
+          <h4>Quanto mais, maior</h4>
+          <p>Soma das citações. O mais crítico ganha traço grosso, brilho e barras.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <aside class="card nuvem-rank anim d5" aria-label="Mais citados">
+      <h3>Mais citados</h3>
+      <p class="nuvem-rank-sub">× citações · criticidade média</p>
+      <p class="nuvem-rank-grupo">
+        <span class="nuvem-selo nuvem-selo--bom"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span>
+        <span class="nuvem-rank-nome">Fazemos bem</span>
+      </p>
+      <ol class="nuvem-rank-lista" data-lado="bom"></ol>
+      <p class="nuvem-rank-grupo">
+        <span class="nuvem-selo nuvem-selo--melhorar"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg></span>
+        <span class="nuvem-rank-nome">Podemos melhorar</span>
+      </p>
+      <ol class="nuvem-rank-lista" data-lado="melhorar"></ol>
+      <p class="nuvem-rank-info" data-info></p>
+    </aside>
+  </div>
+
+</section>

@@ -1,0 +1,153 @@
+<!--
+  LAYOUT  brainstorm  — tabela de brainstorming projetada, preenchida ao vivo pelo facilitador.
+  Cada ouvinte fala N práticas boas e N a melhorar; o facilitador registra aqui; a tela "nuvem" lê os MESMOS dados.
+  Estilos: assets/css/layouts/56-brainstorm.css · comportamento: assets/js/layouts/56-brainstorm.js
+
+  ANATOMIA (de cima para baixo)
+    .brainstorm-topo        .cab (kicker + h2)  +  .brainstorm-instrucao (regra "N boas · N a melhorar por pessoa", resumo agregado, dica de teclas,
+                            botão "Ver todos" [data-brainstorm-todos] e a linha de totais [data-brainstorm-todos-info], só no modo Ver todos)
+    .brainstorm-progresso   faixa de chips por participante: SÓ o nome e um estado (check = completo · anel vazio = em andamento).
+                            NUNCA número por pessoa (regra do cliente: nunca nome de pessoa junto de métrica); o agregado "N de M completos" fica no topo.
+                            .brainstorm-pessoa (botão: clicar seleciona o participante na barra de entrada) · .brainstorm-pessoa--exemplo (cinza, some com dados)
+    .brainstorm-colunas     2 cartões lado a lado (.card .brainstorm-col, data-tipo="bom" | "melhorar")
+      .brainstorm-col-cab   ícone + título + .brainstorm-contador (n itens)        (melhorar: + .brainstorm-legenda da criticidade)
+      .brainstorm-lista     <ul> com rolagem interna, em 1 a 3 colunas internas conforme a densidade; itens .brainstorm-item  [participante · texto · criticidade]
+                            O JS acrescenta .brainstorm-mais ("+N mais abaixo/acima") em cada coluna quando há itens fora da vista.
+      .brainstorm-item--exemplo  linha-exemplo em cinza; só aparece com a coluna vazia; NÃO vira dado
+    .brainstorm-entrada     <form> fixa na base: participante (datalist) · tipo Bom/Melhorar · apontamento · criticidade 1-3 (só em Melhorar) · Adicionar
+
+  ATRIBUTOS DO <section>
+    id, data-layout="brainstorm", data-bloco, data-modelo                     (padrão do deck)
+    data-rodada="1"      rodada desta tela: grava na coluna "rodada" e mostra só as linhas dela (padrão "1")
+    data-meta="3"        apontamentos esperados por pessoa e por tipo: alimenta o progresso e o texto da regra (padrão 3)
+    data-tabela="brainstorming"   (informativo; a tabela usada é sempre SUMMIT.dados.tabela('brainstorming'))
+    Uma tela por rodada: duplique a <section> com outro id e outro data-rodada; cada uma enxerga só a sua rodada.
+    Ganchos preenchidos pelo JS (não digite): [data-brainstorm-rodada] [data-brainstorm-meta] [data-brainstorm-resumo]
+
+  DADOS  tabela 'brainstorming' (dados/brainstorming.csv): rodada · participante · tipo (bom|melhorar) · texto · criticidade
+    - tipo 'bom'      -> criticidade gravada VAZIA (só pesa em 'melhorar'); tipo 'melhorar' -> 1, 2 ou 3.
+    - Dados limpos para a nuvem de palavras: espaços colapsados, sem quebra de linha, participante reutiliza a grafia já
+      existente (sem diferenciar maiúsculas/acentos: "joao" vira "João" se "João" já falou), texto até 160 caracteres.
+    - A linha-exemplo e o chip-exemplo nunca são gravados.
+
+  COMPORTAMENTO
+    - Enter no apontamento adiciona e mantém participante e tipo; o foco volta ao apontamento.
+    - Enter sem foco em campo (tela aberta) leva o foco à barra de entrada (participante, se vazio; senão o apontamento); Esc devolve a navegação do deck.
+    - Clicar num item abre a edição inline (texto e criticidade): Enter salva, Esc cancela; "Remover" pede confirmação.
+    - Clicar num chip de participante preenche a barra de entrada com aquele nome.
+    - Focar o campo participante seleciona o texto todo: digitar o nome seguinte substitui (não concatena).
+    - Placeholder do participante: "Pessoa (sigla)" — incentiva iniciais/P1, P2; o nome completo fica projetado para a sala (avisar no README).
+    - DENSIDADE ADAPTATIVA: o JS mede as listas e escolhe o nível mais legível em que o conjunto cabe (.brainstorm-colunas[data-densidade="0…4"]):
+      1 coluna folgada · 1 coluna justa · 2 colunas (26px) · 2 colunas (22px) · 3 colunas (22px, só em Ver todos). Texto nunca < 22px, 26px enquanto couber.
+      O que não couber rola (degradê + "+N mais abaixo").
+    - VER TODOS: botão (ou tecla V) recolhe a barra de entrada e o progresso; as duas listas ocupam a área toda para a sala ler o conjunto
+      (72–90 apontamentos cabem sem rolar ou com no máx. 1 rolagem). Volta com o mesmo botão, V ou Esc; Enter também volta e foca a entrada.
+      Reabrir a tela sempre volta ao modo de registro. (A tela antiga sem o botão no HTML ganha um criado pelo JS.)
+    - Re-renderiza quando o CSV muda (local, arquivo ou servidor) sem tirar o foco de quem digita.
+    - Mais de 8 participantes: chips passam ao modo compacto (nome mais curto; nome completo no aria-label/title).
+
+  REGRAS / LIMITES DE TEXTO
+    - Título (h2) até ~30 caracteres, uma linha. Mais que isso quebra e tira altura das colunas (degrada, não corta).
+    - Nome de participante: até ~14 caracteres cabem inteiros na coluna do item; acima disso, reticências (nome completo no title).
+    - Apontamento: 1 a 2 linhas por item; a densidade adapta; 45 itens por coluna cabem em Ver todos com texto curto (~35 caracteres).
+    - Chips: até 3 linhas visíveis (~30 participantes); acima disso a faixa rola (o JS marca [data-rolagem]).
+    - As listas levam [data-rolagem] (rolagem intencional): a auditoria (SUMMIT.auditar) não as conta como "recortado"/"fora-da-area".
+  Cores: bom = --bom (azul), melhorar = --melhorar (vermelho); sempre com ícone (check/alerta) e rótulo, nunca só cor.
+-->
+<section class="slide" id="modelo-brainstorm" data-layout="brainstorm" data-bloco="b1" data-rodada="1" data-meta="3" data-tabela="brainstorming" data-modelo>
+  <div class="brainstorm-topo anim d1">
+    <header class="cab">
+      <p class="kicker">Brainstorming · rodada <span data-brainstorm-rodada>1</span></p>
+      <h2>Título do <em>brainstorming</em></h2>
+    </header>
+    <div class="brainstorm-instrucao">
+      <p class="brainstorm-todos-info" data-brainstorm-todos-info hidden></p>
+      <p class="brainstorm-regra">
+        <span class="brainstorm-regra-item"><svg class="ico brainstorm-ico--bom" aria-hidden="true"><use href="#i-check"/></svg><b data-brainstorm-meta>3</b> práticas boas</span>
+        <span class="brainstorm-regra-sep" aria-hidden="true">·</span>
+        <span class="brainstorm-regra-item"><svg class="ico brainstorm-ico--melhorar" aria-hidden="true"><use href="#i-alerta"/></svg><b data-brainstorm-meta>3</b> a melhorar</span>
+        <span>por pessoa</span>
+      </p>
+      <p class="brainstorm-apoio"><span data-brainstorm-resumo>nenhum participante ainda</span> · <kbd>Enter</kbd> digitar · <kbd>Esc</kbd> navegar</p>
+      <p class="brainstorm-acoes"><button type="button" class="brainstorm-btn brainstorm-btn--todos" data-brainstorm-todos aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg><span class="brainstorm-todos-rot">Ver todos</span><kbd>V</kbd></button></p>
+    </div>
+  </div>
+
+  <div class="corpo brainstorm-corpo">
+    <div class="brainstorm-progresso anim d2" role="group" aria-label="Progresso por participante">
+      <div class="brainstorm-chips" data-densidade="amplo">
+        <span class="brainstorm-pessoa brainstorm-pessoa--exemplo"><span class="exemplo-marca">exemplo</span><span class="brainstorm-selo brainstorm-selo--parcial" aria-hidden="true"><svg class="ico"><use href="#i-check"/></svg></span><span class="brainstorm-pessoa-nome">P1</span></span>
+      </div>
+    </div>
+
+    <div class="brainstorm-colunas anim d3">
+      <article class="card brainstorm-col" data-tipo="bom" aria-label="O que fazemos bem">
+        <header class="brainstorm-col-cab">
+          <span class="brainstorm-col-ico" aria-hidden="true"><svg class="ico"><use href="#i-check"/></svg></span>
+          <h3>O que fazemos bem</h3>
+          <p class="brainstorm-contador"><b class="num" data-brainstorm-n>0</b><span data-brainstorm-n-rot>itens</span></p>
+        </header>
+        <ul class="brainstorm-lista" data-tipo="bom" data-rolagem tabindex="0" aria-label="Apontamentos sobre o que fazemos bem">
+          <li class="brainstorm-item brainstorm-item--exemplo">
+            <div class="brainstorm-item-corpo">
+              <span class="brainstorm-quem">Pessoa 1</span>
+              <span class="brainstorm-texto exemplo"><span class="exemplo-marca">exemplo</span>Uma prática que funciona, em uma frase curta</span>
+            </div>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card brainstorm-col" data-tipo="melhorar" aria-label="O que podemos melhorar">
+        <header class="brainstorm-col-cab">
+          <span class="brainstorm-col-ico" aria-hidden="true"><svg class="ico"><use href="#i-alerta"/></svg></span>
+          <h3>O que podemos melhorar</h3>
+          <p class="brainstorm-legenda">criticidade 1 a 3</p>
+          <p class="brainstorm-contador"><b class="num" data-brainstorm-n>0</b><span data-brainstorm-n-rot>itens</span></p>
+        </header>
+        <ul class="brainstorm-lista" data-tipo="melhorar" data-rolagem tabindex="0" aria-label="Apontamentos sobre o que podemos melhorar">
+          <li class="brainstorm-item brainstorm-item--exemplo">
+            <div class="brainstorm-item-corpo">
+              <span class="brainstorm-quem">Pessoa 1</span>
+              <span class="brainstorm-texto exemplo"><span class="exemplo-marca">exemplo</span>Um ponto a melhorar, em uma frase curta</span>
+              <span class="brainstorm-crit" data-nivel="2" role="img" aria-label="Criticidade 2 de 3"><span></span><span></span><span></span></span>
+            </div>
+          </li>
+        </ul>
+      </article>
+    </div>
+
+    <form class="brainstorm-entrada anim d4" aria-label="Registrar apontamento" autocomplete="off" novalidate>
+      <label class="brainstorm-campo brainstorm-campo--participante">
+        <span class="brainstorm-campo-rot" data-erro="Falta o nome">Participante</span>
+        <input class="brainstorm-input" type="text" data-campo="participante" maxlength="40" placeholder="Pessoa (sigla)" enterkeyhint="next">
+      </label>
+      <datalist data-brainstorm-sugestoes></datalist>
+
+      <fieldset class="brainstorm-campo brainstorm-campo--tipo">
+        <legend class="brainstorm-campo-rot">Tipo</legend>
+        <div class="brainstorm-segmento">
+          <label><input class="brainstorm-radio" type="radio" data-campo="tipo" value="bom" checked><span class="brainstorm-seg brainstorm-seg--bom"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Bom</span></label>
+          <label><input class="brainstorm-radio" type="radio" data-campo="tipo" value="melhorar"><span class="brainstorm-seg brainstorm-seg--melhorar"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg>Melhorar</span></label>
+        </div>
+      </fieldset>
+
+      <label class="brainstorm-campo brainstorm-campo--texto">
+        <span class="brainstorm-campo-rot" data-erro="Falta o texto">Apontamento</span>
+        <input class="brainstorm-input" type="text" data-campo="texto" maxlength="160" placeholder="Uma frase curta" enterkeyhint="send">
+      </label>
+
+      <fieldset class="brainstorm-campo brainstorm-campo--criticidade" hidden>
+        <legend class="brainstorm-campo-rot">Criticidade</legend>
+        <div class="brainstorm-segmento brainstorm-segmento--crit">
+          <label><input class="brainstorm-radio" type="radio" data-campo="criticidade" value="1" aria-label="Criticidade 1 de 3, baixa"><span class="brainstorm-seg brainstorm-seg--melhorar">1</span></label>
+          <label><input class="brainstorm-radio" type="radio" data-campo="criticidade" value="2" aria-label="Criticidade 2 de 3, média" checked><span class="brainstorm-seg brainstorm-seg--melhorar">2</span></label>
+          <label><input class="brainstorm-radio" type="radio" data-campo="criticidade" value="3" aria-label="Criticidade 3 de 3, alta"><span class="brainstorm-seg brainstorm-seg--melhorar">3</span></label>
+        </div>
+      </fieldset>
+
+      <button type="submit" class="brainstorm-btn brainstorm-btn--forte"><svg class="ico" aria-hidden="true"><use href="#i-mais"/></svg>Adicionar</button>
+    </form>
+  </div>
+
+  <p class="sr-only" role="status" aria-live="polite" data-brainstorm-status></p>
+</section>

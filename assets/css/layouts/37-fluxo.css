@@ -1,0 +1,762 @@
+/* ==========================================================================
+   37 · LAYOUT fluxo — diagrama de processo em duas variantes.
+     colunas       etapas da esquerda para a direita (2 a 5), cada uma um painel com número, título, ator(es) e 1–3 nós
+                   empilhados; setas entre os painéis; nós de ação × artefato × decisão; ramificação e convergência.
+     comparativo   duas faixas: HOJE (várias entradas convergindo para UM gargalo) × NOVO (as mesmas entradas
+                   distribuídas para N nós de PO em paralelo, cada um com a sua saída). A faixa NOVO tem uma segunda forma, sem
+                   entradas (data-entradas="nenhuma"): só os cartões produto/frente + PO lado a lado, sem barramento nem saída.
+   Compõe .cab · .kicker · .sub · .corpo · .sr-only · .ico (núcleo). Sem JS e sem CSV: o HTML já é o dado.
+   Modelo e anatomia: conteudo/modelos/37-fluxo.html
+
+   Como as linhas são feitas (nada de glifo de seta, nada de imagem):
+     · toda seta é UM pseudo-elemento com clip-path (haste de 3px + ponta), a mesma técnica do eixo de 38-linha-tempo.css;
+     · trilhos de ramificação (barramento) = um segmento vertical por item, de centro a centro, mais um talo horizontal;
+       por isso os itens de um mesmo barramento têm SEMPRE a mesma altura (as alturas são fixas ou 1fr).
+   Nó = forma + rótulo + cor do ator: a cor nunca é a única pista (ator = ícone + nome; artefato = canto dobrado + rótulo).
+
+   Ordem: escopo e atores → cabeçalho → colunas (painel · nós · marcadores · formas · legenda) → comparativo (faixa ·
+          entradas · ligação · gargalo · PO · saída).
+   ========================================================================== */
+
+/* ---- escopo e medidas (px do palco; só tokens do núcleo, os locais abaixo são derivados deles) ---- */
+.slide[data-layout="fluxo"]{
+  --fx-seta:rgba(234,242,246,.55);          /* ink do núcleo a 55%: setas e trilhos */
+  --fx-linha:3px;                           /* espessura de toda linha do diagrama */
+  --fx-dobra:rgba(255,255,255,.28);         /* canto dobrado do artefato */
+  --fx-artefato-brd:rgba(247,148,29,.45);   /* contorno do artefato: laranja suave, como .proposta-custa */
+  --fx-decisao-fundo:rgba(247,148,29,.16);
+  --fx-alerta-fundo:rgba(240,180,41,.12);   /* alerta do núcleo a 12%: fundo do gargalo */
+  --fx-tinta:var(--azul-950);               /* texto escuro sobre o chip colorido (igual aos .chip--individual etc.) */
+  --fx-fs-prod:32px;                        /* produto/frente do PO: a 3 POs a linha tem 86px de altura, então fica um degrau abaixo de --t-lead */
+  --fx-ia:var(--laranja);
+  --fx-qa:var(--f-individual);
+  --fx-inovacao:var(--f-subgrupos);
+  --fx-dev:var(--f-plenaria);
+}
+
+/* o cabeçalho é compacto aqui: o diagrama precisa de altura (mesmo critério do quadro) */
+.slide[data-layout="fluxo"] .cab{margin-bottom:24px}
+.slide[data-layout="fluxo"] .kicker{margin-bottom:12px}
+.slide[data-layout="fluxo"] .sub{max-width:none;margin-top:8px;font-size:var(--t-corpo);line-height:1.3}
+.slide[data-layout="fluxo"] .corpo{justify-content:space-between;gap:var(--gap)}
+
+/* ---- atores: cor + ícone + rótulo. Quatro atores coloridos; os demais em neutro, só o ícone e o nome os separam ---- */
+.slide[data-layout="fluxo"] [data-ator]{
+  --fx-cor:var(--ink-dim);
+  --fx-fundo:transparent;
+  --fx-texto:var(--ink);
+}
+.slide[data-layout="fluxo"] [data-ator="ia"]{--fx-cor:var(--fx-ia);--fx-fundo:var(--fx-ia);--fx-texto:var(--fx-tinta)}
+.slide[data-layout="fluxo"] [data-ator="qa"]{--fx-cor:var(--fx-qa);--fx-fundo:var(--fx-qa);--fx-texto:var(--fx-tinta)}
+.slide[data-layout="fluxo"] [data-ator="inovacao"]{--fx-cor:var(--fx-inovacao);--fx-fundo:var(--fx-inovacao);--fx-texto:var(--fx-tinta)}
+.slide[data-layout="fluxo"] [data-ator="dev"]{--fx-cor:var(--fx-dev);--fx-fundo:var(--fx-dev);--fx-texto:var(--fx-tinta)}
+/* techlead: neutro como atendimento/comercial/gestor/po, mas com contorno em ink pleno e fundo de card (um degrau acima do neutro puro);
+   quem o separa dos demais é o ícone (colchetes de código, desenhado inline) e o rótulo, nunca a cor */
+.slide[data-layout="fluxo"] [data-ator="techlead"]{--fx-cor:var(--ink);--fx-fundo:var(--card-forte);--fx-texto:var(--ink)}
+
+.slide[data-layout="fluxo"] .fluxo-ator{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  max-width:100%;
+  padding:3px 12px 3px 9px;
+  border-radius:999px;
+  border:1.5px solid var(--fx-cor);
+  background:var(--fx-fundo);
+  color:var(--fx-texto);
+  font-family:var(--mono);
+  font-size:var(--fx-fs-ator,var(--t-min));  /* 20px com 5 etapas e no comparativo; 22px com 2 a 4 etapas (há folga vertical) */
+  font-weight:500;
+  letter-spacing:.04em;
+  line-height:1.35;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+/* =========================================================================
+   VARIANTE colunas
+   ========================================================================= */
+
+/* densidade: o nº de colunas nasce de :has() contando as etapas; 5 é o padrão e o limite superior */
+.slide[data-layout="fluxo"] .fluxo-etapas{
+  --n:5;
+  --fx-gap:52px;                            /* entre painéis: cabe haste + ponta da seta */
+  --fx-pad:14px;
+  --fx-fs:var(--t-rotulo);                  /* texto dos nós */
+  --fx-fs-tit:var(--t-peq);                 /* título da etapa */
+  --fx-num:44px;
+  --fx-gap-no:34px;                         /* entre nós empilhados: cabe a seta (ou o marcador) */
+  list-style:none;
+  display:grid;
+  grid-template-columns:repeat(var(--n),minmax(0,1fr));
+  grid-template-rows:auto auto auto;        /* título · atores · nós: as linhas são COMPARTILHADAS pelos painéis (subgrid), então
+                                               o filete do cabeçalho e o primeiro nó alinham em todas as colunas, tenha a etapa 0, 1 ou 2 chips */
+  column-gap:var(--fx-gap);
+  margin-block:auto;                        /* centra o diagrama entre o cabeçalho e a legenda */
+}
+.slide[data-layout="fluxo"] .fluxo-etapas:has(> :nth-child(4):last-child){
+  --n:4;--fx-gap:60px;--fx-pad:16px;--fx-fs:var(--t-peq);--fx-fs-tit:var(--t-corpo);--fx-fs-ator:22px;
+}
+.slide[data-layout="fluxo"] .fluxo-etapas:has(> :nth-child(3):last-child){
+  --n:3;--fx-gap:76px;--fx-pad:20px;--fx-fs:var(--t-corpo);--fx-fs-tit:var(--t-lead);--fx-num:48px;--fx-gap-no:40px;--fx-fs-ator:22px;
+}
+.slide[data-layout="fluxo"] .fluxo-etapas:has(> :nth-child(2):last-child){
+  --n:2;--fx-gap:96px;--fx-pad:24px;--fx-fs:var(--t-corpo);--fx-fs-tit:var(--t-h3);--fx-num:52px;--fx-gap-no:44px;--fx-fs-ator:22px;
+}
+
+/* a etapa de DECISÃO (nó data-tipo="decisao") traz o ator mais importante do diagrama: seus chips sobem para 24 px (a coluna tem folga vertical;
+   o cabeçalho cresce e todas as colunas descem juntas, pois o título e os chips são linhas compartilhadas por subgrid) */
+.slide[data-layout="fluxo"] .fluxo-etapa:has(.fluxo-no[data-tipo="decisao"]){
+  --fx-fs-ator:24px;
+}
+
+/* ---- painel da etapa + seta para o próximo ---- */
+.slide[data-layout="fluxo"] .fluxo-etapa{
+  position:relative;
+  display:grid;
+  grid-row:span 3;
+  grid-template-rows:subgrid;
+  grid-template-columns:minmax(0,1fr);
+  row-gap:0;
+  min-width:0;
+  padding:var(--fx-pad);
+  background:var(--card);
+  border:1px solid var(--card-brd);
+  border-radius:var(--raio);
+}
+.slide[data-layout="fluxo"] .fluxo-etapa:not(:last-child)::after{
+  content:"";
+  position:absolute;
+  left:100%;
+  top:calc(50% - 11px);
+  width:var(--fx-gap);
+  height:22px;
+  background:var(--fx-seta);
+  clip-path:polygon(6px calc(50% - var(--fx-linha) / 2), calc(100% - 18px) calc(50% - var(--fx-linha) / 2), calc(100% - 18px) 0,
+                    calc(100% - 4px) 50%, calc(100% - 18px) 100%, calc(100% - 18px) calc(50% + var(--fx-linha) / 2),
+                    6px calc(50% + var(--fx-linha) / 2));
+}
+/* 3 nós na mesma etapa: o espaço vertical é o recurso mais caro, então aperta-se o respiro */
+.slide[data-layout="fluxo"] .fluxo-etapa:has(> .fluxo-nos > :nth-child(3)){
+  --fx-gap-no:30px;
+}
+
+/* ---- cabeçalho da etapa: número · título · atores ---- */
+/* O cabeçalho ocupa as duas primeiras linhas compartilhadas (título · atores), também em subgrid: o título mais alto e o
+   cabeçalho com mais chips mandam em TODAS as colunas. Sem chip, a linha dos atores fica vazia (0 px) ou só reserva o espaço. */
+.slide[data-layout="fluxo"] .fluxo-etapa-cab{
+  grid-row:1 / span 2;
+  display:grid;
+  grid-template-rows:subgrid;
+  grid-template-columns:auto minmax(0,1fr);
+  column-gap:12px;
+  row-gap:0;
+  margin-bottom:calc(var(--fx-pad) + 2px);
+  padding-bottom:calc(var(--fx-pad) - 2px);
+  border-bottom:1px solid var(--line);
+}
+.slide[data-layout="fluxo"] .fluxo-num{
+  display:grid;
+  place-items:center;
+  align-self:start;
+  width:var(--fx-num);
+  height:var(--fx-num);
+  border:2px solid var(--laranja);
+  border-radius:50%;
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  font-weight:500;
+  line-height:1;
+  color:var(--laranja-claro);
+}
+.slide[data-layout="fluxo"] .fluxo-titulo{
+  display:grid;                             /* título de 1 linha fica centrado no círculo; de 2 linhas cresce para baixo */
+  grid-template-columns:minmax(0,1fr);
+  align-content:center;
+  align-self:start;
+  min-height:var(--fx-num);
+  font-size:var(--fx-fs-tit);
+  line-height:1.12;
+  overflow-wrap:break-word;
+  text-wrap:balance;
+}
+.slide[data-layout="fluxo"] .fluxo-atores{
+  grid-column:1 / -1;
+  grid-row:2;
+  margin-top:10px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px 26px;
+}
+/* convergência: dois atores que atuam JUNTOS ganham um "+" entre os chips (decorativo, mudo para leitor de tela).
+   O "+" é do SEGUNDO chip: o respiro de 26 px fica na margem dele (e não no gap do contêiner), então, quando os dois não cabem na mesma
+   linha (5 etapas, chips de 24 px), o 2º chip desce já recuado e o "+" fica dentro do padding do painel, ligado a ele ("+ Tech Lead"), em vez
+   de pendurado sobre a borda esquerda do cartão. Na mesma linha o aspecto é o de sempre: chip · "+" · chip. */
+.slide[data-layout="fluxo"] .fluxo-atores[data-juntos]{
+  column-gap:0;
+}
+.slide[data-layout="fluxo"] .fluxo-atores[data-juntos] .fluxo-ator + .fluxo-ator{
+  position:relative;
+  margin-left:26px;
+}
+.slide[data-layout="fluxo"] .fluxo-atores[data-juntos] .fluxo-ator + .fluxo-ator::before{
+  content:"+";
+  content:"+" / "";
+  position:absolute;
+  left:-22px;
+  top:50%;
+  width:18px;
+  transform:translateY(-50%);
+  text-align:center;
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  font-weight:700;
+  line-height:1;
+  color:var(--laranja-claro);
+}
+
+/* ---- nós empilhados dentro da etapa ---- */
+.slide[data-layout="fluxo"] .fluxo-nos{
+  list-style:none;
+  grid-row:3;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;               /* o primeiro nó de cada painel parte da mesma altura (logo abaixo do filete): o olho lê o fluxo em linha */
+  gap:var(--fx-gap-no);
+}
+.slide[data-layout="fluxo"] .fluxo-no-item{
+  position:relative;
+  min-width:0;
+}
+/* entre dois nós: sequência = seta para baixo (padrão) · paralelo = "+" · alternativa = "ou" */
+.slide[data-layout="fluxo"] .fluxo-nos > .fluxo-no-item + .fluxo-no-item::before{
+  content:"";
+  position:absolute;
+  left:calc(50% - 10px);
+  top:calc(-1 * var(--fx-gap-no));
+  width:20px;
+  height:var(--fx-gap-no);
+  background:var(--fx-seta);
+  clip-path:polygon(calc(50% - var(--fx-linha) / 2) 4px, calc(50% + var(--fx-linha) / 2) 4px,
+                    calc(50% + var(--fx-linha) / 2) calc(100% - 15px), 100% calc(100% - 15px), 50% calc(100% - 3px),
+                    0 calc(100% - 15px), calc(50% - var(--fx-linha) / 2) calc(100% - 15px));
+}
+.slide[data-layout="fluxo"] .fluxo-nos[data-modo="paralelo"] > .fluxo-no-item + .fluxo-no-item::before{
+  top:calc(-1 * var(--fx-gap-no) / 2 - 14px);
+  width:28px;
+  height:28px;
+  left:calc(50% - 14px);
+  border:2px solid var(--fx-seta);
+  border-radius:50%;
+  background:
+    linear-gradient(var(--fx-seta),var(--fx-seta)) center / 14px var(--fx-linha) no-repeat,
+    linear-gradient(var(--fx-seta),var(--fx-seta)) center / var(--fx-linha) 14px no-repeat;
+  clip-path:none;
+}
+.slide[data-layout="fluxo"] .fluxo-nos[data-modo="alternativa"] > .fluxo-no-item + .fluxo-no-item::before{
+  content:"ou";
+  left:0;
+  right:0;
+  width:auto;
+  display:grid;
+  place-items:center;
+  background:none;
+  clip-path:none;
+  font-family:var(--mono);
+  font-size:var(--t-min);
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+}
+
+/* ---- nó: ação (padrão) × artefato × decisão — a FORMA diz o tipo; a barra lateral colorida diz o ator (e o chip o nomeia) ---- */
+.slide[data-layout="fluxo"] .fluxo-no{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+  min-width:0;
+  padding:12px 14px 12px 16px;
+  background:var(--card-forte);
+  border:1px solid var(--card-brd);
+  border-left:6px solid var(--fx-cor,var(--card-brd));
+  border-radius:12px;
+  font-size:var(--fx-fs);
+  line-height:1.3;
+  color:var(--ink);
+  overflow-wrap:break-word;
+}
+.slide[data-layout="fluxo"] .fluxo-no-txt{
+  min-width:0;
+  text-wrap:balance;
+}
+.slide[data-layout="fluxo"] .fluxo-no b{
+  font-weight:600;
+  color:var(--branco);
+}
+.slide[data-layout="fluxo"] .fluxo-no-tipo{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:var(--mono);
+  font-size:var(--t-min);
+  font-weight:500;
+  letter-spacing:.1em;
+  line-height:1.2;
+  text-transform:uppercase;
+  color:var(--laranja-claro);
+}
+.slide[data-layout="fluxo"] .fluxo-no-tipo .ico{
+  font-size:var(--t-min);
+}
+
+/* artefato: algo que fica registrado (relatório, card, board, tarefa). Canto superior direito dobrado + rótulo com ícone */
+.slide[data-layout="fluxo"] .fluxo-no[data-tipo="artefato"]{
+  padding-right:34px;
+  border-color:var(--fx-artefato-brd);
+  border-left-color:var(--fx-cor,var(--fx-artefato-brd));
+  border-radius:12px 0 12px 12px;
+  background:
+    linear-gradient(to bottom left,transparent 50%,var(--fx-dobra) 50%) top right / 26px 26px no-repeat,
+    var(--card-forte);
+  clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,0 100%);
+}
+
+/* decisão: hexágono achatado, sem borda (a borda some nas pontas do clip) */
+.slide[data-layout="fluxo"] .fluxo-no[data-tipo="decisao"]{
+  align-items:center;
+  padding:14px 30px;
+  border:0;
+  border-radius:0;
+  background:var(--fx-decisao-fundo);
+  text-align:center;
+  clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%);
+}
+.slide[data-layout="fluxo"] .fluxo-no[data-tipo="decisao"] .fluxo-no-tipo{
+  justify-content:center;
+}
+
+/* ---- legenda opcional no rodapé: forma + rótulo, nunca só cor ---- */
+.slide[data-layout="fluxo"] .fluxo-legenda{
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:12px 48px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+}
+.slide[data-layout="fluxo"] .fluxo-legenda li{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  font-size:var(--t-peq);
+  line-height:1.25;
+  color:var(--ink-dim);
+}
+.slide[data-layout="fluxo"] .fluxo-legenda b{
+  font-weight:500;
+  color:var(--ink);
+}
+.slide[data-layout="fluxo"] .fluxo-amostra{
+  flex:none;
+  position:relative;
+  width:44px;
+  height:30px;
+  background:var(--card-forte);
+  border:1px solid var(--card-brd);
+  border-left:5px solid var(--ink-dim);
+  border-radius:8px;
+}
+.slide[data-layout="fluxo"] .fluxo-amostra--artefato{
+  border-color:var(--fx-artefato-brd);
+  border-left-color:var(--ink-dim);
+  border-radius:8px 0 8px 8px;
+  background:
+    linear-gradient(to bottom left,transparent 50%,var(--fx-dobra) 50%) top right / 14px 14px no-repeat,
+    var(--card-forte);
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);
+}
+.slide[data-layout="fluxo"] .fluxo-amostra--seta{
+  width:44px;
+  height:22px;
+  border:0;
+  border-radius:0;
+  background:var(--fx-seta);
+  clip-path:polygon(0 calc(50% - var(--fx-linha) / 2),calc(100% - 15px) calc(50% - var(--fx-linha) / 2),calc(100% - 15px) 0,100% 50%,
+                    calc(100% - 15px) 100%,calc(100% - 15px) calc(50% + var(--fx-linha) / 2),0 calc(50% + var(--fx-linha) / 2));
+}
+.slide[data-layout="fluxo"] .fluxo-amostra--paralelo{
+  width:30px;
+  height:30px;
+  border:2px solid var(--fx-seta);
+  border-radius:50%;
+  background:
+    linear-gradient(var(--fx-seta),var(--fx-seta)) center / 14px var(--fx-linha) no-repeat,
+    linear-gradient(var(--fx-seta),var(--fx-seta)) center / var(--fx-linha) 14px no-repeat;
+}
+
+/* =========================================================================
+   VARIANTE comparativo
+   ========================================================================= */
+.slide[data-layout="fluxo"] .fluxo-comparativo{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+.slide[data-layout="fluxo"][data-variante="comparativo"] .corpo{
+  gap:0;
+}
+
+/* ---- faixa: rótulo | entradas | ligação | destino · seta · saída ---- */
+.slide[data-layout="fluxo"] .fluxo-faixa{
+  --fx-g:12px;                              /* entre itens de um mesmo barramento */
+  --fx-bus:40px;                            /* talo das entradas até o barramento */
+  --fx-rail:36px;                           /* barramento de distribuição, antes dos destinos */
+  --fx-h-ent:46px;                          /* altura fixa do chip de entrada */
+  --fx-h-lista:270px;                       /* altura da lista de destinos (NOVO) */
+  --fx-c-rot:190px;
+  --fx-c-ent:270px;
+  --fx-c-card:540px;
+  --fx-c-seta:56px;
+  flex:1 1 0;
+  min-height:0;
+  display:grid;
+  grid-template-columns:var(--fx-c-rot) var(--fx-c-ent) minmax(0,1fr) calc(var(--fx-c-card) + var(--fx-c-seta) + 340px);
+  align-items:center;
+  padding:12px 28px 12px 24px;
+  background:var(--card);
+  border:1px solid var(--card-brd);
+  border-radius:var(--raio);
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-faixa="novo"]{
+  border-color:var(--fx-artefato-brd);
+  border-top:4px solid var(--laranja);      /* o filete laranja marca o destaque, como em .card--destaque */
+}
+
+/* rótulo da faixa: chip HOJE / NOVO + uma nota curta */
+.slide[data-layout="fluxo"] .fluxo-faixa-rotulo{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:12px;
+  padding-right:16px;
+}
+.slide[data-layout="fluxo"] .fluxo-faixa-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 18px 6px 14px;
+  border:1.5px solid var(--ink-dim);
+  border-radius:999px;
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  font-weight:700;
+  letter-spacing:.14em;
+  line-height:1.2;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-faixa="novo"] .fluxo-faixa-chip{
+  background:var(--laranja);
+  border-color:var(--laranja);
+  color:var(--azul-950);
+}
+.slide[data-layout="fluxo"] .fluxo-faixa-nota{
+  font-size:var(--t-rotulo);
+  line-height:1.3;
+  color:var(--ink-dim);
+}
+
+/* ---- entradas: chips pequenos; cada um solta um talo e um trecho do barramento ---- */
+.slide[data-layout="fluxo"] .fluxo-entradas{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:var(--fx-g);
+}
+.slide[data-layout="fluxo"] .fluxo-entradas:has(> :nth-child(6)){
+  --fx-h-ent:40px;
+  --fx-g:8px;
+}
+/* o contorno é uma sombra interna (não uma borda): assim a caixa de padding = a caixa da borda e as linhas do barramento
+   caem exatamente de centro a centro. O overflow fica no <span> do texto, nunca no chip (cortaria o talo). */
+.slide[data-layout="fluxo"] .fluxo-entrada{
+  position:relative;
+  display:flex;
+  align-items:center;
+  height:var(--fx-h-ent);
+  padding:0 18px;
+  background:var(--card-forte);
+  box-shadow:inset 0 0 0 1px var(--card-brd);
+  border-radius:12px;
+  font-size:var(--t-rotulo);
+  line-height:1.2;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.slide[data-layout="fluxo"] .fluxo-entrada-txt{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.slide[data-layout="fluxo"] .fluxo-entrada::after{
+  content:"";
+  position:absolute;
+  left:100%;
+  top:calc(50% - var(--fx-linha) / 2);
+  width:var(--fx-bus);
+  height:var(--fx-linha);
+  background:var(--fx-seta);
+}
+.slide[data-layout="fluxo"] .fluxo-entrada:not(:first-child)::before{
+  content:"";
+  position:absolute;
+  left:calc(100% + var(--fx-bus) - var(--fx-linha));
+  top:calc(-50% - var(--fx-g));
+  width:var(--fx-linha);
+  height:calc(100% + var(--fx-g) + var(--fx-linha) / 2);
+  background:var(--fx-seta);
+}
+
+/* ---- ligação entre o barramento das entradas e os destinos ---- */
+.slide[data-layout="fluxo"] .fluxo-ligacao{
+  display:block;
+  height:22px;
+  margin-left:calc(var(--fx-bus) - var(--fx-linha));
+  margin-right:4px;
+  background:var(--fx-seta);
+  clip-path:polygon(0 calc(50% - var(--fx-linha) / 2),calc(100% - 18px) calc(50% - var(--fx-linha) / 2),calc(100% - 18px) 0,100% 50%,
+                    calc(100% - 18px) 100%,calc(100% - 18px) calc(50% + var(--fx-linha) / 2),0 calc(50% + var(--fx-linha) / 2));
+}
+/* NOVO: a ligação é só uma linha; as pontas de seta ficam nos talos de cada PO */
+.slide[data-layout="fluxo"] .fluxo-faixa[data-faixa="novo"] .fluxo-ligacao{
+  height:var(--fx-linha);
+  margin-right:calc(var(--fx-rail) - var(--fx-linha));
+  clip-path:none;
+}
+
+/* ---- destinos: gargalo (HOJE) ou POs em paralelo (NOVO); cada um com sua seta e sua saída ---- */
+.slide[data-layout="fluxo"] .fluxo-destinos{
+  list-style:none;
+  display:grid;
+  grid-auto-rows:minmax(0,1fr);             /* as linhas nunca crescem com o texto: o excedente é cortado com reticências e a auditoria acusa */
+  row-gap:var(--fx-g);
+  min-width:0;
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-faixa="novo"] .fluxo-destinos{
+  height:var(--fx-h-lista);
+}
+.slide[data-layout="fluxo"] .fluxo-destino{
+  position:relative;
+  display:grid;
+  grid-template-columns:var(--fx-c-card) var(--fx-c-seta) minmax(0,1fr);
+  align-items:center;
+  min-width:0;
+}
+.slide[data-layout="fluxo"] .fluxo-destino > .fluxo-po,
+.slide[data-layout="fluxo"] .fluxo-destino > .fluxo-gargalo{
+  align-self:stretch;
+}
+/* seta do destino para a saída */
+.slide[data-layout="fluxo"] .fluxo-destino::before{
+  content:"";
+  grid-column:2;
+  grid-row:1;
+  height:22px;
+  background:var(--fx-seta);
+  clip-path:polygon(6px calc(50% - var(--fx-linha) / 2),calc(100% - 18px) calc(50% - var(--fx-linha) / 2),calc(100% - 18px) 0,
+                    calc(100% - 4px) 50%,calc(100% - 18px) 100%,calc(100% - 18px) calc(50% + var(--fx-linha) / 2),
+                    6px calc(50% + var(--fx-linha) / 2));
+}
+.slide[data-layout="fluxo"] .fluxo-destino > :first-child{
+  grid-column:1;
+  grid-row:1;
+}
+.slide[data-layout="fluxo"] .fluxo-saida{
+  grid-column:3;
+  grid-row:1;
+  min-width:0;
+  padding:10px 24px;
+  border:1.5px solid var(--line);
+  border-radius:999px;
+  font-size:var(--t-peq);
+  line-height:1.25;
+  color:var(--ink);
+}
+/* NOVO: uma linha só (as linhas dos POs têm altura fixa); HOJE tem espaço para duas */
+.slide[data-layout="fluxo"] .fluxo-faixa[data-faixa="novo"] .fluxo-saida{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* gargalo: o nó que centraliza tudo. Ícone de alerta + rótulo "Funil" + borda de alerta: três pistas além da cor */
+.slide[data-layout="fluxo"] .fluxo-gargalo{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:8px;
+  min-height:150px;
+  padding:16px 26px;
+  background:var(--fx-alerta-fundo);
+  border:2px solid var(--alerta);
+  border-radius:var(--raio);
+}
+.slide[data-layout="fluxo"] .fluxo-gargalo-tipo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  font-weight:700;
+  letter-spacing:.16em;
+  line-height:1.2;
+  text-transform:uppercase;
+  color:var(--alerta);
+}
+.slide[data-layout="fluxo"] .fluxo-gargalo-tipo .ico{
+  font-size:var(--t-lead);
+  stroke-width:2.2;
+}
+.slide[data-layout="fluxo"] .fluxo-gargalo-txt{
+  font-size:var(--t-peq);
+  line-height:1.3;
+  color:var(--ink);
+  overflow-wrap:break-word;
+}
+.slide[data-layout="fluxo"] .fluxo-gargalo-txt b{
+  font-weight:600;
+  color:var(--branco);
+}
+
+/* PO: produto ou frente em destaque, o nome do PO embaixo; a ponta de seta entra no cartão a partir do barramento */
+.slide[data-layout="fluxo"] .fluxo-po{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:2px;
+  min-width:0;
+  padding:12px 24px 8px;
+  background:var(--card-forte);
+  box-shadow:inset 0 0 0 1px var(--card-brd),inset 0 4px 0 var(--laranja);   /* contorno + filete laranja do destaque, sem borda (ver .fluxo-entrada) */
+  border-radius:var(--raio);
+}
+.slide[data-layout="fluxo"] .fluxo-po-prod{
+  min-width:0;
+  font-family:var(--serif);
+  font-size:var(--fx-fs-prod);
+  font-weight:600;
+  line-height:1.15;
+  letter-spacing:-.01em;
+  color:var(--branco);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.slide[data-layout="fluxo"] .fluxo-po-nome{
+  display:block;
+  min-width:0;
+  font-size:var(--t-rotulo);
+  line-height:1.25;
+  color:var(--ink);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.slide[data-layout="fluxo"] .fluxo-po-nome .ico{
+  margin-right:10px;
+  color:var(--laranja-claro);
+}
+.slide[data-layout="fluxo"] .fluxo-po::after{
+  content:"";
+  position:absolute;
+  left:calc(-1 * var(--fx-rail));
+  top:calc(50% - 10px);
+  width:var(--fx-rail);
+  height:20px;
+  background:var(--fx-seta);
+  clip-path:polygon(0 calc(50% - var(--fx-linha) / 2),calc(100% - 15px) calc(50% - var(--fx-linha) / 2),calc(100% - 15px) 0,100% 50%,
+                    calc(100% - 15px) 100%,calc(100% - 15px) calc(50% + var(--fx-linha) / 2),0 calc(50% + var(--fx-linha) / 2));
+}
+.slide[data-layout="fluxo"] .fluxo-destino:not(:first-child) .fluxo-po::before{
+  content:"";
+  position:absolute;
+  left:calc(-1 * var(--fx-rail));
+  top:calc(-50% - var(--fx-g));
+  width:var(--fx-linha);
+  height:calc(100% + var(--fx-g) + var(--fx-linha) / 2);
+  background:var(--fx-seta);
+}
+/* 4 POs: produto e PO na mesma linha */
+.slide[data-layout="fluxo"] .fluxo-destinos:has(> :nth-child(4)) .fluxo-po{
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding-block:4px;
+}
+.slide[data-layout="fluxo"] .fluxo-destinos:has(> :nth-child(4)) .fluxo-po-prod{
+  font-size:var(--t-lead);
+}
+.slide[data-layout="fluxo"] .fluxo-destinos:has(> :nth-child(4)) .fluxo-po-nome{
+  flex:none;
+  max-width:46%;
+}
+
+/* ---- NOVO sem entradas (data-entradas="nenhuma"): só os cartões produto/frente + PO lado a lado, com a nota ----
+   Serve quando o comparativo NÃO quer afirmar que os assuntos fluem para os POs: sem chips de entrada, sem barramento, sem seta,
+   sem saída. A faixa HOJE continua como está; esta variante é só da faixa NOVO. */
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"]{
+  grid-template-columns:var(--fx-c-rot) minmax(0,1fr);
+  column-gap:24px;
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-destinos{
+  height:auto;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(0,1fr);
+  grid-auto-rows:auto;
+  column-gap:var(--gap);
+  row-gap:0;
+  align-self:center;
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-destino{
+  display:block;
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-destino::before,
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-po::before,
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-po::after{
+  content:none;
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-po{
+  min-height:150px;
+  gap:6px;
+  padding:20px 24px 14px;
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-po-prod{
+  font-size:var(--t-h3);
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-po-nome{
+  font-size:var(--t-peq);
+}
+/* 4 cartões: cada um fica com ~1/4 da faixa, então volta a um degrau abaixo e empilha produto e PO */
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-destinos:has(> :nth-child(4)) .fluxo-po{
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:center;
+  gap:6px;
+  padding:16px 20px 12px;
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-destinos:has(> :nth-child(4)) .fluxo-po-prod{
+  font-size:var(--t-lead);
+}
+.slide[data-layout="fluxo"] .fluxo-faixa[data-entradas="nenhuma"] .fluxo-destinos:has(> :nth-child(4)) .fluxo-po-nome{
+  max-width:none;
+  font-size:var(--t-rotulo);
+}

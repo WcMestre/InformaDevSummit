@@ -1,0 +1,175 @@
+<!--
+  LAYOUT  matriz  — tabela de dupla entrada: LINHAS (quem/o quê) × COLUNAS (o que se recebe, usa ou mantém), cada célula com um ESTADO.
+  Serve para mostrar de uma vez "quem tem o quê". É REPERTÓRIO: vem antes de qualquer pergunta à sala. Sem JS, sem CSV (o HTML já é o dado).
+  Estilos: assets/css/layouts/41-matriz.css (escopado em .slide[data-layout="matriz"]). Usado em a7-matriz.
+
+  ANATOMIA
+    .cab    kicker · h2 (<em>) · .sub opcional      (cabeçalho compacto: a tabela precisa de altura)
+    .corpo
+      div.anim[data-sangra] > table.matriz-tabela
+                (data-sangra obrigatório: a tabela tem margem negativa de 12px para que as BORDAS das células alinhem com o título;
+                 o que se desenha continua dentro da área útil, só a caixa da tabela, que inclui o espaçamento, passa 12px)
+        caption.sr-only                               descreve a tabela para leitor de tela (obrigatória)
+        colgroup > col.matriz-col-linha + 1 <col> por coluna
+        thead
+          tr 1   td.matriz-canto[rowspan=2] (vazio, com sr-only) · th.matriz-grupo[scope=colgroup][colspan] (1 a 2 grupos;
+                 .matriz-grupo--destaque = filete e rótulo laranja). Sem grupos: remova a linha 1 e o rowspan do canto.
+          tr 2   th.matriz-col[scope=col] > span.matriz-col-nome + span.matriz-col-nota (a nota é opcional)
+        tbody
+          tr     th.matriz-linha[scope=row] > span.matriz-linha-txt (svg.ico + nome)
+                 td.matriz-celula[data-estado="sim|nao|nd"] > span.matriz-conteudo > span.matriz-ico (svg.ico) + span.matriz-rotulo
+      ul.matriz-legenda   (obrigatória: um item por estado usado; forma + rótulo)
+
+  ATRIBUTOS   id, data-layout="matriz", data-bloco, [data-min], [data-modelo]
+  ESTADOS (data-estado no td; a cor NUNCA é a única pista: cada estado tem ícone, rótulo e borda própria)
+    sim   check no selo verde · borda contínua · rótulo com o VERBO ("Recebe", "Usa", "Fica logada": até ~14 caracteres)
+    nao   x no selo vazado (vermelho) · borda tracejada · rótulo "Não recebe"
+    nd    traço desenhado (span.matriz-traco[aria-hidden]) · borda pontilhada · SEM rótulo visível; o texto "não informado" fica em .sr-only
+          Use "nd" para toda célula que a fonte não informa: nunca preencha com palpite.
+  CLASSES PRÓPRIAS  .matriz-tabela · .matriz-col-linha · .matriz-canto · .matriz-grupo (--destaque) · .matriz-col (-nome, -nota) · .matriz-linha (-txt)
+                    · .matriz-celula · .matriz-conteudo (--nd) · .matriz-ico · .matriz-rotulo · .matriz-traco · .matriz-legenda
+  ENTRADAS    .anim .d1…d5 (cab d1–d3; tabela d4; legenda d5)
+
+  LIMITES (medidos em Chrome, 1920x1080 e 1366x768; o layout nunca reduz a fonte sozinho: estourou, a auditoria acusa)
+    linhas: 1 a 5 · colunas: 1 a 5 (o modelo 5x5 mostra o pior caso; confira com SUMMIT.auditar()). A altura da célula se ajusta
+            sozinha ao nº de linhas (até 3: 124 px · 4: 104 px · 5: 84 px, selo de ícone proporcional): é altura de LINHA, não de fonte.
+            Com 4 linhas, sub de até 1 linha; com 5, sem sub (o cabeçalho já consome a altura).
+    título e sub em 1 linha · nome de linha até ~24 caracteres (2 linhas) · nome de coluna até ~24 caracteres (2 linhas); nota de coluna até ~18 (1 linha)
+    célula: ícone + rótulo de 1 linha (26 px) · grupo de colunas: até 2, rótulo curto (1 linha)
+  REGRAS  a tabela só afirma o que a fonte afirma (o resto é "nd"); sem número, preço ou nome de pessoa nas células;
+          sem destaque de linha/coluna por hover ou foco (tela projetada, sem interação); mantenha 3 estados.
+-->
+<section class="slide" id="modelo-matriz" data-layout="matriz" data-bloco="b1" data-min="5" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Repertório</p>
+    <h2 class="anim d2">Quem tem <em>o quê</em></h2>
+    <p class="sub anim d3">Leia por linha. O traço marca o que não foi informado.</p>
+  </header>
+  <div class="corpo">
+    <div class="anim d4" data-sangra>
+      <table class="matriz-tabela">
+        <caption class="sr-only">Descrição da tabela para leitor de tela</caption>
+        <colgroup><col class="matriz-col-linha"><col><col><col><col></colgroup>
+        <thead>
+          <tr>
+            <td class="matriz-canto" rowspan="2"><span class="sr-only">Linha</span></td>
+            <th scope="colgroup" colspan="2" class="matriz-grupo matriz-grupo--destaque">Grupo 1</th>
+            <th scope="colgroup" colspan="2" class="matriz-grupo">Grupo 2</th>
+          </tr>
+          <tr>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Coluna 1</span><span class="matriz-col-nota">nota curta</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Coluna 2</span><span class="matriz-col-nota">nota curta</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Coluna 3</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Coluna 4</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Linha A</span></th>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Recebe</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Recebe</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-alvo"/></svg>Linha B</span></th>
+            <td class="matriz-celula" data-estado="nao"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span><span class="matriz-rotulo">Não recebe</span></span></td>
+            <td class="matriz-celula" data-estado="nao"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span><span class="matriz-rotulo">Não recebe</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Usa</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg>Linha C</span></th>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Fica ativa</span></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ul class="matriz-legenda anim d5" aria-label="Legenda dos estados">
+      <li><span class="matriz-ico matriz-ico--sim"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span>Sim (o rótulo diz o verbo)</li>
+      <li><span class="matriz-ico matriz-ico--nao"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span>Não</li>
+      <li><span class="matriz-traco" aria-hidden="true"></span>Não informado</li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" id="modelo-matriz-5x5" data-layout="matriz" data-bloco="b1" data-min="5" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Repertório</p>
+    <h2 class="anim d2">Cinco linhas por <em>cinco colunas</em></h2>
+  </header>
+  <div class="corpo">
+    <div class="anim d4" data-sangra>
+      <table class="matriz-tabela">
+        <caption class="sr-only">Descrição da tabela para leitor de tela</caption>
+        <colgroup><col class="matriz-col-linha"><col><col><col><col><col></colgroup>
+        <thead>
+          <tr>
+            <td class="matriz-canto" rowspan="2"><span class="sr-only">Linha</span></td>
+            <th scope="colgroup" colspan="3" class="matriz-grupo matriz-grupo--destaque">Grupo 1</th>
+            <th scope="colgroup" colspan="2" class="matriz-grupo">Grupo 2</th>
+          </tr>
+          <tr>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Coluna 1</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Coluna 2</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Coluna 3</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Coluna 4</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Coluna 5</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Linha A</span></th>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nao"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span><span class="matriz-rotulo">Não</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Linha B</span></th>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nao"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span><span class="matriz-rotulo">Não</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Linha C</span></th>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nao"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span><span class="matriz-rotulo">Não</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Linha D</span></th>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nao"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span><span class="matriz-rotulo">Não</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Linha E</span></th>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nao"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span><span class="matriz-rotulo">Não</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Sim</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ul class="matriz-legenda anim d5" aria-label="Legenda dos estados">
+      <li><span class="matriz-ico matriz-ico--sim"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span>Sim (o rótulo diz o verbo)</li>
+      <li><span class="matriz-ico matriz-ico--nao"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span>Não</li>
+      <li><span class="matriz-traco" aria-hidden="true"></span>Não informado</li>
+    </ul>
+  </div>
+</section>

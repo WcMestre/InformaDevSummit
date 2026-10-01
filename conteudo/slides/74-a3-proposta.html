@@ -1,0 +1,82 @@
+<section class="slide" id="a3-proposta" data-layout="proposta" data-bloco="a3" data-min="15" data-assunto="operacao-inovacao" data-tabela="propostas">
+  <header class="cab">
+    <p class="kicker anim d1">Assunto 3 · Proposta na mesa</p>
+    <h2 class="proposta-enunciado anim d2">Adotar o <em>novo fluxo</em> da Inovação, com um PO por produto ou frente.</h2>
+  </header>
+  <div class="corpo">
+    <div class="proposta-miolo anim d3">
+      <section class="card proposta-muda" aria-labelledby="a3-proposta-t-muda">
+        <h3 class="rotulo rotulo--laranja" id="a3-proposta-t-muda">O que muda</h3>
+        <ul class="lista">
+          <li>Um PO em InfoAudio, InfoRádio e SaaS</li>
+          <li>Hoje: funil de todos pelo Gestor da Área</li>
+          <li>Papéis do PO e do Gestor da Área: a definir</li>
+        </ul>
+      </section>
+      <section class="card card--forte card--destaque proposta-custa" aria-labelledby="a3-proposta-t-custa">
+        <h3 class="rotulo rotulo--laranja" id="a3-proposta-t-custa"><svg class="ico"><use href="#i-alerta"/></svg>O que custa</h3>
+        <dl class="proposta-custa-lista">
+          <div><dt>Tempo</dt><dd>Prazo definido ainda hoje.</dd></div>
+          <div><dt>Esforço</dt><dd>Colocar o novo fluxo em prática.</dd></div>
+          <div><dt>Risco</dt><dd>Nenhum levantado: a sala aponta antes de votar.</dd></div>
+          <div><dt>Abre mão de</dt><dd>A definir com a sala.</dd></div>
+        </dl>
+      </section>
+    </div>
+
+    <div class="proposta-barra anim d4" role="group" aria-labelledby="a3-proposta-t-decisao">
+      <div class="proposta-barra-topo">
+        <h3 class="rotulo" id="a3-proposta-t-decisao">Decisão da sala</h3>
+        <p class="proposta-estado" role="status" aria-live="polite">Ainda sem decisão</p>
+        <p class="proposta-aviso chip chip--alerta" hidden><svg class="ico"><use href="#i-alerta"/></svg>Mais mãos do que pessoas na sala</p>
+      </div>
+
+      <div class="proposta-acoes">
+        <div class="proposta-acao" data-acao="aceitar">
+          <button type="button" class="proposta-botao" data-acao="aceitar" aria-pressed="false">
+            <svg class="ico"><use href="#i-check"/></svg><span class="proposta-rotulo">Aceitar</span><span class="proposta-tecla" aria-hidden="true">1</span>
+          </button>
+          <div class="proposta-maos" role="group" aria-label="Mãos levantadas para aceitar">
+            <button type="button" class="proposta-mao" data-mao="-1" aria-label="Menos uma mão para aceitar"><svg class="ico"><use href="#i-menos"/></svg></button>
+            <output class="proposta-maos-n">0</output><span class="proposta-maos-un">mãos</span>
+            <button type="button" class="proposta-mao" data-mao="1" aria-label="Mais uma mão para aceitar"><svg class="ico"><use href="#i-mais"/></svg></button>
+          </div>
+        </div>
+        <div class="proposta-acao" data-acao="ajustar">
+          <button type="button" class="proposta-botao" data-acao="ajustar" aria-pressed="false">
+            <svg class="ico"><use href="#i-ajustar"/></svg><span class="proposta-rotulo">Ajustar</span><span class="proposta-tecla" aria-hidden="true">2</span>
+          </button>
+          <div class="proposta-maos" role="group" aria-label="Mãos levantadas para ajustar">
+            <button type="button" class="proposta-mao" data-mao="-1" aria-label="Menos uma mão para ajustar"><svg class="ico"><use href="#i-menos"/></svg></button>
+            <output class="proposta-maos-n">0</output><span class="proposta-maos-un">mãos</span>
+            <button type="button" class="proposta-mao" data-mao="1" aria-label="Mais uma mão para ajustar"><svg class="ico"><use href="#i-mais"/></svg></button>
+          </div>
+        </div>
+        <div class="proposta-acao" data-acao="recusar">
+          <button type="button" class="proposta-botao" data-acao="recusar" aria-pressed="false">
+            <svg class="ico"><use href="#i-x"/></svg><span class="proposta-rotulo">Recusar</span><span class="proposta-tecla" aria-hidden="true">3</span>
+          </button>
+          <div class="proposta-maos" role="group" aria-label="Mãos levantadas para recusar">
+            <button type="button" class="proposta-mao" data-mao="-1" aria-label="Menos uma mão para recusar"><svg class="ico"><use href="#i-menos"/></svg></button>
+            <output class="proposta-maos-n">0</output><span class="proposta-maos-un">mãos</span>
+            <button type="button" class="proposta-mao" data-mao="1" aria-label="Mais uma mão para recusar"><svg class="ico"><use href="#i-mais"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="proposta-ajuste-linha">
+        <div class="proposta-ajuste">
+          <label class="rotulo" for="a3-proposta-ajuste">Ajuste acordado</label>
+          <div class="proposta-campo">
+            <textarea id="a3-proposta-ajuste" class="proposta-ajuste-texto" rows="2" maxlength="400" spellcheck="false"></textarea>
+            <p class="proposta-exemplo exemplo" aria-hidden="true"><span class="exemplo-marca">exemplo</span>Descreva aqui o ajuste combinado com a sala.</p>
+          </div>
+        </div>
+        <div class="proposta-total" role="group" aria-label="Total de mãos">
+          <span class="rotulo">Mãos no total</span>
+          <p class="proposta-total-linha"><output class="num proposta-total-n">0</output></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

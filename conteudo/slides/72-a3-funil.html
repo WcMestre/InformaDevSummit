@@ -1,0 +1,61 @@
+<section class="slide" id="a3-funil" data-layout="fluxo" data-variante="comparativo" data-bloco="a3" data-min="8">
+  <header class="cab">
+    <p class="kicker anim d1">Assunto 3 · Hoje e novo fluxo</p>
+    <h2 class="anim d2">Hoje e o novo fluxo, com os <em>POs</em></h2>
+    <p class="sub anim d3">O funil de hoje e os POs de cada produto ou frente.</p>
+  </header>
+  <div class="corpo">
+    <div class="fluxo-comparativo">
+      <div class="fluxo-faixa anim d4" data-faixa="hoje" role="group" aria-label="Hoje: todos os assuntos convergem para o Gestor da Área">
+        <div class="fluxo-faixa-rotulo">
+          <span class="fluxo-faixa-chip"><svg class="ico" aria-hidden="true"><use href="#i-relogio"/></svg>Hoje</span>
+          <p class="fluxo-faixa-nota">Todos os assuntos passam pelo Gestor da Área</p>
+        </div>
+        <ul class="fluxo-entradas" aria-label="Assuntos que entram">
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto A</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto B</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto C</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto D</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto E</span></li>
+        </ul>
+        <span class="fluxo-ligacao" data-decor aria-hidden="true"></span>
+        <ul class="fluxo-destinos" aria-label="Todos os assuntos convergem para um só ponto">
+          <li class="fluxo-destino">
+            <div class="fluxo-gargalo">
+              <p class="fluxo-gargalo-tipo"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg><span>Funil</span></p>
+              <span class="fluxo-ator" data-ator="gestor"><svg class="ico" aria-hidden="true"><use href="#i-cadeado"/></svg>Gestor da Área</span>
+              <p class="fluxo-gargalo-txt">Valida <b>todos</b> os assuntos</p>
+            </div>
+            <p class="fluxo-saida">Validado</p>
+          </li>
+        </ul>
+      </div>
+      <div class="fluxo-faixa anim d6" data-faixa="novo" data-entradas="nenhuma" role="group" aria-label="Novo fluxo: um PO por produto ou frente">
+        <div class="fluxo-faixa-rotulo">
+          <span class="fluxo-faixa-chip"><svg class="ico" aria-hidden="true"><use href="#i-mais"/></svg>Novo</span>
+          <p class="fluxo-faixa-nota">Cada produto ou frente de trabalho tem um PO.</p>
+        </div>
+        <ul class="fluxo-destinos" aria-label="Um PO por produto ou frente">
+          <li class="fluxo-destino">
+            <div class="fluxo-po" data-ator="po">
+              <p class="fluxo-po-prod">InfoAudio</p>
+              <p class="fluxo-po-nome"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>PO · Francisco Meneghetti</p>
+            </div>
+          </li>
+          <li class="fluxo-destino">
+            <div class="fluxo-po" data-ator="po">
+              <p class="fluxo-po-prod">InfoRádio</p>
+              <p class="fluxo-po-nome"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>PO · Gustavo Dias</p>
+            </div>
+          </li>
+          <li class="fluxo-destino">
+            <div class="fluxo-po" data-ator="po">
+              <p class="fluxo-po-prod">SaaS</p>
+              <p class="fluxo-po-nome"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>PO · Felipe Sanches</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

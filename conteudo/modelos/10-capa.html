@@ -1,0 +1,48 @@
+<!--
+  LAYOUT  capa  — abertura do evento: a marca como protagonista, título e frase-guia. 1 por deck, 1ª tela.
+  Anatomia (de cima para baixo):
+    .capa-marca      logo oficial grande (128px de altura)
+    .cab.capa-titulo .kicker (nome do evento) · h1 (título; <em> em laranja) · .sub (tema em uma frase)
+    .capa-rodape     .capa-frase (frase-guia: serif itálico + filete laranja) · .capa-meta (data · horário · local)
+    .capa-decor      [data-decor] com o svg .capa-arcos: arcos concêntricos em laranja de baixíssima opacidade (evocam o ícone
+                     do logo); recortado no próprio palco, ignorado pela auditoria, nunca carrega informação.
+  Atributos: id, data-layout="capa", data-bloco="abertura", data-min, data-chrome="off" (esconde a moldura),
+             data-bloco-* (metadados do bloco de abertura: nome, curto, ini, min, apres, def) · [data-modelo]
+  Variantes: nenhuma. Tabela CSV: nenhuma (tela estática).
+  Limites de texto: título até ~34 caracteres, em no máximo 2 linhas de 112px (3 linhas só com subtítulo e frase de 1 linha);
+                    subtítulo até 2 linhas; frase-guia até 2 linhas; metadados: 3 itens curtos, em uma linha.
+                    Acima disso o bloco de texto passa da área útil (SUMMIT.auditar() acusa "fora-da-area") — nada se sobrepõe. Encurte.
+  Regras: logo só via <use href="#logo-informa">; nunca inventar data, horário ou local — valores abaixo são modelo.
+-->
+<section class="slide" id="modelo-capa" data-layout="capa" data-bloco="abertura" data-min="3" data-chrome="off"
+         data-bloco-nome="Abertura" data-bloco-curto="Abertura" data-bloco-ini="09:00" data-bloco-min="30" data-bloco-apres="30" data-bloco-def="0"
+         data-modelo>
+  <div class="capa-decor" data-decor aria-hidden="true">
+    <svg class="capa-arcos" viewBox="0 0 900 900" focusable="false">
+      <path d="M360 900V450a90 90 0 0 1 180 0V900"/>
+      <path d="M270 900V450a180 180 0 0 1 360 0V900"/>
+      <path d="M180 900V450a270 270 0 0 1 540 0V900"/>
+      <path d="M90 900V450a360 360 0 0 1 720 0V900"/>
+      <path d="M0 900V450a450 450 0 0 1 900 0V900"/>
+    </svg>
+  </div>
+
+  <div class="capa-marca anim d1">
+    <svg class="logo" viewBox="0 0 503.94 164.06" role="img" aria-label="Informa Solutions"><use href="#logo-informa"/></svg>
+  </div>
+
+  <header class="cab capa-titulo">
+    <p class="kicker anim d2">1º Informa DEV Summit</p>
+    <h1 class="anim d3">Título da <em>apresentação</em> em até duas linhas</h1>
+    <p class="sub anim d4">Subtítulo: o tema do encontro dito em uma única frase.</p>
+  </header>
+
+  <footer class="capa-rodape">
+    <p class="capa-frase anim d5">Frase-guia curta, no tom de quem convida a sala.</p>
+    <ul class="capa-meta anim d6">
+      <li>dd.mm.aaaa</li>
+      <li>hh:mm – hh:mm</li>
+      <li>Local do evento</li>
+    </ul>
+  </footer>
+</section>

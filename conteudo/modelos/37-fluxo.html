@@ -1,0 +1,474 @@
+<!--
+  LAYOUT  fluxo  — diagrama de processo. Serve para mostrar COMO algo anda: quem faz o quê, em que ordem, o que fica registrado.
+  Duas variantes, escolhidas por data-variante na <section>:
+    colunas       um fluxo da esquerda para a direita: de 2 a 5 etapas, cada uma com 1 a 3 nós (ação · artefato · decisão),
+                  com ramificação (nós em paralelo), alternativa (um OU outro) e convergência (dois atores juntos).
+    comparativo   duas faixas, HOJE (várias entradas convergindo para UM gargalo) × NOVO. NOVO tem duas formas:
+                    com entradas   as mesmas entradas distribuídas para N POs em paralelo, cada um com a sua saída (o diagrama AFIRMA o roteamento);
+                    sem entradas   data-entradas="nenhuma": só os cartões produto/frente + PO lado a lado e a nota — sem entradas, barramento,
+                                   seta nem saída. Use quando o briefing diz apenas QUEM é o PO de cada produto ou frente, e não que os assuntos vão até ele.
+  É REPERTÓRIO: vem antes de qualquer pergunta à sala. Sem JS, sem CSV (o HTML já é o dado).
+  Estilos: assets/css/layouts/37-fluxo.css (escopado em .slide[data-layout="fluxo"]).
+
+  ANATOMIA — colunas
+    .cab    kicker · h2 (<em>) · .sub                       (título e sub em 1 linha cada; o diagrama precisa de altura)
+    .corpo  > ol.fluxo-etapas  [aria-label]  (+ ul.fluxo-legenda, opcional)
+    ol.fluxo-etapas > li.fluxo-etapa × 2–5                  uma etapa = um painel; a ordem do HTML é a ordem do fluxo
+      header.fluxo-etapa-cab
+        span.fluxo-num [aria-hidden]                        número da etapa (1…5)
+        h3.fluxo-titulo                                     título curto; sr-only "Etapa N: " na frente para leitor de tela
+        p.fluxo-atores [data-juntos]                        OPCIONAL, 0 a 2 chips: QUEM CONDUZ a etapa (quem avisa, estima, atribui); data-juntos = atuam JUNTOS
+                                                            (convergência), põe "+" entre os chips (o "+" é do 2º chip: se os dois não cabem na mesma linha, o 2º desce com o "+"
+                                                            ao lado, dentro do painel — "+ Tech Lead"). Sem chip no cabeçalho? Omita o <p>: a linha fica reservada e os filetes alinham.
+          span.fluxo-ator [data-ator]                       chip: svg.ico (ícone do ator) + nome
+      ul.fluxo-nos [data-modo] [aria-label]                 1 a 3 nós, de cima para baixo
+        li.fluxo-no-item > div.fluxo-no [data-tipo] [data-ator]
+          p.fluxo-no-tipo                                   só em artefato e decisão: svg.ico + rótulo ("Artefato", "Decisão")
+          span.fluxo-ator                                   opcional: chip DENTRO do nó = SEMPRE quem AGE nesse nó (use quando os nós da etapa têm atores diferentes)
+          p.fluxo-no-txt                                    texto do nó; <b> destaca 1 expressão
+    ul.fluxo-legenda > li > span.fluxo-amostra(--artefato|--seta|--paralelo) + texto      (opcional)
+
+  ATRIBUTOS
+    section        id, data-layout="fluxo", data-variante="colunas|comparativo", data-bloco, [data-min], [data-modelo]
+    ul.fluxo-nos   data-modo="sequencia"   (padrão) os nós acontecem em ordem: seta para baixo entre eles
+                   data-modo="paralelo"    ramificação: todos acontecem ao mesmo tempo; marcador "+" entre eles. Pôr aria-label="Em paralelo"
+                   data-modo="alternativa" um OU outro; marcador "ou" entre eles. Pôr aria-label="Um destes caminhos"
+    div.fluxo-no   data-tipo="acao"        (padrão) retângulo com barra lateral na cor do ator: algo que alguém faz
+                   data-tipo="artefato"    canto superior dobrado + rótulo com ícone de quadro: algo que FICA registrado (relatório, card, board, tarefa)
+                   data-tipo="decisao"     hexágono achatado + rótulo "Decisão": ponto em que o caminho depende de um critério
+                   data-ator="ia|qa|inovacao|dev|atendimento|comercial|po|gestor|techlead"  cor da barra lateral (4 coloridos, 5 neutros)
+    .fluxo-ator    data-ator="…" (mesmos valores). A COR NUNCA É A ÚNICA PISTA: todo ator tem ícone + nome no chip.
+
+  QUEM É QUEM (regra única, para o chip não mudar de sentido de uma tela para outra)
+    chip no CABEÇALHO da etapa   quem conduz a etapa (o que "faz acontecer"): a IA que avisa, QA e Inovação que estimam.
+    chip DENTRO do nó            sempre quem AGE nesse nó: o Dev que "Recebe a tarefa atribuída", o QA que "Recebe o aviso dos itens do tipo A".
+    Quando o DESTINATÁRIO é diferente de quem age, escreva-o no texto do nó ("Recebe o aviso dos Bugs") e deixe o cabeçalho mostrar quem avisa.
+    Nunca ponha no chip do nó o destinatário de uma ação de OUTRO ator: o chip lê como executor.
+    data-ator num ARTEFATO = quem o produz e mantém; sem data-ator ele é neutro (vale quando ninguém em particular é dono).
+    Alinhamento: o título, os chips do cabeçalho e o filete são linhas compartilhadas por todos os painéis (subgrid). Etapas com 0, 1 ou 2 chips,
+    ou com título de 1 ou 2 linhas, alinham o filete e o PRIMEIRO nó de todas as colunas (os nós partem do topo; a coluna com menos nós termina antes).
+
+  ATORES (cor · ícone do sprite — use sempre o par abaixo, para o mesmo ator ter o mesmo ícone em todas as telas)
+    ia            laranja   i-play        qa           azul      i-check       inovacao   verde-água  i-alvo        dev    violeta  i-seta
+    atendimento   neutro    i-pessoas     comercial    neutro    i-ajustar     gestor     neutro      i-cadeado     po     neutro   i-quadro
+    techlead      neutro    colchetes de código, SVG inline (o sprite não tem ícone de liderança técnica; os 6 livres — relógio, alerta, café, talher, x, pause — significam outra coisa)
+    (evite i-mais em chip de ator: ele é o "+" da convergência e do paralelo. i-quadro também é o ícone do rótulo "Artefato"; PO só aparece no comparativo.)
+    (cores = tokens --laranja · --f-individual · --f-subgrupos · --f-plenaria; os neutros se distinguem só por ícone e nome)
+    TECH LEAD (data-ator="techlead"): o rótulo do chip é livre ("Tech Lead"); vale no chip do cabeçalho, no chip dentro do nó e como cor da barra do nó.
+      Cor neutra derivada de tokens (contorno --ink, fundo --card-forte) — um degrau acima dos outros neutros; quem o distingue é o ícone + o nome. Copie o chip assim:
+      <span class="fluxo-ator" data-ator="techlead"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7l-5 5 5 5M15.5 7l5 5-5 5"/></svg>Tech Lead</span>
+      (o ícone é um SVG inline com .ico, como o chip "Individual" de 21-a0-dinamica; não há CSS extra para ele.)
+  Setas: entre etapas, uma seta de painel a painel (CSS); entre nós da mesma etapa, seta para baixo (sequência), "+" (paralelo) ou "ou"
+  (alternativa). Nenhuma é glifo de texto.
+
+  CLASSES PRÓPRIAS  .fluxo-etapas · .fluxo-etapa · .fluxo-etapa-cab · .fluxo-num · .fluxo-titulo · .fluxo-atores · .fluxo-ator
+                    .fluxo-nos · .fluxo-no-item · .fluxo-no · .fluxo-no-tipo · .fluxo-no-txt · .fluxo-legenda · .fluxo-amostra(--artefato|--seta|--paralelo)
+  ENTRADAS          .anim .d1…d7 (cab d1–d3; etapas d3…d7 da esquerda para a direita; legenda d7)
+
+  DENSIDADE (automática por CSS, contando as etapas): texto dos nós 30 px (2–3 etapas) · 26 px (4) · 22 px (5); título da etapa 40 · 34 · 30 · 26 px;
+  chip de ator 22 px com 2–4 etapas e 20 px com 5 (e no comparativo); na etapa de DECISÃO (nó data-tipo="decisao") os chips do cabeçalho sobem para 24 px
+  (com 5 etapas, QAs + Tech Lead juntos não cabem na mesma linha: o 2º chip desce, recuado, com o "+" ao lado).
+  Etapa com 3 nós aperta o respiro entre eles. O layout nunca reduz fonte abaixo disso: estourou, SUMMIT.auditar() acusa — corte texto, não a fonte.
+
+  LIMITES — colunas (medidos em Chrome a 1920×1080 e 1366×768 — o palco escala igual, os números não mudam — com o PIOR caso: TODAS as colunas
+  iguais, título da etapa de 2 linhas e 1 chip no cabeçalho; palavras de ~6 letras; arredondado para baixo, de 5 em 5)
+    título 1 linha · sub 1 linha · etapas 2 a 5 (6 não é suportado: divida em duas telas) · nós por etapa 1 a 3 · 0 a 2 chips por etapa
+    título da etapa até 2 linhas (~14 caracteres por linha com 5 etapas; ~18 com 4; ~24 com 3; ~28 com 2)
+    CUSTO POR PEÇA: o rótulo "Artefato" e o chip DENTRO do nó consomem UMA linha cada (1 linha de 22–30 px + o respiro do nó). Por isso o limite
+    de texto depende da composição do nó, não só da contagem. A coluna mais cheia manda para TODAS as colunas.
+
+    TEXTO DO NÓ — máximo de caracteres POR NÓ (a coluna mais cheia manda)
+                              2 nós por etapa            3 nós por etapa
+                              com legenda | sem          com legenda | sem
+      A) nós só de ação (sem chip dentro do nó, sem artefato)
+        5 etapas (22 px)        100 | 140                  65 |  85
+        4 etapas (26 px)         85 | 105                  45 |  65
+        3 etapas (30 px)         85 | 110                  60 |  60
+        2 etapas (30 px)        140 | 190                  50 |  95
+      B) com artefato (1 artefato nas colunas de 2 nós; 2 artefatos nas de 3 nós)
+        5 etapas                 90 | 120                  40 |  60
+        4 etapas                 85 | 105                  25 |  45
+        3 etapas                 85 | 110                  30 |  55
+        2 etapas                 95 | 140                  50 |  50
+      C) chip de ator DENTRO de todos os nós
+        5 etapas                 85 | 105                  20 |  40
+        4 etapas                 65 |  85                  25 |  45
+        3 etapas                 60 |  85                  não cabe | 30
+        2 etapas                 95 | 140                  não cabe | 50
+      Quando só UMA das 3 peças da coluna é artefato (as outras duas, de ação): 5 etapas 40 | 65 · 4 etapas 40 | 65 · 3 etapas 30 | 60 · 2 etapas 50 | 95.
+      Misturou composições (artefato e chip no mesmo nó)? Cada um custa uma linha: parta do caso C e confirme com SUMMIT.auditar().
+      Com 3 nós, cada passo de A para B e de B para C tira de 1/3 a 1/2 do texto (por isso: com 3 nós e legenda, não use chip dentro do nó).
+    NÓS NO TOTAL: o teto é a ALTURA, não uma contagem. Referência de 12 nós (5 etapas, 3 + 3 + 2 + 2 + 2, com 1 artefato por coluna): ~40 caracteres
+    por nó com legenda, ~65 sem legenda. Com mais texto que isso, tire a legenda ou divida em duas telas.
+    legenda: até 4 itens de 1 linha; omita-a quando uma etapa tem 3 nós de 3 linhas ou mais
+    Estourou: o excedente cai sobre a trilha do dia e a auditoria acusa "fora-da-area" — nunca há rolagem nem fonte menor.
+
+  REGRAS  texto-modelo neutro; nome de pessoa, produto ou cliente real só na tela final, nunca neste modelo.
+          Um nó = uma ideia, no máximo 3 linhas. Mais de 5 etapas: divida em duas telas. Mais nós ou mais texto do que os limites acima: divida
+          em duas telas (o exemplo de 12 nós só cabe com ~40 caracteres por nó).
+          Ramificação (data-modo="paralelo") só entre nós que de fato acontecem juntos; "ou" (alternativa) só quando é um OU o outro.
+          Fato com número ou data reais no diagrama leva <p class="fonte"> (origem e data) no fim do .corpo.
+
+  ANATOMIA — comparativo
+    .corpo  > div.fluxo-comparativo  >  div.fluxo-faixa × 2 (HOJE em cima, NOVO embaixo; a ordem do HTML é a ordem de leitura)
+    div.fluxo-faixa [data-faixa="hoje|novo"] [data-entradas="nenhuma"] [role="group"] [aria-label]    data-entradas="nenhuma" só na faixa NOVO (forma sem entradas)
+      div.fluxo-faixa-rotulo > span.fluxo-faixa-chip (svg.ico + "Hoje"|"Novo") + p.fluxo-faixa-nota (1 frase curta, opcional)
+      ul.fluxo-entradas [aria-label]  >  li.fluxo-entrada > span.fluxo-entrada-txt        2 a 6 chips pequenos ("Assunto 1"…), mesmo texto nas duas faixas
+      span.fluxo-ligacao [data-decor] [aria-hidden]                                      linha entre o barramento das entradas e os destinos
+      ul.fluxo-destinos [aria-label]  >  li.fluxo-destino
+          HOJE: div.fluxo-gargalo > p.fluxo-gargalo-tipo (svg.ico alerta + "Funil") + [span.fluxo-ator gestor] + p.fluxo-gargalo-txt ; p.fluxo-saida
+          NOVO: div.fluxo-po [data-ator="po"] > p.fluxo-po-prod (PRODUTO OU FRENTE, em destaque) + p.fluxo-po-nome (svg.ico + "PO · nome") ; p.fluxo-saida
+          NOVO sem entradas (data-entradas="nenhuma"): SÓ div.fluxo-faixa-rotulo (chip + nota) e ul.fluxo-destinos > li.fluxo-destino > div.fluxo-po (os mesmos
+                 cartões). NÃO levam .fluxo-entradas, .fluxo-ligacao nem .fluxo-saida; os cartões ficam lado a lado, sem setas.
+    O barramento das entradas, a seta de cada destino para a sua saída e o barramento de distribuição são desenhados por CSS.
+    Frase de leitura (sr-only não é necessário): o aria-label do <ul> dos destinos diz "convergem para um só" (HOJE) ou "distribuídos em paralelo" (NOVO).
+
+  LIMITES — comparativo (medidos como acima)
+    título 1 linha · sub 1 linha · entradas: 2 a 6 (com 6 o chip cai de 46 para 40 px) · texto do chip 1 linha, até ~18 caracteres (excedente vira reticências)
+    HOJE: 1 gargalo (rótulo "Funil" e ícone de alerta obrigatórios; texto até 2 linhas de ~34 caracteres) · saída até 2 linhas (~22 caracteres por linha)
+    NOVO: 2 a 4 POs. Produto/frente 1 linha (~30 caracteres com 2–3 POs; ~14 com 4) · "PO · nome" 1 linha (~38 com 2–3 POs; ~16 com 4)
+          saída 1 linha (~22 caracteres). Com 4 POs o cartão vira uma linha só (produto à esquerda, PO à direita).
+    NOVO sem entradas: 2 a 4 cartões lado a lado, produto 40 px (34 px com 4) e "PO · nome" 26 px (22 px com 4), os dois em 1 linha. Com 2–3 cartões:
+          produto até ~20 caracteres, "PO · nome" até ~28; com 4: ~14 e ~20. Excedente termina em reticências e a auditoria acusa "recortado".
+    nota da faixa (.fluxo-faixa-nota): até 4 linhas de ~15 caracteres
+    Estourou: produto, PO, saída e chip de entrada terminam em reticências (a auditoria acusa "recortado"); o resto não cresce.
+
+  REGRA  o par HOJE × NOVO com entradas só vale se as entradas forem as MESMAS nas duas faixas. NOVO sem entradas é válido (data-entradas="nenhuma",
+         sem .fluxo-entrada); NOVO sem entradas e SEM o atributo (ou com o atributo e COM entradas) o montar.py reprova. HOJE sempre tem 2 a 6 entradas.
+         Nada de nome real no modelo.
+  VALIDAÇÃO (montar.py › validar_fluxos)  data-variante ∈ {colunas, comparativo}; data-modo de ul.fluxo-nos ∈ {sequencia, alternativa, paralelo}
+         (valor fora da lista cai em silêncio em "sequência", por isso reprova); colunas 2–5 × 1–3; comparativo 2 faixas (hoje, novo); POs = destinos.
+-->
+<section class="slide" id="modelo-fluxo-colunas" data-layout="fluxo" data-variante="colunas" data-bloco="b1" data-min="4" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título do fluxo em <em>uma linha</em></h2>
+    <p class="sub anim d3">Subtítulo: o que a sala deve perceber ao percorrer as etapas, da esquerda para a direita.</p>
+  </header>
+  <div class="corpo">
+    <ol class="fluxo-etapas" aria-label="Etapas do fluxo, da esquerda para a direita">
+      <li class="fluxo-etapa anim d3">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">1</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Etapa 1: </span>Entrada</h3>
+          <p class="fluxo-atores">
+            <span class="fluxo-ator" data-ator="techlead"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7l-5 5 5 5M15.5 7l5 5-5 5"/></svg>Tech Lead</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="atendimento">
+              <span class="fluxo-ator" data-ator="atendimento"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Atendimento</span>
+              <p class="fluxo-no-txt"><b>Registra</b> o item que chegou</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d4">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">2</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 2: </span>Coleta e análise</h3>
+          <p class="fluxo-atores">
+            <span class="fluxo-ator" data-ator="ia"><svg class="ico" aria-hidden="true"><use href="#i-play"/></svg>IA</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="ia">
+              <p class="fluxo-no-txt">Coleta os itens <b>novos</b> do período e analisa</p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="artefato" data-ator="ia">
+              <p class="fluxo-no-tipo"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg><span>Artefato</span></p>
+              <p class="fluxo-no-txt">Relatório do período</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d5">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">3</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 3: </span>Aviso por tipo</h3>
+          <p class="fluxo-atores">
+            <span class="fluxo-ator" data-ator="ia"><svg class="ico" aria-hidden="true"><use href="#i-play"/></svg>IA</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos" data-modo="paralelo" aria-label="Em paralelo">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="qa">
+              <span class="fluxo-ator" data-ator="qa"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>QA</span>
+              <p class="fluxo-no-txt">Recebe o aviso dos itens do <b>tipo A</b></p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="inovacao">
+              <span class="fluxo-ator" data-ator="inovacao"><svg class="ico" aria-hidden="true"><use href="#i-alvo"/></svg>Inovação</span>
+              <p class="fluxo-no-txt">Recebe o aviso dos itens do <b>tipo B</b></p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d6">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">4</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 4: </span>Estimativa</h3>
+          <p class="fluxo-atores" data-juntos>
+            <span class="fluxo-ator" data-ator="qa"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>QA</span>
+            <span class="fluxo-ator" data-ator="inovacao"><svg class="ico" aria-hidden="true"><use href="#i-alvo"/></svg>Inovação</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao">
+              <p class="fluxo-no-txt">Estimam <b>juntos</b> quando libera</p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="artefato">
+              <p class="fluxo-no-tipo"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg><span>Artefato</span></p>
+              <p class="fluxo-no-txt">Quadro de consulta</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d7">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">5</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 5: </span>Atribuição</h3>
+          <p class="fluxo-atores" data-juntos>
+            <span class="fluxo-ator" data-ator="qa"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>QA</span>
+            <span class="fluxo-ator" data-ator="inovacao"><svg class="ico" aria-hidden="true"><use href="#i-alvo"/></svg>Inovação</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="dev">
+              <span class="fluxo-ator" data-ator="dev"><svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg>Dev</span>
+              <p class="fluxo-no-txt">Recebe a <b>tarefa</b> atribuída</p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="techlead">
+              <span class="fluxo-ator" data-ator="techlead"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7l-5 5 5 5M15.5 7l5 5-5 5"/></svg>Tech Lead</span>
+              <p class="fluxo-no-txt">Acompanha a <b>entrega</b></p>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ol>
+    <ul class="fluxo-legenda anim d7" aria-label="Legenda">
+      <li><span class="fluxo-amostra" aria-hidden="true"></span><span><b>Ação</b> · algo que alguém faz</span></li>
+      <li><span class="fluxo-amostra fluxo-amostra--artefato" aria-hidden="true"></span><span><b>Artefato</b> · algo que fica registrado</span></li>
+      <li><span class="fluxo-amostra fluxo-amostra--seta" aria-hidden="true"></span><span><b>Seta</b> · depois</span></li>
+      <li><span class="fluxo-amostra fluxo-amostra--paralelo" aria-hidden="true"></span><span><b>Mais</b> · ao mesmo tempo</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" id="modelo-fluxo-colunas-curto" data-layout="fluxo" data-variante="colunas" data-bloco="b1" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Fluxo curto em <em>três etapas</em></h2>
+    <p class="sub anim d3">Com poucas etapas o texto cresce: use este formato quando cada passo merece uma frase.</p>
+  </header>
+  <div class="corpo">
+    <ol class="fluxo-etapas" aria-label="Etapas do fluxo, da esquerda para a direita">
+      <li class="fluxo-etapa anim d3">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">1</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Etapa 1: </span>Entrada por um canal</h3>
+        </header>
+        <ul class="fluxo-nos" data-modo="alternativa" aria-label="Um destes caminhos">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="atendimento">
+              <span class="fluxo-ator" data-ator="atendimento"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Atendimento</span>
+              <p class="fluxo-no-txt">Registra o item que chegou</p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="comercial">
+              <span class="fluxo-ator" data-ator="comercial"><svg class="ico" aria-hidden="true"><use href="#i-ajustar"/></svg>Comercial</span>
+              <p class="fluxo-no-txt">Registra o item que chegou</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d4">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">2</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 2: </span>Análise automática</h3>
+          <p class="fluxo-atores">
+            <span class="fluxo-ator" data-ator="ia"><svg class="ico" aria-hidden="true"><use href="#i-play"/></svg>IA</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="ia">
+              <p class="fluxo-no-txt">Lê os itens <b>novos</b> e separa por tipo</p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="artefato" data-ator="ia">
+              <p class="fluxo-no-tipo"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg><span>Artefato</span></p>
+              <p class="fluxo-no-txt">Relatório do período</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d5">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">3</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 3: </span>Decisão da equipe</h3>
+          <p class="fluxo-atores" data-juntos>
+            <span class="fluxo-ator" data-ator="qa"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>QA</span>
+            <span class="fluxo-ator" data-ator="inovacao"><svg class="ico" aria-hidden="true"><use href="#i-alvo"/></svg>Inovação</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="decisao">
+              <p class="fluxo-no-tipo"><span>Decisão</span></p>
+              <p class="fluxo-no-txt">Entra na próxima entrega?</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide" id="modelo-fluxo-comparativo" data-layout="fluxo" data-variante="comparativo" data-bloco="b1" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">De um funil para <em>vários donos</em></h2>
+    <p class="sub anim d3">Subtítulo: as mesmas entradas, antes passando por um só ponto e depois distribuídas.</p>
+  </header>
+  <div class="corpo">
+    <div class="fluxo-comparativo">
+      <div class="fluxo-faixa anim d4" data-faixa="hoje" role="group" aria-label="Hoje: todas as entradas convergem para um só ponto">
+        <div class="fluxo-faixa-rotulo">
+          <span class="fluxo-faixa-chip"><svg class="ico" aria-hidden="true"><use href="#i-relogio"/></svg>Hoje</span>
+          <p class="fluxo-faixa-nota">Tudo passa por uma só validação</p>
+        </div>
+        <ul class="fluxo-entradas" aria-label="Assuntos que entram">
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 1</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 2</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 3</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 4</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 5</span></li>
+        </ul>
+        <span class="fluxo-ligacao" data-decor aria-hidden="true"></span>
+        <ul class="fluxo-destinos" aria-label="Todos os assuntos convergem para um só ponto">
+          <li class="fluxo-destino">
+            <div class="fluxo-gargalo">
+              <p class="fluxo-gargalo-tipo"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg><span>Funil</span></p>
+              <span class="fluxo-ator" data-ator="gestor"><svg class="ico" aria-hidden="true"><use href="#i-cadeado"/></svg>Gestor da Área</span>
+              <p class="fluxo-gargalo-txt">Valida <b>todos</b> os assuntos, um a um</p>
+            </div>
+            <p class="fluxo-saida">Segue ao time</p>
+          </li>
+        </ul>
+      </div>
+      <div class="fluxo-faixa anim d6" data-faixa="novo" role="group" aria-label="Novo: as entradas se distribuem entre os POs, em paralelo">
+        <div class="fluxo-faixa-rotulo">
+          <span class="fluxo-faixa-chip"><svg class="ico" aria-hidden="true"><use href="#i-mais"/></svg>Novo</span>
+          <p class="fluxo-faixa-nota">Cada frente tem um dono</p>
+        </div>
+        <ul class="fluxo-entradas" aria-label="Assuntos que entram">
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 1</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 2</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 3</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 4</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 5</span></li>
+        </ul>
+        <span class="fluxo-ligacao" data-decor aria-hidden="true"></span>
+        <ul class="fluxo-destinos" aria-label="Cada assunto vai ao PO do seu produto ou frente, em paralelo">
+          <li class="fluxo-destino">
+            <div class="fluxo-po" data-ator="po">
+              <p class="fluxo-po-prod">Produto A</p>
+              <p class="fluxo-po-nome"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>PO · Nome</p>
+            </div>
+            <p class="fluxo-saida">Segue direto ao time</p>
+          </li>
+          <li class="fluxo-destino">
+            <div class="fluxo-po" data-ator="po">
+              <p class="fluxo-po-prod">Produto B</p>
+              <p class="fluxo-po-nome"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>PO · Nome</p>
+            </div>
+            <p class="fluxo-saida">Segue direto ao time</p>
+          </li>
+          <li class="fluxo-destino">
+            <div class="fluxo-po" data-ator="po">
+              <p class="fluxo-po-prod">Frente C</p>
+              <p class="fluxo-po-nome"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>PO · Nome</p>
+            </div>
+            <p class="fluxo-saida">Segue direto ao time</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="modelo-fluxo-comparativo-cartoes" data-layout="fluxo" data-variante="comparativo" data-bloco="b1" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Hoje e <em>quem é o dono</em> de cada frente</h2>
+    <p class="sub anim d3">Subtítulo: o funil de hoje e os POs, sem afirmar que os assuntos seguem até eles.</p>
+  </header>
+  <div class="corpo">
+    <div class="fluxo-comparativo">
+      <div class="fluxo-faixa anim d4" data-faixa="hoje" role="group" aria-label="Hoje: todas as entradas convergem para um só ponto">
+        <div class="fluxo-faixa-rotulo">
+          <span class="fluxo-faixa-chip"><svg class="ico" aria-hidden="true"><use href="#i-relogio"/></svg>Hoje</span>
+          <p class="fluxo-faixa-nota">Tudo passa por uma só validação</p>
+        </div>
+        <ul class="fluxo-entradas" aria-label="Assuntos que entram">
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 1</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 2</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 3</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 4</span></li>
+          <li class="fluxo-entrada"><span class="fluxo-entrada-txt">Assunto 5</span></li>
+        </ul>
+        <span class="fluxo-ligacao" data-decor aria-hidden="true"></span>
+        <ul class="fluxo-destinos" aria-label="Todos os assuntos convergem para um só ponto">
+          <li class="fluxo-destino">
+            <div class="fluxo-gargalo">
+              <p class="fluxo-gargalo-tipo"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg><span>Funil</span></p>
+              <span class="fluxo-ator" data-ator="gestor"><svg class="ico" aria-hidden="true"><use href="#i-cadeado"/></svg>Gestor da Área</span>
+              <p class="fluxo-gargalo-txt">Valida <b>todos</b> os assuntos, um a um</p>
+            </div>
+            <p class="fluxo-saida">Segue ao time</p>
+          </li>
+        </ul>
+      </div>
+      <div class="fluxo-faixa anim d6" data-faixa="novo" data-entradas="nenhuma" role="group" aria-label="Novo: um PO por produto ou frente">
+        <div class="fluxo-faixa-rotulo">
+          <span class="fluxo-faixa-chip"><svg class="ico" aria-hidden="true"><use href="#i-mais"/></svg>Novo</span>
+          <p class="fluxo-faixa-nota">Cada frente tem um dono</p>
+        </div>
+        <ul class="fluxo-destinos" aria-label="Um PO por produto ou frente">
+          <li class="fluxo-destino">
+            <div class="fluxo-po" data-ator="po">
+              <p class="fluxo-po-prod">Produto A</p>
+              <p class="fluxo-po-nome"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>PO · Nome</p>
+            </div>
+          </li>
+          <li class="fluxo-destino">
+            <div class="fluxo-po" data-ator="po">
+              <p class="fluxo-po-prod">Produto B</p>
+              <p class="fluxo-po-nome"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>PO · Nome</p>
+            </div>
+          </li>
+          <li class="fluxo-destino">
+            <div class="fluxo-po" data-ator="po">
+              <p class="fluxo-po-prod">Frente C</p>
+              <p class="fluxo-po-nome"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>PO · Nome</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

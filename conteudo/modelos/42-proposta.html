@@ -1,0 +1,134 @@
+<!--
+  LAYOUT  proposta  — "PROPOSTA NA MESA": toda decisão chega pronta para ACEITAR, AJUSTAR ou RECUSAR.
+  Vem DEPOIS do repertório (opcoes · conteudo · numeros…): a sala já viu o material; aqui só decide.
+  Nenhuma decisão aparece marcada de fábrica; o estado vive no CSV, nunca no HTML.
+
+  ANATOMIA
+    .cab                       kicker ("Proposta na mesa") · h2.proposta-enunciado (1–2 frases; é o enunciado da proposta)
+    .corpo
+      .proposta-miolo          duas colunas
+        section.card.proposta-muda      h3.rotulo "O que muda" + ul.lista (2 a 4 itens, 1 linha cada)
+        section.card.card--forte.proposta-custa   BLOCO OBRIGATÓRIO e destacado: h3.rotulo + dl.proposta-custa-lista
+                                                   4 linhas fixas: Tempo · Esforço · Risco · Abre mão de
+      .proposta-barra          barra de decisão
+        .proposta-barra-topo   h3.rotulo "Decisão da sala" · p.proposta-estado (texto da decisão marcada) · .proposta-aviso (mais mãos que pessoas) · .proposta-aviso-maioria (decisão diverge das mãos)
+        .proposta-acoes        3 .proposta-acao[data-acao="aceitar|ajustar|recusar"], sempre nesta ordem e posição 1 · 2 · 3:
+                                 button.proposta-botao[aria-pressed]  ícone + rótulo + .proposta-tecla (1, 2, 3)
+                                 .proposta-maos                       button(−) · output.proposta-maos-n · .proposta-maos-un · button(+)
+        .proposta-ajuste-linha
+          .proposta-ajuste     label "Ajuste acordado" + .proposta-campo (textarea + linha-exemplo em cinza marcada "exemplo")
+          .proposta-total      "Mãos no total": output · "de N" (N = data-sala, opcional)
+
+  ATRIBUTOS  id (único; é a CHAVE do CSV) · data-layout="proposta" · data-bloco · [data-min] · [data-modelo]
+             data-assunto  (obrigatório: assunto a que a proposta pertence; vai para a coluna "assunto")
+             data-tabela="propostas"
+             data-sala     (opcional: tamanho da sala; mostra "0 de N" e avisa se as mãos passarem de N.
+                            Aqui, data-sala="12" é VALOR-MODELO — troque pelo número real ou apague o atributo)
+
+  AVISOS  discretos, ícone + texto, nunca bloqueiam nem alteram a decisão (o JS troca o texto do segundo):
+            · .proposta-aviso ............ soma das mãos > data-sala (só existe se houver data-sala)
+            · .proposta-aviso-maioria .... decisão marcada ≠ ação com mais mãos (sozinha na frente; empate não avisa).
+            O segundo é opcional no HTML: se a tela não o trouxer, o JS o cria a partir do primeiro.
+
+  INTERAÇÃO (assets/js/layouts/42-proposta.js)
+    clicar numa ação, ou teclar 1 / 2 / 3 com a tela ativa e sem foco em campo editável, marca a decisão; repetir desmarca.
+    (−) e (+) em cada ação contam mãos levantadas (mínimo 0, máximo 99). Espaço/Enter com o foco vindo do mouse no (+) seguem avançando o deck;
+    com o foco vindo do teclado (Tab), Espaço/Enter acionam o botão (regra do núcleo). O total soma as três ações.
+    "Ajuste acordado" é texto livre; a linha-exemplo em cinza some ao digitar/focar e NUNCA vai para o CSV.
+
+  TABELA CSV  propostas — UMA linha por tela (upsert; chave lógica: proposta = id da <section>)
+              assunto · proposta · enunciado · decisao (aceitar|ajustar|recusar|vazio) · votos_aceitar · votos_ajustar · votos_recusar · ajuste
+              enunciado = texto do h2.proposta-enunciado em 1 linha (textContent limpo), regravado a cada upsert.
+              A linha nasce na 1ª interação (tela só lida não cria linha). window.SUMMIT.propostas.dados() devolve as linhas.
+
+  REGRAS E LIMITES DE TEXTO  (medidos em Chrome, 1920x1080 e 1366x768; a tela NUNCA reduz fonte sozinha — estourou, a auditoria acusa)
+    Enunciado: no máximo 2 linhas em 56 px (~110 caracteres); 3 linhas não cabem.
+    "O que muda": 2 a 4 itens de 1 linha (~44 car.). "O que custa": as 4 linhas (Tempo · Esforço · Risco · Abre mão de) são
+    OBRIGATÓRIAS — escreva "nenhum" se for o caso, nunca apague a linha; cada uma com 1 linha (~36 car.).
+    A tela aguenta UMA linha extra no conjunto (por exemplo, uma das linhas de "O que custa" com 2 linhas); duas ou mais, não:
+    corte o texto. Nome de pessoa nunca no enunciado; responsáveis e prazos vão para a tela de Compromissos.
+    Uma tela por decisão: duas decisões = duas telas `proposta` (cada uma com id e linha próprios no CSV).
+-->
+<section class="slide" id="modelo-proposta" data-layout="proposta" data-bloco="b1" data-min="5" data-modelo data-assunto="modelo" data-tabela="propostas" data-sala="12">
+  <header class="cab">
+    <p class="kicker anim d1">Proposta na mesa</p>
+    <h2 class="proposta-enunciado anim d2">Enunciado da proposta em uma ou duas frases, <em>direto e sem rodeio</em>.</h2>
+  </header>
+  <div class="corpo">
+    <div class="proposta-miolo anim d3">
+      <section class="card proposta-muda" aria-labelledby="modelo-proposta-t-muda">
+        <h3 class="rotulo rotulo--laranja" id="modelo-proposta-t-muda">O que muda</h3>
+        <ul class="lista">
+          <li>Primeira mudança, em uma linha.</li>
+          <li>Segunda mudança, em uma linha.</li>
+          <li>Terceira mudança, em uma linha.</li>
+        </ul>
+      </section>
+      <section class="card card--forte card--destaque proposta-custa" aria-labelledby="modelo-proposta-t-custa">
+        <h3 class="rotulo rotulo--laranja" id="modelo-proposta-t-custa"><svg class="ico"><use href="#i-alerta"/></svg>O que custa</h3>
+        <dl class="proposta-custa-lista">
+          <div><dt>Tempo</dt><dd>Quanto tempo leva.</dd></div>
+          <div><dt>Esforço</dt><dd>Quem e quanto trabalho exige.</dd></div>
+          <div><dt>Risco</dt><dd>O que pode dar errado.</dd></div>
+          <div><dt>Abre mão de</dt><dd>O que deixamos de fazer.</dd></div>
+        </dl>
+      </section>
+    </div>
+
+    <div class="proposta-barra anim d4" role="group" aria-labelledby="modelo-proposta-t-decisao">
+      <div class="proposta-barra-topo">
+        <h3 class="rotulo" id="modelo-proposta-t-decisao">Decisão da sala</h3>
+        <p class="proposta-estado" role="status" aria-live="polite">Ainda sem decisão</p>
+        <p class="proposta-aviso chip chip--alerta" role="status" hidden><svg class="ico"><use href="#i-alerta"/></svg>Mais mãos do que pessoas na sala</p>
+        <p class="proposta-aviso proposta-aviso-maioria chip chip--alerta" role="status" hidden><svg class="ico"><use href="#i-alerta"/></svg>Decisão contra a maioria das mãos</p>
+      </div>
+
+      <div class="proposta-acoes">
+        <div class="proposta-acao" data-acao="aceitar">
+          <button type="button" class="proposta-botao" data-acao="aceitar" aria-pressed="false">
+            <svg class="ico"><use href="#i-check"/></svg><span class="proposta-rotulo">Aceitar</span><span class="proposta-tecla" aria-hidden="true">1</span>
+          </button>
+          <div class="proposta-maos" role="group" aria-label="Mãos levantadas para aceitar">
+            <button type="button" class="proposta-mao" data-mao="-1" aria-label="Menos uma mão para aceitar"><svg class="ico"><use href="#i-menos"/></svg></button>
+            <output class="proposta-maos-n">0</output><span class="proposta-maos-un">mãos</span>
+            <button type="button" class="proposta-mao" data-mao="1" aria-label="Mais uma mão para aceitar"><svg class="ico"><use href="#i-mais"/></svg></button>
+          </div>
+        </div>
+        <div class="proposta-acao" data-acao="ajustar">
+          <button type="button" class="proposta-botao" data-acao="ajustar" aria-pressed="false">
+            <svg class="ico"><use href="#i-ajustar"/></svg><span class="proposta-rotulo">Ajustar</span><span class="proposta-tecla" aria-hidden="true">2</span>
+          </button>
+          <div class="proposta-maos" role="group" aria-label="Mãos levantadas para ajustar">
+            <button type="button" class="proposta-mao" data-mao="-1" aria-label="Menos uma mão para ajustar"><svg class="ico"><use href="#i-menos"/></svg></button>
+            <output class="proposta-maos-n">0</output><span class="proposta-maos-un">mãos</span>
+            <button type="button" class="proposta-mao" data-mao="1" aria-label="Mais uma mão para ajustar"><svg class="ico"><use href="#i-mais"/></svg></button>
+          </div>
+        </div>
+        <div class="proposta-acao" data-acao="recusar">
+          <button type="button" class="proposta-botao" data-acao="recusar" aria-pressed="false">
+            <svg class="ico"><use href="#i-x"/></svg><span class="proposta-rotulo">Recusar</span><span class="proposta-tecla" aria-hidden="true">3</span>
+          </button>
+          <div class="proposta-maos" role="group" aria-label="Mãos levantadas para recusar">
+            <button type="button" class="proposta-mao" data-mao="-1" aria-label="Menos uma mão para recusar"><svg class="ico"><use href="#i-menos"/></svg></button>
+            <output class="proposta-maos-n">0</output><span class="proposta-maos-un">mãos</span>
+            <button type="button" class="proposta-mao" data-mao="1" aria-label="Mais uma mão para recusar"><svg class="ico"><use href="#i-mais"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="proposta-ajuste-linha">
+        <div class="proposta-ajuste">
+          <label class="rotulo" for="modelo-proposta-ajuste">Ajuste acordado</label>
+          <div class="proposta-campo">
+            <textarea id="modelo-proposta-ajuste" class="proposta-ajuste-texto" rows="2" maxlength="400" spellcheck="false"></textarea>
+            <p class="proposta-exemplo exemplo" aria-hidden="true"><span class="exemplo-marca">exemplo</span>Descreva aqui o ajuste combinado com a sala.</p>
+          </div>
+        </div>
+        <div class="proposta-total" role="group" aria-label="Total de mãos">
+          <span class="rotulo">Mãos no total</span>
+          <p class="proposta-total-linha"><output class="num proposta-total-n">0</output><span class="proposta-total-de"> de <span class="proposta-sala">12</span></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

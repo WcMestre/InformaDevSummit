@@ -1,0 +1,314 @@
+/* ==========================================================================
+   42 · LAYOUT proposta — "proposta na mesa": aceitar · ajustar · recusar, declarando o que custa.
+   Compõe .cab · .corpo · .card(--forte --destaque) · .rotulo · .lista · .chip · .exemplo(-marca) (30-componentes.css).
+   Comportamento: assets/js/layouts/42-proposta.js (grava na tabela CSV "propostas").
+   Estados visuais (vêm do JS, nunca do HTML):
+     .proposta-aviso(-maioria)              avisos discretos (ícone + texto): mãos > sala · decisão diverge das mãos
+     .proposta-botao[aria-pressed="true"]   decisão marcada (preenchido + ícone + texto em .proposta-estado)
+     .proposta-campo.tem-texto              campo de ajuste com texto → esconde a linha-exemplo
+   Ordem: layout → miolo (muda · custa) → barra (topo · ações · mãos · ajuste · total) → estados.
+   Modelo: conteudo/modelos/42-proposta.html
+   ========================================================================== */
+
+/* ---- layout ---- */
+.slide[data-layout="proposta"]{
+  --proposta-ok:var(--ok);            /* cor por ação: sempre acompanhada de ícone, rótulo e posição */
+  --proposta-ajustar:var(--alerta);
+  --proposta-recusar:var(--perigo);
+  --proposta-botao-alt:76px;          /* altura dos botões de decisão */
+}
+.slide[data-layout="proposta"] .cab{
+  margin-bottom:var(--gap);
+}
+.slide[data-layout="proposta"] .proposta-enunciado{
+  max-width:1560px;
+  line-height:1.12;
+  text-wrap:balance;
+}
+.slide[data-layout="proposta"] .corpo{
+  gap:var(--gap);
+}
+
+/* ---- miolo: o que muda × o que custa ---- */
+.slide[data-layout="proposta"] .proposta-miolo{
+  display:grid;
+  grid-template-columns:minmax(0,5fr) minmax(0,6fr);
+  gap:var(--gap);
+  flex:1 0 auto;                   /* nunca encolhe: se o texto não couber, a tela estoura e a auditoria acusa (sem sobrepor a barra em silêncio) */
+}
+.slide[data-layout="proposta"] .proposta-muda,
+.slide[data-layout="proposta"] .proposta-custa{
+  padding:20px 32px;
+}
+.slide[data-layout="proposta"] .proposta-muda .rotulo,
+.slide[data-layout="proposta"] .proposta-custa .rotulo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+.slide[data-layout="proposta"] .proposta-muda .lista{
+  gap:20px;
+}
+
+/* o que custa: bloco obrigatório, destacado (card--forte + card--destaque; contorno laranja suave nos demais lados) */
+.slide[data-layout="proposta"] .proposta-custa{
+  border-color:rgba(247,148,29,.45);
+  border-top-color:var(--laranja);
+}
+.slide[data-layout="proposta"] .proposta-custa-lista{
+  display:flex;
+  flex-direction:column;
+}
+.slide[data-layout="proposta"] .proposta-custa-lista > div{
+  display:grid;
+  grid-template-columns:190px minmax(0,1fr);
+  align-items:baseline;
+  gap:20px;
+  padding:6px 0;
+  border-top:1px solid var(--line);
+}
+.slide[data-layout="proposta"] .proposta-custa-lista dt{
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--laranja-claro);
+}
+.slide[data-layout="proposta"] .proposta-custa-lista dd{
+  font-size:var(--t-corpo);
+  line-height:1.3;
+  color:var(--ink);
+}
+
+/* ---- barra de decisão ---- */
+.slide[data-layout="proposta"] .proposta-barra{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding:14px 28px 16px;
+  background:var(--card);
+  border:1px solid var(--card-brd);
+  border-radius:var(--raio);
+}
+.slide[data-layout="proposta"] .proposta-barra-topo{
+  display:flex;
+  align-items:center;
+  gap:24px;
+  min-height:40px;               /* reserva a altura do aviso: a barra não "pula" quando ele aparece */
+}
+.slide[data-layout="proposta"] .proposta-barra-topo .rotulo{
+  margin-bottom:0;
+}
+.slide[data-layout="proposta"] .proposta-estado{
+  flex:none;
+  white-space:nowrap;            /* com os dois avisos visíveis o estado não pode quebrar e crescer a barra */
+  font-size:var(--t-peq);
+  color:var(--ink-dim);
+}
+.slide[data-layout="proposta"] .proposta-estado.tem-decisao{
+  color:var(--ink);
+  font-weight:600;
+}
+.slide[data-layout="proposta"] .proposta-aviso{
+  margin-left:auto;
+}
+.slide[data-layout="proposta"] .proposta-aviso[hidden]{
+  display:none;
+}
+/* dois avisos possíveis (mãos > sala · decisão ≠ mãos): o primeiro visível vai para a direita, o outro fica colado nele */
+.slide[data-layout="proposta"] .proposta-aviso:not([hidden]) ~ .proposta-aviso{
+  margin-left:0;
+}
+
+/* ações: [botão | mãos] × 3 */
+.slide[data-layout="proposta"] .proposta-acoes{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:var(--gap);
+}
+.slide[data-layout="proposta"] .proposta-acao{
+  --acao-cor:var(--proposta-ok);
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:16px;
+}
+.slide[data-layout="proposta"] .proposta-acao[data-acao="ajustar"]{ --acao-cor:var(--proposta-ajustar); }
+.slide[data-layout="proposta"] .proposta-acao[data-acao="recusar"]{ --acao-cor:var(--proposta-recusar); }
+
+.slide[data-layout="proposta"] .proposta-botao{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+  height:var(--proposta-botao-alt);
+  padding:0 20px;
+  font:inherit;
+  font-size:var(--t-lead);
+  font-weight:600;
+  color:var(--ink);
+  background:var(--card-forte);
+  border:2px solid var(--line);
+  border-radius:16px;
+  cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s;
+}
+.slide[data-layout="proposta"] .proposta-botao .ico{
+  font-size:38px;
+  color:var(--acao-cor);
+}
+.slide[data-layout="proposta"] .proposta-rotulo{
+  flex:1;
+  text-align:left;
+}
+.slide[data-layout="proposta"] .proposta-tecla{
+  flex:none;
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  font-weight:500;
+  color:var(--ink-dim);
+  border:1.5px solid var(--line);
+  border-radius:10px;
+}
+.slide[data-layout="proposta"] .proposta-botao:hover{
+  border-color:var(--acao-cor);
+}
+.slide[data-layout="proposta"] .proposta-botao:focus-visible,
+.slide[data-layout="proposta"] .proposta-mao:focus-visible,
+.slide[data-layout="proposta"] .proposta-ajuste-texto:focus-visible{
+  outline:3px solid var(--laranja-claro);
+  outline-offset:3px;
+}
+
+/* decisão marcada: preenchido com a cor da ação, texto escuro, ícone e tecla no mesmo tom */
+.slide[data-layout="proposta"] .proposta-botao[aria-pressed="true"]{
+  background:var(--acao-cor);
+  border-color:var(--acao-cor);
+  color:var(--azul-950);
+}
+.slide[data-layout="proposta"] .proposta-botao[aria-pressed="true"] .ico{
+  color:var(--azul-950);
+}
+.slide[data-layout="proposta"] .proposta-botao[aria-pressed="true"] .proposta-tecla{
+  color:var(--azul-950);
+  border-color:var(--azul-950);
+}
+
+/* mãos levantadas: (−) n mãos (+) */
+.slide[data-layout="proposta"] .proposta-maos{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.slide[data-layout="proposta"] .proposta-mao{
+  flex:none;
+  display:grid;
+  place-items:center;
+  width:52px;
+  height:52px;
+  font-size:26px;
+  color:var(--ink);
+  background:var(--card-forte);
+  border:1.5px solid var(--line);
+  border-radius:50%;
+  cursor:pointer;
+}
+.slide[data-layout="proposta"] .proposta-mao:hover{
+  border-color:var(--laranja);
+}
+.slide[data-layout="proposta"] .proposta-maos-n{
+  min-width:2ch;
+  font-family:var(--mono);
+  font-size:var(--t-h3);
+  font-weight:500;
+  line-height:1;
+  text-align:center;
+  font-variant-numeric:tabular-nums;
+  color:var(--ink);
+}
+.slide[data-layout="proposta"] .proposta-maos-un{
+  min-width:4ch;
+  font-family:var(--mono);
+  font-size:var(--t-min);
+  color:var(--ink-dim);
+}
+
+/* ajuste acordado + total de mãos */
+.slide[data-layout="proposta"] .proposta-ajuste-linha{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 300px;
+  gap:var(--gap);
+  align-items:stretch;
+}
+.slide[data-layout="proposta"] .proposta-ajuste{
+  display:grid;
+  grid-template-columns:200px minmax(0,1fr);
+  gap:20px;
+  align-items:start;
+}
+.slide[data-layout="proposta"] .proposta-ajuste .rotulo{
+  margin:8px 0 0;
+}
+.slide[data-layout="proposta"] .proposta-campo{
+  position:relative;
+}
+.slide[data-layout="proposta"] .proposta-ajuste-texto{
+  display:block;
+  width:100%;
+  height:94px;
+  padding:8px 20px;
+  font:inherit;
+  font-size:var(--t-corpo);
+  line-height:1.3;
+  color:var(--ink);
+  background:rgba(2,22,31,.45);
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  resize:none;
+}
+.slide[data-layout="proposta"] .proposta-ajuste-texto:focus{
+  border-color:var(--laranja);
+}
+/* linha-exemplo: sobreposta ao campo, cinza, fora dos dados; some ao focar ou digitar */
+.slide[data-layout="proposta"] .proposta-exemplo{
+  position:absolute;
+  left:20px;
+  right:20px;
+  top:8px;
+  font-size:var(--t-peq);
+  line-height:1.3;
+  pointer-events:none;
+}
+.slide[data-layout="proposta"] .proposta-campo.tem-texto .proposta-exemplo,
+.slide[data-layout="proposta"] .proposta-campo:focus-within .proposta-exemplo{
+  display:none;
+}
+
+.slide[data-layout="proposta"] .proposta-total{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:0 24px;
+  border-left:1px solid var(--line);
+}
+.slide[data-layout="proposta"] .proposta-total .rotulo{
+  margin-bottom:6px;
+}
+.slide[data-layout="proposta"] .proposta-total-linha{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  font-size:var(--t-peq);
+  color:var(--ink-dim);
+}
+.slide[data-layout="proposta"] .proposta-total-n{
+  font-size:var(--t-h3);
+}
+.slide[data-layout="proposta"] .proposta-total-de[hidden]{
+  display:none;
+}

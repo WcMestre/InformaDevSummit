@@ -1,0 +1,142 @@
+<!--
+  LAYOUT  nuvem  — nuvem de palavras formada a partir dos apontamentos do brainstorming.
+  Serve para: mostrar à sala, de uma vez, o que fazemos bem (AZUL) e o que podemos melhorar (VERMELHO), com o
+  tamanho e o destaque de cada termo dizendo "quanto apareceu" e "quão crítico é". Vem depois da tela de registro (layout brainstorm).
+  É também onde a sala VOTA a criticidade (passo "Votar a criticidade e fechar"): no ranking lateral cada termo vermelho
+  tem o controle 1·2·3, e a nuvem se redesenha na hora. Lê os apontamentos; o único ponto de escrita é esse controle.
+
+  ANATOMIA (ordem no arquivo)
+    .nuvem-topo      .cab (kicker + h2; SEM .sub, para dar altura à nuvem)  |  .nuvem-ctrl (.nuvem-stats contadores + .nuvem-alterna "Palavras | Frases")
+    .corpo.nuvem-corpo
+      .nuvem-esq     .nuvem-area (a nuvem)  +  .card.nuvem-legenda (3 regras em linguagem simples)
+        .nuvem-area   .nuvem-termos[role=list] (spans .nuvem-termo gerados pelo JS) · .nuvem-vazio (estado vazio, com exemplo em cinza)
+                      · .nuvem-dica (dica ao passar/focar) · .nuvem-medida (sonda invisível de medida)
+      .card.nuvem-rank   ranking "Mais citados": 5 azuis + 5 vermelhos, com nº de citações e criticidade média; rodapé "Na nuvem: X de Y termos"
+                         (cai para 3 + 3 se a tela for baixa, ex.: título de 2 linhas; nunca rola)
+        .nuvem-rank-escala        dica fixa sob "Podemos melhorar": "Votar criticidade: 1 baixa · 3 alta" (o JS cria se faltar)
+        li.nuvem-rank-item[data-lado="melhorar"][data-chave]   gerado pelo JS:
+            .nuvem-rank-corpo  (.nuvem-rank-termo · .nuvem-rank-meta = ×n + barras + média)
+            .nuvem-crit[role=group]  3 × button.nuvem-crit-btn[data-valor=1|2|3][aria-pressed]  (barras + número, alvo ≥ 44 px)
+
+  ATRIBUTOS da <section>
+    id · data-layout="nuvem" · data-bloco · [data-min] · [data-modelo]
+    data-rodada="1"          filtra a coluna rodada da tabela; ausente ou "todas" = todas as rodadas
+    data-tabela="brainstorming"   (padrão) tabela lida; o JS só escreve a coluna criticidade, pelo controle do ranking
+  Dentro do JS: .nuvem-termo[data-lado="bom|melhorar"][data-nivel="0|1|2|3"]  (nivel = criticidade média arredondada; só em "melhorar")
+
+  DADOS  tabela brainstorming (CSV): rodada · participante · tipo (bom|melhorar) · texto · criticidade (1–3).
+         Preenchida pelo layout brainstorm; aqui é lida e só a coluna criticidade é ajustada (tabela.atualizar). Atualiza ao vivo (tabela.on) e ao abrir a tela.
+
+  VOTAR A CRITICIDADE (passo 5 da dinâmica, nesta tela)
+    O controle 1·2·3 de um termo vermelho aplica o valor a TODOS os apontamentos 'melhorar' que contêm o termo (modo Frases: à frase),
+    grava por tabela.atualizar na coluna criticidade, e a nuvem e o ranking se redesenham ao vivo: o facilitador VÊ o efeito (tamanho, barras,
+    média). Botão selecionado = todas as ocorrências têm aquele valor; nenhum selecionado = valores mistos (veja a média). Teclável
+    (Tab, Enter, Espaço); o foco volta ao mesmo botão depois do redesenho. Sem alert/confirm; para desfazer, toque no valor anterior.
+
+  REGRAS DE COMPORTAMENTO (também impressas na legenda da tela)
+    cor       azul (--bom) = fazemos bem · vermelho (--melhorar) = podemos melhorar
+              a mesma palavra nos dois lados vira DUAS entradas (uma azul, uma vermelha)
+    peso      Σ das citações (1 por apontamento que contém o termo). "bom" vale ×1;
+              "melhorar" vale pela criticidade: 1 → ×1 · 2 → ×2 · 3 → ×4 (1 citação crítica pesa mais que 3 boas)
+    tamanho   raiz do peso, de 24 px até o TETO: 150 px (palavras) ou 72 px (frases); o maior peso sempre no teto.
+              O teto só desce (150, 132, 116, 102, 90, 80, 70, 64 px) quando há tantos termos que o topo ocuparia a área inteira:
+              o JS escolhe o maior teto em que caibam 30 palavras (20 frases) ou todos, se houver menos que isso
+    destaque  vermelho: sublinhado; criticidade média 2 e 3: peso de fonte 700, traço mais grosso, brilho e barras (2 ou 3)
+    modo      Palavras (stopwords pt-BR, sem acento para agrupar, singular/plural) | Frases (texto inteiro de cada apontamento)
+    termos    siglas de 2 letras são mantidas (CI, CD, PR, QA, DB, TI…); ".NET", "C#", "C++", "Node.js" sobrevivem; só caem stopwords e ruído.
+              Plurais agrupam (branches→branch, hotfixes→hotfix, reuniões→reunião, meses→mês, PRs→PR).
+              Exibição = grafia original mais frequente: COM acento quando existe ("reunião", nunca "reuniao"); sigla de até 3 letras em maiúsculas.
+
+  LIMITES E DEGRADAÇÃO
+    título (h2): ideal até ~36 caracteres em uma linha (o bloco do título divide a largura com os contadores)
+    nuvem: de 5 a 150 termos candidatos, posicionados por espiral elíptica determinística (mesmos dados, mesma nuvem, qualquer
+           ordem de gravação; ordem por peso), sem sobreposição e sem sair da área (~1242×556 px, varia com a altura do título).
+           Na prática cabem ~12 termos de 87–150 px com poucos apontamentos e ~30–48 termos de 24–80 px com dezenas; os menos citados
+           ficam de fora e o rodapé do ranking informa "Na nuvem: X de Y termos". Palavra comprida demais encolhe até 24 px antes de ser descartada.
+           Frases longas (> 90 caracteres) são abreviadas com "…" na nuvem; o texto completo fica no aria-label.
+    título: o h2 pode ocupar 2 linhas (o ranking e a nuvem se comprimem sem estourar); kicker curto.
+    ranking: termo truncado com "…" pela largura; o texto completo fica no aria-label e no title; o card nunca rola (tira itens se faltar altura)
+    sem dados: estado vazio elegante ("Sem apontamentos ainda — volte à tela anterior e registre") com exemplo em cinza (fora dos dados)
+    contraste: --bom e --melhorar têm ≥ 4,5:1 sobre o painel escuro da nuvem (rgba do --azul-950) — sem ajuste de luminosidade
+-->
+<section class="slide" id="modelo-nuvem" data-layout="nuvem" data-bloco="b1" data-rodada="1" data-tabela="brainstorming" data-min="5" data-modelo>
+
+  <div class="nuvem-topo">
+    <header class="cab">
+      <p class="kicker anim d1">Kicker da tela</p>
+      <h2 class="anim d2">Título da tela em <em>uma linha</em></h2>
+    </header>
+    <div class="nuvem-ctrl anim d3">
+      <p class="nuvem-stats" aria-live="polite">
+        <span class="nuvem-stat" data-stat="apontamentos"><b>0</b> apontamentos</span>
+        <span class="nuvem-stat" data-stat="participantes"><b>0</b> participantes</span>
+        <span class="nuvem-stat" data-stat="rodada">rodada <b>1</b></span>
+      </p>
+      <div class="nuvem-alterna" role="group" aria-label="O que a nuvem mostra">
+        <button type="button" class="nuvem-alterna-btn" data-modo="palavras" aria-pressed="true">Palavras</button>
+        <button type="button" class="nuvem-alterna-btn" data-modo="frases" aria-pressed="false">Frases</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="corpo nuvem-corpo">
+    <div class="nuvem-esq">
+
+      <div class="nuvem-area anim d4" data-estado="vazio">
+        <div class="nuvem-termos" role="list" aria-label="Nuvem de termos dos apontamentos"></div>
+        <div class="nuvem-vazio">
+          <svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg>
+          <h3 class="nuvem-vazio-titulo">Sem apontamentos ainda</h3>
+          <p class="corpo-txt dim nuvem-vazio-texto">Volte à tela anterior e registre.</p>
+          <p class="nuvem-exemplo exemplo" aria-hidden="true">
+            <span class="exemplo-marca">exemplo</span>
+            <span class="nuvem-exemplo-a">citada 1 vez</span>
+            <span class="nuvem-exemplo-b">citada mais vezes</span>
+            <span class="nuvem-exemplo-c">mais crítica</span>
+          </p>
+        </div>
+        <div class="nuvem-dica" role="tooltip" hidden></div>
+        <span class="nuvem-termo nuvem-medida" aria-hidden="true"></span>
+      </div>
+
+      <div class="card nuvem-legenda anim d5">
+        <div class="nuvem-leg-item">
+          <span class="nuvem-selo nuvem-selo--bom"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span>
+          <h4>Azul: fazemos bem</h4>
+          <p>Vale 1 por citação. A mesma palavra nos dois lados vira duas entradas.</p>
+        </div>
+        <div class="nuvem-leg-item">
+          <span class="nuvem-selo nuvem-selo--melhorar"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg></span>
+          <h4>Vermelho: melhorar</h4>
+          <p>Vem sublinhado. Criticidade 1, 2 ou 3 vale 1, 2 ou 4 citações.</p>
+        </div>
+        <div class="nuvem-leg-item">
+          <span class="nuvem-selo nuvem-selo--tamanho">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V14M12 19V9M19 19V4"/></svg>
+          </span>
+          <h4>Quanto mais, maior</h4>
+          <p>Soma das citações. O mais crítico ganha traço grosso, brilho e barras.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <aside class="card nuvem-rank anim d5" aria-label="Mais citados">
+      <h3>Mais citados</h3>
+      <p class="nuvem-rank-sub">× citações · criticidade média</p>
+      <p class="nuvem-rank-grupo">
+        <span class="nuvem-selo nuvem-selo--bom"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span>
+        <span class="nuvem-rank-nome">Fazemos bem</span>
+      </p>
+      <ol class="nuvem-rank-lista" data-lado="bom"></ol>
+      <p class="nuvem-rank-grupo">
+        <span class="nuvem-selo nuvem-selo--melhorar"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg></span>
+        <span class="nuvem-rank-nome">Podemos melhorar</span>
+      </p>
+      <p class="nuvem-rank-escala">Votar criticidade: 1 baixa · 3 alta</p>
+      <ol class="nuvem-rank-lista" data-lado="melhorar"></ol>
+      <p class="nuvem-rank-info" data-info></p>
+    </aside>
+  </div>
+
+</section>

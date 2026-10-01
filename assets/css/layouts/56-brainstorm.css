@@ -1,0 +1,300 @@
+/* ==========================================================================
+   56 · LAYOUT brainstorm — tabela de brainstorming projetada, preenchida ao vivo.
+   Duas colunas (o que fazemos bem = --bom · o que podemos melhorar = --melhorar), progresso por
+   participante e barra de entrada fixa na base. Tudo escopado em .slide[data-layout="brainstorm"].
+   Ordem: variáveis → topo → progresso → colunas → densidade → itens → edição → entrada → botões → estados → ver todos → [hidden].
+   Compõe: .cab .kicker .card .num .exemplo .exemplo-marca (30-componentes.css) e .ico (20-moldura.css).
+   Cor nunca sozinha: bom leva check, melhorar leva alerta + barras de criticidade (cheias x vazadas).
+   Texto colorido só a partir de 24px (as cores do par têm ~3,9:1 sobre o fundo): em 20px a cor vai em ícone/borda/fundo.
+
+   DENSIDADE ADAPTATIVA: o JS mede as listas e grava .brainstorm-colunas[data-densidade="0…4"]; o CSS só descreve os níveis.
+     0 amplo    1 coluna · texto 26px · linha folgada (participante em coluna própria)
+     1 médio    1 coluna · texto 26px · linha justa (participante em linha)
+     2 duplo    2 colunas internas · texto 26px · participante como etiqueta no fluxo do texto (a quebra volta por baixo dela)
+     3 compacto 2 colunas internas · texto 22px · idem
+     4 denso    3 colunas internas · texto 22px · idem (só no modo "Ver todos")
+   Texto nunca abaixo de 22px; participante e rótulos em 20px.
+   ========================================================================== */
+
+/* ---------- variáveis do layout ---------- */
+.slide[data-layout="brainstorm"]{
+  --brainstorm-campo-h:64px;           /* altura dos campos da barra de entrada */
+  --brainstorm-chip-h:40px;            /* altura de cada chip de participante */
+  --brainstorm-barra:var(--azul-900);  /* fundo opaco da barra de entrada (os rótulos "entalhados" usam a mesma cor) */
+  --brainstorm-rebaixo:rgba(2,22,31,.5); /* fundo rebaixado: linhas-exemplo e campos */
+}
+
+/* ---------- topo: título + regra da dinâmica ---------- */
+.slide[data-layout="brainstorm"] .brainstorm-topo{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:var(--gap-g);margin-bottom:20px}
+.slide[data-layout="brainstorm"] .brainstorm-topo .cab{margin-bottom:0;min-width:0}
+.slide[data-layout="brainstorm"] .brainstorm-instrucao{flex:none;text-align:right}
+.slide[data-layout="brainstorm"] .brainstorm-regra{
+  display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px 14px;
+  font-size:var(--t-corpo);line-height:1.3;color:var(--ink)}
+.slide[data-layout="brainstorm"] .brainstorm-regra-item{display:inline-flex;align-items:center;gap:10px}
+.slide[data-layout="brainstorm"] .brainstorm-regra-item b{font-weight:600}
+.slide[data-layout="brainstorm"] .brainstorm-regra-sep{color:var(--ink-dim)}
+.slide[data-layout="brainstorm"] .brainstorm-ico--bom{color:var(--bom)}
+.slide[data-layout="brainstorm"] .brainstorm-ico--melhorar{color:var(--melhorar)}
+.slide[data-layout="brainstorm"] .brainstorm-apoio{
+  margin-top:8px;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.04em;color:var(--ink-dim)}
+.slide[data-layout="brainstorm"] .brainstorm-acoes{margin-top:10px}
+.slide[data-layout="brainstorm"] .brainstorm-todos-info{
+  margin:0;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.04em;color:var(--ink)}
+
+/* ---------- corpo: progresso · colunas · entrada ---------- */
+.slide[data-layout="brainstorm"] .brainstorm-corpo{gap:16px}
+
+/* ---------- progresso por participante: nome + estado (check = completo · anel = em andamento), nunca número ---------- */
+.slide[data-layout="brainstorm"] .brainstorm-chips{
+  display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px;padding:3px;
+  max-height:calc(var(--brainstorm-chip-h) * 3 + 8px * 2 + 6px);   /* 3 linhas; acima disso rola */
+  overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.slide[data-layout="brainstorm"] .brainstorm-pessoa{
+  display:inline-flex;align-items:center;gap:10px;height:var(--brainstorm-chip-h);padding:0 16px 0 10px;
+  border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);
+  font-family:var(--sans);font-size:var(--t-rotulo);font-weight:600;line-height:1;white-space:nowrap}
+.slide[data-layout="brainstorm"] button.brainstorm-pessoa{cursor:pointer}
+.slide[data-layout="brainstorm"] button.brainstorm-pessoa:hover{background:var(--card-forte)}
+.slide[data-layout="brainstorm"] .brainstorm-pessoa[aria-pressed="true"]{
+  border-color:var(--laranja);box-shadow:0 0 0 1px var(--laranja)}
+.slide[data-layout="brainstorm"] .brainstorm-pessoa--completo{background:var(--card-forte)}
+.slide[data-layout="brainstorm"] .brainstorm-pessoa-nome{max-width:190px;overflow:hidden;text-overflow:ellipsis}
+
+.slide[data-layout="brainstorm"] .brainstorm-selo{
+  display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:50%;
+  background:var(--ok);color:var(--azul-950);font-size:18px}
+.slide[data-layout="brainstorm"] .brainstorm-selo--parcial{background:transparent;box-shadow:inset 0 0 0 2.5px var(--ink-dim)}
+.slide[data-layout="brainstorm"] .brainstorm-selo--parcial .ico{display:none}
+
+/* modo compacto (9+ participantes): nome um pouco mais curto (nome completo no aria-label/title) */
+.slide[data-layout="brainstorm"] .brainstorm-chips[data-densidade="compacto"] .brainstorm-pessoa{gap:8px;padding:0 14px 0 8px}
+.slide[data-layout="brainstorm"] .brainstorm-chips[data-densidade="compacto"] .brainstorm-pessoa-nome{max-width:150px}
+
+/* chip-exemplo: cinza, tracejado, fora dos dados (sem contagem: a marcação antiga trazia "2/3", escondida aqui) */
+.slide[data-layout="brainstorm"] .brainstorm-pessoa--exemplo{
+  padding-left:14px;border:1.5px dashed var(--exemplo);background:var(--brainstorm-rebaixo);font-weight:500;color:var(--ink-dim)}
+.slide[data-layout="brainstorm"] .brainstorm-pessoa--exemplo .exemplo-marca{margin-right:0}
+.slide[data-layout="brainstorm"] .brainstorm-pessoa--exemplo .brainstorm-cont{display:none}
+
+/* ---------- colunas ---------- */
+.slide[data-layout="brainstorm"] .brainstorm-colunas{
+  flex:1;min-height:0;display:grid;gap:var(--gap);
+  grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}
+.slide[data-layout="brainstorm"] .brainstorm-col{
+  position:relative;display:flex;flex-direction:column;min-height:0;padding:18px 20px 16px 24px;border-top:4px solid var(--brainstorm-cor)}
+.slide[data-layout="brainstorm"] .brainstorm-col[data-tipo="bom"]{--brainstorm-cor:var(--bom)}
+.slide[data-layout="brainstorm"] .brainstorm-col[data-tipo="melhorar"]{--brainstorm-cor:var(--melhorar)}
+
+.slide[data-layout="brainstorm"] .brainstorm-col-cab{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.slide[data-layout="brainstorm"] .brainstorm-col-ico{
+  display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;
+  background:var(--brainstorm-cor);color:var(--azul-950);font-size:26px}
+.slide[data-layout="brainstorm"] .brainstorm-col-cab h3{margin:0;font-size:var(--t-lead);white-space:nowrap}
+.slide[data-layout="brainstorm"] .brainstorm-legenda{
+  margin-left:auto;font-size:var(--t-min);color:var(--ink-dim);white-space:nowrap}
+.slide[data-layout="brainstorm"] .brainstorm-contador{
+  display:flex;align-items:baseline;gap:8px;margin-left:auto;font-size:var(--t-min);color:var(--ink-dim);white-space:nowrap}
+.slide[data-layout="brainstorm"] .brainstorm-legenda + .brainstorm-contador{margin-left:0}
+.slide[data-layout="brainstorm"] .brainstorm-contador .num{font-size:var(--t-h3)}
+
+/* contêiner rolável (criado pelo JS em volta da <ul>) com o degradê de borda; a <ul> dentro corre em N colunas internas (densidade),
+   empacotadas (cada coluna cresce na vertical). O aviso "+N mais acima/abaixo" (.brainstorm-mais) e data-mais-cima / data-mais-baixo vêm do JS. */
+.slide[data-layout="brainstorm"] .brainstorm-rolagem{
+  position:relative;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.slide[data-layout="brainstorm"] .brainstorm-lista{
+  list-style:none;margin:0;padding:2px 10px 2px 0;
+  column-count:var(--brainstorm-cols,1);column-gap:var(--brainstorm-col-gap,10px);column-fill:balance}
+.slide[data-layout="brainstorm"] .brainstorm-rolagem[data-mais-baixo]{
+  -webkit-mask-image:linear-gradient(var(--branco) calc(100% - 44px),transparent);mask-image:linear-gradient(var(--branco) calc(100% - 44px),transparent)}
+.slide[data-layout="brainstorm"] .brainstorm-rolagem[data-mais-cima]{
+  -webkit-mask-image:linear-gradient(transparent,var(--branco) 44px);mask-image:linear-gradient(transparent,var(--branco) 44px)}
+.slide[data-layout="brainstorm"] .brainstorm-rolagem[data-mais-cima][data-mais-baixo]{
+  -webkit-mask-image:linear-gradient(transparent,var(--branco) 44px,var(--branco) calc(100% - 44px),transparent);
+  mask-image:linear-gradient(transparent,var(--branco) 44px,var(--branco) calc(100% - 44px),transparent)}
+
+/* aviso "+N mais abaixo/acima": pílula opaca sobre o degradê, no rodapé/topo da lista (texto 22px, ícone de seta) */
+.slide[data-layout="brainstorm"] .brainstorm-mais{
+  position:absolute;left:50%;z-index:2;display:inline-flex;align-items:center;gap:10px;height:38px;padding:0 18px 0 14px;
+  transform:translateX(-50%);border:1.5px solid var(--laranja);border-radius:999px;background:var(--azul-900);color:var(--ink);
+  font-size:var(--t-rotulo);font-weight:600;line-height:1;white-space:nowrap;pointer-events:none}
+.slide[data-layout="brainstorm"] .brainstorm-mais--baixo{bottom:var(--brainstorm-mais-base,24px)}
+.slide[data-layout="brainstorm"] .brainstorm-mais--baixo .ico{transform:rotate(90deg)}
+.slide[data-layout="brainstorm"] .brainstorm-mais--cima{top:var(--brainstorm-mais-topo,84px)}
+.slide[data-layout="brainstorm"] .brainstorm-mais--cima .ico{transform:rotate(-90deg)}
+.slide[data-layout="brainstorm"] .brainstorm-mais .ico{color:var(--laranja);font-size:22px}
+
+/* ---------- densidade (grava o JS em .brainstorm-colunas[data-densidade]) ---------- */
+.slide[data-layout="brainstorm"] .brainstorm-colunas{
+  --brainstorm-cols:1;--brainstorm-lin-gap:8px;--brainstorm-col-gap:10px;
+  --brainstorm-fonte:var(--t-peq);--brainstorm-entrelinha:1.3;--brainstorm-pad:12px 16px 12px 14px;
+  --brainstorm-quem-max:12;--brainstorm-pip:24px;--brainstorm-pip-w:9px;--brainstorm-pip-gap:4px}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="1"]{
+  --brainstorm-lin-gap:6px;--brainstorm-pad:6px 14px 6px 12px;--brainstorm-quem-max:12}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="2"]{
+  --brainstorm-cols:2;--brainstorm-lin-gap:4px;--brainstorm-pad:4px 10px 4px 8px;--brainstorm-quem-max:12;--brainstorm-pip:22px;--brainstorm-entrelinha:1.2}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="3"]{
+  --brainstorm-cols:2;--brainstorm-lin-gap:3px;--brainstorm-pad:3px 10px 3px 8px;--brainstorm-quem-max:12;--brainstorm-pip:20px;--brainstorm-pip-w:6px;--brainstorm-pip-gap:3px;
+  --brainstorm-fonte:var(--t-rotulo);--brainstorm-entrelinha:1.15}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="4"]{
+  --brainstorm-cols:3;--brainstorm-lin-gap:3px;--brainstorm-col-gap:8px;--brainstorm-pad:3px 8px 3px 8px;--brainstorm-quem-max:8;--brainstorm-pip:20px;--brainstorm-pip-w:6px;--brainstorm-pip-gap:3px;
+  --brainstorm-fonte:var(--t-rotulo);--brainstorm-entrelinha:1.15}
+/* do nível 1 em diante o participante vira etiqueta em linha (antes de texto), em vez de coluna própria */
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="1"] .brainstorm-item-corpo{display:flex;column-gap:10px}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="1"] .brainstorm-item-corpo > .brainstorm-quem{
+  flex:none;letter-spacing:0;width:calc(min(var(--brainstorm-quem-ch,8),var(--brainstorm-quem-max)) * 1ch + 1px)}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="1"] .brainstorm-item-corpo > .brainstorm-texto{flex:1;min-width:0}
+/* níveis 2 a 4: participante, texto e criticidade correm na mesma linha e a quebra volta por baixo da etiqueta (aproveita a largura toda) */
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="2"] .brainstorm-item-corpo{display:block;font-size:var(--brainstorm-fonte);line-height:var(--brainstorm-entrelinha)}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="2"] .brainstorm-item-corpo > .brainstorm-quem{display:inline;margin-right:8px;letter-spacing:0}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="2"] .brainstorm-item-corpo > .brainstorm-texto{display:inline}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="2"] .brainstorm-item-corpo > .brainstorm-crit{display:inline-flex;vertical-align:middle;margin-left:8px}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="3"] .brainstorm-item-corpo,
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="4"] .brainstorm-item-corpo{display:block;font-size:var(--brainstorm-fonte);line-height:var(--brainstorm-entrelinha)}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="3"] .brainstorm-item-corpo > .brainstorm-quem,
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="4"] .brainstorm-item-corpo > .brainstorm-quem{
+  display:inline;margin-right:8px;letter-spacing:0}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="3"] .brainstorm-item-corpo > .brainstorm-texto,
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="4"] .brainstorm-item-corpo > .brainstorm-texto{display:inline}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="3"] .brainstorm-item-corpo > .brainstorm-crit,
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="4"] .brainstorm-item-corpo > .brainstorm-crit{
+  display:inline-flex;vertical-align:middle;margin-left:8px}
+
+/* ---------- itens ---------- */
+.slide[data-layout="brainstorm"] .brainstorm-item{
+  min-width:0;margin:0 0 var(--brainstorm-lin-gap,8px);break-inside:avoid;border-radius:14px;background:var(--card);border:1px solid var(--card-brd);border-left:4px solid var(--brainstorm-cor)}
+.slide[data-layout="brainstorm"] .brainstorm-colunas:not([data-densidade="0"]) .brainstorm-item{border-radius:10px}
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="3"] .brainstorm-item,
+.slide[data-layout="brainstorm"] .brainstorm-colunas[data-densidade="4"] .brainstorm-item{border-top-width:0;border-bottom-width:0;border-right-width:0}
+.slide[data-layout="brainstorm"] .brainstorm-item-corpo{
+  display:grid;grid-template-columns:140px minmax(0,1fr) auto;column-gap:16px;align-items:baseline;width:100%;
+  padding:var(--brainstorm-pad);border:0;border-radius:inherit;background:none;color:var(--ink);text-align:left;font:inherit}
+.slide[data-layout="brainstorm"] button.brainstorm-item-corpo{cursor:pointer}
+.slide[data-layout="brainstorm"] button.brainstorm-item-corpo:hover{background:var(--card)}
+.slide[data-layout="brainstorm"] .brainstorm-quem{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--mono);font-size:var(--t-min);letter-spacing:.02em;color:var(--ink)}
+.slide[data-layout="brainstorm"] .brainstorm-texto{
+  font-size:var(--brainstorm-fonte);line-height:var(--brainstorm-entrelinha);overflow-wrap:break-word}
+
+/* criticidade: 3 barras crescentes; cheias = nível, vazadas = resto (a forma diz o nível, não só a cor) */
+.slide[data-layout="brainstorm"] .brainstorm-crit{
+  display:inline-flex;align-items:flex-end;flex:none;gap:var(--brainstorm-pip-gap);height:var(--brainstorm-pip);align-self:center}
+.slide[data-layout="brainstorm"] .brainstorm-crit > span{
+  width:var(--brainstorm-pip-w);border-radius:3px;background:transparent;box-shadow:inset 0 0 0 2px var(--melhorar)}
+.slide[data-layout="brainstorm"] .brainstorm-crit > span:nth-child(1){height:calc(var(--brainstorm-pip) * .42)}
+.slide[data-layout="brainstorm"] .brainstorm-crit > span:nth-child(2){height:calc(var(--brainstorm-pip) * .7)}
+.slide[data-layout="brainstorm"] .brainstorm-crit > span:nth-child(3){height:var(--brainstorm-pip)}
+.slide[data-layout="brainstorm"] .brainstorm-crit[data-nivel="1"] > span:nth-child(-n+1),
+.slide[data-layout="brainstorm"] .brainstorm-crit[data-nivel="2"] > span:nth-child(-n+2),
+.slide[data-layout="brainstorm"] .brainstorm-crit[data-nivel="3"] > span{background:var(--melhorar)}
+
+/* linha-exemplo (cinza, tracejada, rebaixada) */
+.slide[data-layout="brainstorm"] .brainstorm-item--exemplo{
+  background:var(--brainstorm-rebaixo);border:1.5px dashed var(--exemplo)}
+.slide[data-layout="brainstorm"] .brainstorm-item--exemplo .brainstorm-crit > span{box-shadow:inset 0 0 0 2px var(--exemplo)}
+.slide[data-layout="brainstorm"] .brainstorm-item--exemplo .brainstorm-crit[data-nivel="2"] > span:nth-child(-n+2){background:var(--exemplo)}
+
+/* ---------- edição inline (atravessa todas as colunas internas, em qualquer densidade) ---------- */
+.slide[data-layout="brainstorm"] .brainstorm-item--editando{
+  column-span:all;
+  display:grid;grid-template-columns:140px minmax(0,1fr);column-gap:16px;align-items:start;
+  padding:14px 16px 14px 14px;background:var(--card-forte);border-color:var(--laranja);border-left-color:var(--brainstorm-cor)}
+.slide[data-layout="brainstorm"] .brainstorm-item--editando > .brainstorm-quem{padding-top:12px}
+.slide[data-layout="brainstorm"] .brainstorm-edicao{display:flex;flex-direction:column;gap:12px;min-width:0}
+.slide[data-layout="brainstorm"] .brainstorm-edicao-linha{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.slide[data-layout="brainstorm"] .brainstorm-edicao-linha .brainstorm-segmento{flex:none;width:138px;height:52px}
+.slide[data-layout="brainstorm"] .brainstorm-edicao-linha .brainstorm-btn{height:52px;padding:0 14px;font-size:var(--t-rotulo)}
+.slide[data-layout="brainstorm"] .brainstorm-edicao-linha .brainstorm-btn--perigo{min-width:168px}   /* cabe "Confirmar" sem quebrar a linha */
+.slide[data-layout="brainstorm"] .brainstorm-edicao-espaco{flex:1}
+
+/* ---------- barra de entrada (fixa na base) ---------- */
+.slide[data-layout="brainstorm"] .brainstorm-entrada{
+  display:flex;align-items:stretch;gap:14px;padding:26px 20px 16px;
+  background:var(--brainstorm-barra);border:1px solid var(--card-brd);border-radius:var(--raio)}
+.slide[data-layout="brainstorm"] .brainstorm-campo{
+  position:relative;display:block;min-width:0;margin:0;padding:0;border:0}
+.slide[data-layout="brainstorm"] .brainstorm-campo--participante{flex:none;width:292px}
+.slide[data-layout="brainstorm"] .brainstorm-campo--tipo{flex:none;width:380px}
+.slide[data-layout="brainstorm"] .brainstorm-campo--texto{flex:1 1 0}
+.slide[data-layout="brainstorm"] .brainstorm-campo--criticidade{flex:none;width:210px}
+
+/* rótulo "entalhado" na borda do campo: não gasta altura. Caixa de 20px (line-height 1) centrada na borda:
+   termina a ~9px do topo do campo, acima dos segmentos (que começam a 9,5px), sem cobrir o botão "Bom" (finding 36) */
+.slide[data-layout="brainstorm"] .brainstorm-campo-rot{
+  position:absolute;z-index:1;left:14px;top:-11px;padding:0 8px;max-width:calc(100% - 28px);
+  background:var(--brainstorm-barra);font-family:var(--mono);font-size:var(--t-min);line-height:1;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);white-space:nowrap}
+
+.slide[data-layout="brainstorm"] .brainstorm-input{
+  display:block;width:100%;height:var(--brainstorm-campo-h);padding:0 18px;
+  border:1.5px solid var(--line);border-radius:14px;background:var(--brainstorm-rebaixo);
+  color:var(--ink);font-family:var(--sans);font-size:var(--t-corpo)}
+.slide[data-layout="brainstorm"] .brainstorm-input::placeholder{color:var(--exemplo);opacity:1}
+.slide[data-layout="brainstorm"] .brainstorm-input:focus-visible,
+.slide[data-layout="brainstorm"] .brainstorm-input:focus{outline:3px solid var(--laranja);outline-offset:1px;border-color:var(--laranja)}
+.slide[data-layout="brainstorm"] .brainstorm-input--area{
+  height:auto;min-height:84px;padding:12px 16px;resize:none;font-size:var(--t-peq);line-height:1.3}
+
+/* segmentado Bom | Melhorar e 1 | 2 | 3 (radios nativos: setas trocam a opção) */
+.slide[data-layout="brainstorm"] .brainstorm-segmento{
+  display:flex;gap:5px;height:var(--brainstorm-campo-h);padding:5px;
+  border:1.5px solid var(--line);border-radius:14px;background:var(--brainstorm-rebaixo)}
+.slide[data-layout="brainstorm"] .brainstorm-entrada .brainstorm-segmento{padding:8px}   /* folga para o rótulo entalhado (finding 36) */
+.slide[data-layout="brainstorm"] .brainstorm-segmento > label{display:block;flex:1;min-width:0;position:relative}
+.slide[data-layout="brainstorm"] .brainstorm-radio{
+  position:absolute;width:1px;height:1px;margin:0;opacity:0;overflow:hidden}
+.slide[data-layout="brainstorm"] .brainstorm-seg{
+  display:flex;align-items:center;justify-content:center;gap:8px;height:100%;border-radius:10px;
+  font-size:var(--t-peq);font-weight:600;color:var(--ink-dim);cursor:pointer;white-space:nowrap}
+.slide[data-layout="brainstorm"] .brainstorm-seg:hover{background:rgba(255,255,255,.07);color:var(--ink)}
+.slide[data-layout="brainstorm"] .brainstorm-radio:checked + .brainstorm-seg--bom{background:var(--bom);color:var(--azul-950)}
+.slide[data-layout="brainstorm"] .brainstorm-radio:checked + .brainstorm-seg--melhorar{background:var(--melhorar);color:var(--azul-950)}
+.slide[data-layout="brainstorm"] .brainstorm-radio:focus-visible + .brainstorm-seg{outline:3px solid var(--laranja);outline-offset:2px}
+
+/* ---------- botões ---------- */
+.slide[data-layout="brainstorm"] .brainstorm-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;flex:none;height:var(--brainstorm-campo-h);padding:0 28px;
+  border:1.5px solid var(--line);border-radius:14px;background:var(--card-forte);color:var(--ink);
+  font-family:var(--sans);font-size:var(--t-peq);font-weight:600;cursor:pointer;white-space:nowrap}
+.slide[data-layout="brainstorm"] .brainstorm-btn:hover{border-color:var(--laranja)}
+.slide[data-layout="brainstorm"] .brainstorm-btn:focus-visible{outline:3px solid var(--branco);outline-offset:3px}
+.slide[data-layout="brainstorm"] .brainstorm-btn--forte{background:var(--laranja);border-color:var(--laranja);color:var(--azul-950);font-weight:700}
+.slide[data-layout="brainstorm"] .brainstorm-btn--forte:hover{background:var(--laranja-claro);border-color:var(--laranja-claro)}
+.slide[data-layout="brainstorm"] .brainstorm-btn--perigo{border-color:var(--perigo)}
+.slide[data-layout="brainstorm"] .brainstorm-btn--perigo[data-armado]{background:var(--perigo);color:var(--azul-950)}
+/* "Ver todos" / "Voltar a registrar": botão do topo, com a tecla ao lado */
+.slide[data-layout="brainstorm"] .brainstorm-btn--todos{height:48px;padding:0 16px 0 18px;font-size:var(--t-rotulo)}
+.slide[data-layout="brainstorm"] .brainstorm-btn--todos[aria-pressed="true"]{border-color:var(--laranja);background:var(--card-forte)}
+.slide[data-layout="brainstorm"] .brainstorm-btn--todos kbd{margin-left:2px}
+
+/* ---------- estados ---------- */
+.slide[data-layout="brainstorm"] button.brainstorm-item-corpo:focus-visible,
+.slide[data-layout="brainstorm"] button.brainstorm-pessoa:focus-visible,
+.slide[data-layout="brainstorm"] .brainstorm-rolagem:focus-visible{outline:3px solid var(--laranja);outline-offset:2px}
+.slide[data-layout="brainstorm"] .brainstorm-campo--erro .brainstorm-input{border-color:var(--perigo)}
+.slide[data-layout="brainstorm"] .brainstorm-campo--erro .brainstorm-campo-rot{color:var(--perigo);font-weight:700}
+.slide[data-layout="brainstorm"] .brainstorm-item--novo{animation:brainstorm-novo 1.6s ease-out}
+@keyframes brainstorm-novo{from{background:rgba(255,255,255,.26)}to{background:var(--card)}}
+@media (prefers-reduced-motion:reduce){
+  .slide[data-layout="brainstorm"] .brainstorm-item--novo{animation:none}
+}
+
+/* ---------- modo "Ver todos" (data-todos no <section>): some entrada e progresso; o topo vira uma linha; listas ocupam a área toda ---------- */
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-progresso,
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-entrada{display:none}
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-topo{align-items:center;margin-bottom:12px}
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-topo .cab h2,
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-regra,
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-apoio{display:none}
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-topo .kicker{margin-bottom:0}
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-instrucao{display:flex;align-items:center;gap:28px}
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-acoes{margin-top:0}
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-col{padding:12px 16px 12px 20px}
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-col-cab{margin-bottom:8px}
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-col-ico{width:40px;height:40px;font-size:24px}
+.slide[data-layout="brainstorm"][data-todos] .brainstorm-col{--brainstorm-mais-topo:68px;--brainstorm-mais-base:20px}
+
+/* ---------- [hidden] vence os display: acima (mantenha este bloco por último) ---------- */
+.slide[data-layout="brainstorm"] [hidden]{display:none}

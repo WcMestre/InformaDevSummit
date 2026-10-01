@@ -1,0 +1,138 @@
+<!--
+  LAYOUT  ciclo  — o ritmo de uma volta de N semanas em dois períodos (ciclo × cooldown), com laço "volta ao início".
+  Serve para mostrar QUANTO DURA cada período e que o ritmo SE REPETE: números grandes, barra de semanas numeradas
+  e a seta de retorno. É REPERTÓRIO: vem antes de qualquer pergunta à sala. Usado em a6-diagrama (ShapeUp).
+  Estilos: assets/css/layouts/39-ciclo.css (escopado em .slide[data-layout="ciclo"]). Sem JS, sem CSV.
+
+  ANATOMIA
+    .cab    kicker · h2 (<em> = o 2º período; o layout o pinta na cor do cooldown) · .sub
+    .corpo  > .ciclo-quadro   (faixas + semanas + laço)  ·  ul.ciclo-legenda (legenda fixa)
+    .ciclo-quadro > .ciclo-faixas   grade das mesmas N colunas da barra; 2 × div.ciclo-faixa
+                  > ol.ciclo-semanas  1 <li> por semana, em ordem; N de 4 a 10
+                  > .ciclo-volta    laço de retorno desenhado por CSS (borda + ponta de seta); contém p.ciclo-volta-rot
+    faixa:   div.ciclo-faixa.ciclo-faixa--ciclo | --cooldown   data-de="<coluna inicial>"  data-n="<quantas semanas cobre>" (1 a 9)
+               b.num.ciclo-num                número grande do período ("6")
+               p.ciclo-faixa-txt > span.ciclo-faixa-rot (svg.ico + rótulo: "Ciclo" / "Cooldown") · span.ciclo-un ("semanas")
+    semana:  li.ciclo-sem.ciclo-sem--ciclo | --cooldown
+               span.ciclo-sem-rot ("Semana") · b.ciclo-sem-num ("1") · span.sr-only (nome do período, para leitor de tela)
+    laço:    div.ciclo-volta > p.ciclo-volta-rot (svg.ico + frase curta; pílula sobre a linha de retorno)
+    legenda: li > span.ciclo-amostra (--cooldown | --volta, aria-hidden) + texto — forma + rótulo, nunca só cor
+
+  ATRIBUTOS   id, data-layout="ciclo", data-bloco, [data-min], [data-modelo]. Sem variantes.
+    data-de/data-n nas faixas: a soma dos data-n = nº de <li> em .ciclo-semanas; a 1ª faixa começa em 1.
+
+  CLASSES PRÓPRIAS   .ciclo-quadro · .ciclo-faixas · .ciclo-faixa(--ciclo|--cooldown) · .ciclo-num · .ciclo-faixa-txt · .ciclo-faixa-rot · .ciclo-un
+                     .ciclo-semanas · .ciclo-sem(--ciclo|--cooldown) · .ciclo-sem-rot · .ciclo-sem-num
+                     .ciclo-volta · .ciclo-volta-rot · .ciclo-legenda · .ciclo-amostra(--cooldown|--volta)
+  ENTRADAS           .anim .d1…d7 (cab d1–d3; quadro d4; legenda d5)
+
+  DALTONISMO  ciclo = bloco CHEIO laranja, borda contínua, ícone play; cooldown = bloco LISTRADO azul-água, borda tracejada,
+              cantos mais redondos, ícone pause. Rótulo em texto em toda faixa e na legenda.
+  DENSIDADE   o nº de colunas nasce de :has() contando os <li> de .ciclo-semanas (4 a 10). Fora disso, divida em duas telas.
+              A barra e o laço se ajustam às colunas; a ponta da seta cai no centro da 1ª semana.
+
+  LIMITES DE TEXTO (a 1920×1080 e 1366×768)
+    título: 1 linha · sub: 1 linha (~60 caracteres)
+    número da faixa: 1 ou 2 algarismos; unidade de uma palavra ("semanas"); rótulo da faixa até ~12 caracteres
+        (a faixa de 2 colunas em 8 semanas comporta "Cooldown" + "semanas"; com mais de 8 semanas a faixa curta fica estreita: confira)
+    rótulo da semana: uma palavra curta + número de 1 a 2 algarismos
+    frase do laço: até ~36 caracteres, 1 linha · legenda: 2 a 3 itens de 1 linha
+
+  REGRAS  texto-modelo neutro: nomes, números e prazos reais só na tela final. Número de semanas e durações declarados na tela
+          vêm do briefing; não descreva etapas internas de nenhum método neste layout.
+-->
+<section class="slide" id="modelo-ciclo" data-layout="ciclo" data-bloco="b1" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">N semanas de período A, <em>M de período B</em></h2>
+    <p class="sub anim d3">Uma volta completa dura N + M semanas, e o ritmo se repete.</p>
+  </header>
+  <div class="corpo">
+    <div class="ciclo-quadro anim d4">
+      <div class="ciclo-faixas">
+        <div class="ciclo-faixa ciclo-faixa--ciclo" data-de="1" data-n="6">
+          <b class="num ciclo-num">N</b>
+          <p class="ciclo-faixa-txt">
+            <span class="ciclo-faixa-rot"><svg class="ico" aria-hidden="true"><use href="#i-play"/></svg>Período A</span>
+            <span class="ciclo-un">semanas</span>
+          </p>
+        </div>
+        <div class="ciclo-faixa ciclo-faixa--cooldown" data-de="7" data-n="2">
+          <b class="num ciclo-num">M</b>
+          <p class="ciclo-faixa-txt">
+            <span class="ciclo-faixa-rot"><svg class="ico" aria-hidden="true"><use href="#i-pause"/></svg>Período B</span>
+            <span class="ciclo-un">semanas</span>
+          </p>
+        </div>
+      </div>
+
+      <ol class="ciclo-semanas" aria-label="Uma volta completa">
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">1</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">2</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">3</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">4</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">5</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">6</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--cooldown"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">7</b><span class="sr-only">Período B</span></li>
+        <li class="ciclo-sem ciclo-sem--cooldown"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">8</b><span class="sr-only">Período B</span></li>
+      </ol>
+
+      <div class="ciclo-volta">
+        <p class="ciclo-volta-rot"><svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg>Novo ciclo: volta à semana 1</p>
+      </div>
+    </div>
+
+    <ul class="ciclo-legenda anim d5" aria-label="Legenda">
+      <li><span class="ciclo-amostra" aria-hidden="true"></span><span><b>Período A</b> · semanas 1 a 6 · cheio</span></li>
+      <li><span class="ciclo-amostra ciclo-amostra--cooldown" aria-hidden="true"></span><span><b>Período B</b> · semanas 7 e 8 · listrado</span></li>
+      <li><span class="ciclo-amostra ciclo-amostra--volta" aria-hidden="true"><svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg></span><span><b>Novo ciclo</b> · o ritmo se repete</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" id="modelo-ciclo-curto" data-layout="ciclo" data-bloco="b1" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">N semanas de período A, <em>M de período B</em></h2>
+    <p class="sub anim d3">Seis semanas por volta: o mesmo desenho com menos colunas.</p>
+  </header>
+  <div class="corpo">
+    <div class="ciclo-quadro anim d4">
+      <div class="ciclo-faixas">
+        <div class="ciclo-faixa ciclo-faixa--ciclo" data-de="1" data-n="4">
+          <b class="num ciclo-num">N</b>
+          <p class="ciclo-faixa-txt">
+            <span class="ciclo-faixa-rot"><svg class="ico" aria-hidden="true"><use href="#i-play"/></svg>Período A</span>
+            <span class="ciclo-un">semanas</span>
+          </p>
+        </div>
+        <div class="ciclo-faixa ciclo-faixa--cooldown" data-de="5" data-n="2">
+          <b class="num ciclo-num">M</b>
+          <p class="ciclo-faixa-txt">
+            <span class="ciclo-faixa-rot"><svg class="ico" aria-hidden="true"><use href="#i-pause"/></svg>Período B</span>
+            <span class="ciclo-un">semanas</span>
+          </p>
+        </div>
+      </div>
+
+      <ol class="ciclo-semanas" aria-label="Uma volta completa">
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">1</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">2</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">3</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--ciclo"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">4</b><span class="sr-only">Período A</span></li>
+        <li class="ciclo-sem ciclo-sem--cooldown"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">5</b><span class="sr-only">Período B</span></li>
+        <li class="ciclo-sem ciclo-sem--cooldown"><span class="ciclo-sem-rot">Semana</span><b class="ciclo-sem-num">6</b><span class="sr-only">Período B</span></li>
+      </ol>
+
+      <div class="ciclo-volta">
+        <p class="ciclo-volta-rot"><svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg>Novo ciclo: volta à semana 1</p>
+      </div>
+    </div>
+
+    <ul class="ciclo-legenda anim d5" aria-label="Legenda">
+      <li><span class="ciclo-amostra" aria-hidden="true"></span><span><b>Período A</b> · semanas 1 a 4 · cheio</span></li>
+      <li><span class="ciclo-amostra ciclo-amostra--cooldown" aria-hidden="true"></span><span><b>Período B</b> · semanas 5 e 6 · listrado</span></li>
+      <li><span class="ciclo-amostra ciclo-amostra--volta" aria-hidden="true"><svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg></span><span><b>Novo ciclo</b> · o ritmo se repete</span></li>
+    </ul>
+  </div>
+</section>

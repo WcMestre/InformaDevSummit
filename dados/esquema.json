@@ -1,0 +1,56 @@
+{
+  "_leia-me": "Esquema oficial das tabelas CSV (base de dados do deck). Toda tabela ganha automaticamente a coluna 'id' (primeira) e 'atualizado_em' (última). Mudou aqui? Rode montar.py: ele valida os cabeçalhos de dados/*.csv e recria os que faltam.",
+  "tabelas": {
+    "brainstorming": {
+      "colunas": [
+        "rodada",
+        "participante",
+        "tipo",
+        "texto",
+        "criticidade"
+      ],
+      "descricao": "Apontamentos da rodada. tipo = bom | melhorar. criticidade = 1 a 3 (só pesa em 'melhorar')."
+    },
+    "anotacoes": {
+      "colunas": [
+        "assunto",
+        "tipo",
+        "texto",
+        "votos"
+      ],
+      "descricao": "Anotações livres por assunto. tipo = sugestao | duvida | risco. votos = mãos levantadas (inteiro >= 0)."
+    },
+    "propostas": {
+      "colunas": [
+        "assunto",
+        "proposta",
+        "enunciado",
+        "decisao",
+        "votos_aceitar",
+        "votos_ajustar",
+        "votos_recusar",
+        "ajuste"
+      ],
+      "descricao": "Proposta na mesa. proposta = id da tela; enunciado = texto da proposta; decisao = aceitar | ajustar | recusar | (vazio)."
+    },
+    "decisoes": {
+      "colunas": [
+        "assunto",
+        "item",
+        "responsavel",
+        "prazo",
+        "status",
+        "observacao"
+      ],
+      "descricao": "Compromissos: o que, quem (nasce em branco) e quando (AAAA-MM-DD). status = aberto | andamento | concluido."
+    },
+    "progresso": {
+      "colunas": [
+        "slide",
+        "passo",
+        "estado"
+      ],
+      "descricao": "Passos de dinâmica concluídos por tela. estado = feito | em-curso."
+    }
+  }
+}

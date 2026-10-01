@@ -1,0 +1,61 @@
+/* ==========================================================================
+   25 · DADOS — indicador da base CSV na moldura + painel de dados (tecla D).
+   Dono: camada de dados (assets/js/20-dados.js). Estados do chip: --ok (verde) · --alerta (âmbar) · --salvando (neutro, curto) · --conflito · --falhou (vermelho) · --neutro
+   ========================================================================== */
+/* indicador da base de dados (CSV) na barra superior */
+.dados-chip{display:inline-flex;align-items:center;gap:10px;max-width:460px;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.04em;
+  padding:6px 16px;border-radius:999px;border:1.5px solid var(--line);background:rgba(2,22,31,.5);color:var(--ink-dim);cursor:pointer;white-space:nowrap;overflow:hidden}
+.dados-chip span{overflow:hidden;text-overflow:ellipsis}
+.dados-chip:hover,.dados-chip:focus-visible{border-color:var(--laranja);color:var(--ink);outline:none}
+.dados-chip--ok{color:#7fd6a0;border-color:rgba(63,174,107,.6)}
+.dados-chip--alerta{color:var(--alerta);border-color:rgba(240,180,41,.65)}
+.dados-chip--salvando{color:var(--ink);border-color:var(--card-brd)}   /* com pasta, salvar é rotina: sem âmbar */
+.dados-chip--conflito,.dados-chip--falhou{color:#f59a91;border-color:var(--perigo)}
+#stage[data-chrome="min"] .dados-chip{opacity:.0;pointer-events:none}
+
+/* painel de dados (D) */
+.dados-painel{position:absolute;inset:0;z-index:75;background:rgba(2,22,31,.94);display:flex;align-items:center;justify-content:center}
+.dados-painel[hidden]{display:none}
+.dados-caixa{width:1360px;max-height:960px;overflow:auto;background:var(--azul-900);border:1px solid var(--line);border-radius:var(--raio);padding:40px 48px}
+.dados-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.dados-topo h2{font-family:var(--serif);font-size:var(--t-h3);font-weight:600}
+.dados-x{background:none;border:1px solid var(--line);border-radius:10px;color:var(--ink);font-size:30px;width:52px;height:52px;display:grid;place-items:center;cursor:pointer}
+.dados-texto{font-size:var(--t-rotulo);line-height:1.4;color:var(--ink-dim);margin-bottom:18px;max-width:1240px}
+.dados-texto b{color:var(--ink);font-weight:500}
+.dados-texto code,.dados-tab code{font-family:var(--mono);color:var(--laranja-claro);font-size:.92em}
+.dados-pasta{display:flex;align-items:center;gap:16px;padding:16px 22px;border:1.5px solid var(--line);border-radius:14px;font-size:var(--t-peq);margin-bottom:20px}
+.dados-pasta span{flex:1}
+.dados-pasta--ok{border-color:rgba(63,174,107,.6)} .dados-pasta--alerta{border-color:rgba(240,180,41,.65)} .dados-pasta--salvando{border-color:var(--card-brd)} .dados-pasta--conflito,.dados-pasta--falhou{border-color:var(--perigo)}
+.dados-pasta .dados-btn:first-of-type{margin-left:0}
+.dados-erro{color:#f59a91;font-size:var(--t-peq);margin-bottom:14px}
+.dados-status{min-height:1.4em;font-size:var(--t-peq);line-height:1.4;color:var(--ink);margin-bottom:14px}
+.dados-status:empty{display:none}
+.dados-status--erro{color:#f59a91}
+.dados-import{border:1.5px solid rgba(240,180,41,.65);border-radius:14px;padding:16px 22px;margin-bottom:18px;font-size:var(--t-peq)}
+.dados-import[hidden]{display:none}
+.dados-import p{margin-bottom:12px}
+.dados-det td{padding:4px 10px 16px;border-bottom:1px solid var(--line)}
+.dados-det p{font-size:var(--t-peq);line-height:1.4;color:var(--ink-dim);margin-bottom:12px}
+.dados-det p b{color:var(--ink);font-weight:500}
+.dados-det .dados-erro{margin-bottom:0}
+.dados-acoes{display:flex;flex-wrap:wrap;gap:12px}
+.dados-acoes .dados-btn{margin-left:0}
+.dados-zerar{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.dados-texto--tab{margin-bottom:12px}
+.dados-tab{width:100%;border-collapse:collapse;font-size:var(--t-peq)}
+.dados-tab th{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-weight:500}
+.dados-tab td{padding:12px 10px;border-bottom:1px solid var(--line)}
+.dados-tab td.acoes{text-align:right;white-space:nowrap}
+.dados-tab .vazio{color:var(--ink-dim);font-style:italic}
+.sit{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em}
+.sit .ico{vertical-align:-.15em}
+.sit--gravada{color:#7fd6a0}.sit--sem-arquivo,.sit--divergente{color:var(--alerta)}.sit--salvando{color:var(--ink)}.sit--conflito,.sit--falhou{color:#f59a91}.sit--base{color:var(--ink-dim)}
+.dados-btn{display:inline-flex;align-items:center;font:inherit;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em;color:var(--ink);background:var(--card-forte);
+  border:1.5px solid var(--line);border-radius:10px;padding:8px 18px;margin-left:10px;cursor:pointer}
+.dados-btn:hover,.dados-btn:focus-visible{border-color:var(--laranja);outline:none}
+.dados-btn--forte{background:var(--laranja);color:#2a1600;border-color:var(--laranja);font-weight:700}
+.dados-btn--perigo{border-color:var(--perigo)}
+.dados-btn--armado{background:var(--perigo);color:#2a0a06;border-color:var(--perigo);font-weight:700}   /* "toque de novo": ação destrutiva armada por 4 s */
+.dados-rodape{display:flex;align-items:center;gap:12px}
+.dados-rodape .dados-btn{margin-left:0}
+.dados-dica{margin-left:auto;font-family:var(--mono);font-size:var(--t-min);color:var(--ink-dim)}

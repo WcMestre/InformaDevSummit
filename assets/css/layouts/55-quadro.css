@@ -1,0 +1,186 @@
+/* ==========================================================================
+   55 · LAYOUT quadro — tabela editável ao vivo, ligada a uma tabela CSV.
+   Anatomia e atributos: conteudo/modelos/55-quadro.html · comportamento: assets/js/layouts/55-quadro.js
+   Tudo escopado em .slide[data-layout="quadro"]. Compõe .cab, .kicker, .sub, .corpo, .exemplo e .exemplo-marca do núcleo.
+   Ordem: cartão → tabela → células (número · texto · prazo · opções · contador · remover) → avisos sobre a tabela
+          (+N linhas · desfazer) → rodapé e botões → linha-exemplo → estados.
+   Densidade: o cabeçalho da tela é compacto aqui (o quadro precisa de linhas). Variáveis --q-* no .quadro: "normal" (linha 64 px,
+   texto 26 px) enquanto tudo cabe; .quadro[data-densidade="compacta"] (linha 56 px, texto 24 px), posto pelo JS quando não cabe.
+   ========================================================================== */
+
+/* ---------- cabeçalho compacto: o subtítulo de 2 linhas não pode roubar linhas do quadro ---------- */
+.slide[data-layout="quadro"] .cab{margin-bottom:20px}
+.slide[data-layout="quadro"] .kicker{margin-bottom:10px}
+.slide[data-layout="quadro"] .sub{max-width:none;margin-top:8px;font-size:var(--t-corpo);line-height:1.3}
+
+/* ---------- cartão do quadro ---------- */
+.slide[data-layout="quadro"] .quadro{--q-linha:64px;--q-fonte:var(--t-peq);--q-campo:50px;--q-op:46px;--q-btn:52px;
+  position:relative;flex:1;min-height:0;display:flex;flex-direction:column;
+  background:var(--card);border:1px solid var(--card-brd);border-radius:var(--raio)}
+.slide[data-layout="quadro"] .quadro[data-densidade="compacta"]{--q-linha:56px;--q-fonte:24px;--q-campo:40px;--q-op:40px;--q-btn:44px}
+.slide[data-layout="quadro"] .quadro-rolagem{position:relative;flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;
+  scroll-padding-top:56px;scroll-padding-bottom:64px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.28) transparent;
+  border-radius:var(--raio) var(--raio) 0 0}
+/* degradê de borda: há linhas fora da vista (data-mais-baixo, via JS) — junto com o botão "+N linhas abaixo" */
+.slide[data-layout="quadro"] .quadro-rolagem[data-mais-baixo]{
+  -webkit-mask-image:linear-gradient(var(--branco) calc(100% - 40px),transparent);mask-image:linear-gradient(var(--branco) calc(100% - 40px),transparent)}
+
+/* ---------- tabela: colunas fixas por tipo (larguras em px do palco) ---------- */
+.slide[data-layout="quadro"] .quadro-tabela{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0}
+.slide[data-layout="quadro"] .quadro-tabela th{position:sticky;top:0;z-index:2;height:52px;padding:4px 18px;
+  background:var(--azul-900);box-shadow:1px 0 0 var(--azul-900);border-bottom:2px solid rgba(247,148,29,.5);text-align:left;vertical-align:middle;
+  font-family:var(--mono);font-size:var(--t-rotulo);font-weight:500;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);overflow-wrap:anywhere}
+.slide[data-layout="quadro"] .quadro-tabela th:first-child{border-top-left-radius:var(--raio)}
+.slide[data-layout="quadro"] .quadro-tabela th:last-child{border-top-right-radius:var(--raio)}
+.slide[data-layout="quadro"] .quadro-col-num{width:64px;padding:0}
+.slide[data-layout="quadro"] .quadro-col-acoes{width:92px;padding:0}
+.slide[data-layout="quadro"] .quadro-tabela th[data-largura="estreita"]{width:250px}
+.slide[data-layout="quadro"] .quadro-tabela th[data-tipo="data"]{width:480px}
+.slide[data-layout="quadro"] .quadro-tabela th[data-tipo="contador"]{width:260px}
+.slide[data-layout="quadro"] .quadro-tabela th[data-tipo="opcoes"]{width:560px}
+.slide[data-layout="quadro"] .quadro-tabela th[data-tipo="opcoes"][data-compacto]{width:330px}
+.slide[data-layout="quadro"] .quadro-th-nota{margin-left:10px;font-family:var(--sans);font-size:var(--t-min);font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink-dim)}
+
+.slide[data-layout="quadro"] .quadro-tabela td{height:var(--q-linha);padding:3px 18px;vertical-align:middle;border-bottom:1px solid var(--line);
+  font-size:var(--q-fonte);line-height:1.3;color:var(--ink)}
+.slide[data-layout="quadro"] .quadro-tabela tbody tr:last-child td{border-bottom:0}
+.slide[data-layout="quadro"] .quadro-linha:focus-within td{background:var(--card)}
+.slide[data-layout="quadro"] .quadro-linha:focus-within td:first-child{box-shadow:inset 3px 0 0 var(--laranja)}
+
+/* ---------- célula: número da linha ---------- */
+.slide[data-layout="quadro"] .quadro-num{padding:0;text-align:center;font-family:var(--mono);font-size:var(--t-rotulo);color:var(--ink-dim)}
+
+/* ---------- célula: texto editável ---------- */
+.slide[data-layout="quadro"] .quadro-campo{min-height:var(--q-campo);padding:5px 14px;border:1.5px solid transparent;border-radius:12px;
+  background:rgba(255,255,255,.035);white-space:pre-wrap;overflow-wrap:anywhere;cursor:text;outline:none}
+.slide[data-layout="quadro"] .quadro-campo:hover{border-color:var(--line)}
+.slide[data-layout="quadro"] .quadro-campo:focus{border-color:var(--laranja);background:rgba(2,22,31,.55);box-shadow:0 0 0 3px rgba(247,148,29,.3)}
+.slide[data-layout="quadro"] .quadro-campo:empty::before{content:attr(data-ph);color:var(--ink-dim);font-style:italic;pointer-events:none}
+
+/* ---------- célula: prazo (tripla dia/mês/ano + ajuda D+N + aviso) ---------- */
+.slide[data-layout="quadro"] .quadro-data{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px}
+.slide[data-layout="quadro"] .quadro-data-campos{display:inline-flex;align-items:center;gap:2px;padding:0 10px;height:var(--q-campo);
+  border:1.5px solid transparent;border-radius:12px;background:rgba(255,255,255,.035)}
+.slide[data-layout="quadro"] .quadro-data-campos:hover{border-color:var(--line)}
+.slide[data-layout="quadro"] .quadro-data-campos:focus-within{border-color:var(--laranja);background:rgba(2,22,31,.55);box-shadow:0 0 0 3px rgba(247,148,29,.3)}
+.slide[data-layout="quadro"] .quadro-data-campos[data-invalido]{border-color:var(--alerta);border-style:dashed}
+.slide[data-layout="quadro"] .quadro-dmy{width:56px;padding:0;border:0;outline:none;background:none;text-align:center;
+  font-family:var(--sans);font-size:var(--q-fonte);color:var(--ink);font-variant-numeric:tabular-nums}
+.slide[data-layout="quadro"] .quadro-dmy--ano{width:92px}
+.slide[data-layout="quadro"] .quadro-dmy::placeholder{color:var(--ink-dim);font-style:italic}
+.slide[data-layout="quadro"] .quadro-data-sep{color:var(--ink-dim)}
+.slide[data-layout="quadro"] .quadro-data-rel{font-family:var(--mono);font-size:var(--t-rotulo);color:var(--ink-dim);white-space:nowrap}
+.slide[data-layout="quadro"] .quadro-aviso{flex:0 0 100%;display:flex;align-items:center;gap:10px;font-size:var(--t-rotulo);font-weight:500;line-height:1.25;color:var(--alerta)}
+.slide[data-layout="quadro"] .quadro-aviso[hidden]{display:none}
+.slide[data-layout="quadro"] .quadro-aviso .ico{font-size:26px}
+
+/* ---------- célula: opções (grupo de botões com ícone + rótulo) ---------- */
+.slide[data-layout="quadro"] .quadro-seg{display:inline-flex;align-items:center;gap:4px;padding:4px;
+  border:1.5px solid var(--line);border-radius:999px;background:rgba(2,22,31,.35)}
+.slide[data-layout="quadro"] .quadro-op{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:var(--q-op);min-width:52px;padding:0 18px;
+  border:1.5px solid transparent;border-radius:999px;background:none;cursor:pointer;
+  font-family:var(--sans);font-size:var(--t-rotulo);font-weight:500;color:var(--ink-dim);white-space:nowrap}
+.slide[data-layout="quadro"] .quadro-op .ico{font-size:26px}
+.slide[data-layout="quadro"] .quadro-op:hover{border-color:var(--line);color:var(--ink)}
+.slide[data-layout="quadro"] .quadro-op:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:2px}
+.slide[data-layout="quadro"] .quadro-op[aria-checked="true"]{background:var(--laranja);border-color:var(--laranja);color:var(--azul-950);font-weight:700}
+.slide[data-layout="quadro"] .quadro-seg--compacto .quadro-op{padding:0 13px}
+.slide[data-layout="quadro"] .quadro-seg--compacto .quadro-op[aria-checked="true"]{padding:0 18px}
+.slide[data-layout="quadro"] .quadro-seg--compacto .quadro-op[aria-checked="false"] .quadro-op-txt{display:none}
+
+/* ---------- célula: remover ---------- */
+.slide[data-layout="quadro"] .quadro-acoes{padding:0;text-align:center}
+.slide[data-layout="quadro"] .quadro-remover{display:inline-grid;place-items:center;width:var(--q-btn);height:var(--q-btn);border-radius:50%;
+  border:1.5px solid var(--line);background:none;color:var(--ink-dim);font-size:26px;cursor:pointer}
+.slide[data-layout="quadro"] .quadro-remover:hover{border-color:var(--perigo);color:var(--ink)}
+.slide[data-layout="quadro"] .quadro-remover:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:2px}
+
+/* ---------- célula: contador (votação por mãos levantadas) — botões ≥ 44 px, valor grande ---------- */
+.slide[data-layout="quadro"] .quadro-cont{display:inline-flex;align-items:center;gap:6px}
+.slide[data-layout="quadro"] .quadro-cont-btn{display:inline-grid;place-items:center;width:var(--q-btn);height:var(--q-btn);border-radius:50%;
+  border:1.5px solid var(--line);background:var(--card-forte);color:var(--ink);font-size:26px;cursor:pointer}
+.slide[data-layout="quadro"] .quadro-cont-btn--mais{border-color:rgba(247,148,29,.65);color:var(--laranja-claro)}
+.slide[data-layout="quadro"] .quadro-cont-btn:hover{border-color:var(--laranja)}
+.slide[data-layout="quadro"] .quadro-cont-btn:active{background:rgba(247,148,29,.22)}
+.slide[data-layout="quadro"] .quadro-cont-btn:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:2px}
+.slide[data-layout="quadro"] .quadro-cont-btn[aria-disabled="true"]{border-style:dashed;background:none;color:var(--exemplo);cursor:default}
+.slide[data-layout="quadro"] .quadro-cont-btn[aria-disabled="true"]:hover{border-color:var(--line)}
+.slide[data-layout="quadro"] .quadro-cont-valor{min-width:76px;text-align:center;font-family:var(--serif);font-size:var(--t-h3);font-weight:600;line-height:1;
+  color:var(--ink);font-variant-numeric:lining-nums tabular-nums}
+.slide[data-layout="quadro"] .quadro-linha-exemplo .quadro-cont{padding-left:var(--q-btn)}
+.slide[data-layout="quadro"] .quadro-linha-exemplo .quadro-cont-valor{color:var(--exemplo)}
+
+/* ---------- avisos sobre a tabela (altura zero: não tiram linha): "+N linhas abaixo" e "Desfazer" ---------- */
+.slide[data-layout="quadro"] .quadro-sobre{position:relative;height:0;z-index:4}
+/* o indicador mora na faixa do rodapé (entre gravação e botões): não cobre nenhuma linha da tabela; a dica de teclas cede o lugar */
+.slide[data-layout="quadro"] .quadro-mais{position:absolute;left:520px;top:12px;
+  display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 18px 0 20px;border-radius:999px;
+  border:1.5px solid var(--laranja);background:var(--azul-950);box-shadow:0 6px 18px rgba(0,0,0,.45);cursor:pointer;
+  font-family:var(--sans);font-size:var(--t-rotulo);font-weight:600;color:var(--laranja-claro);white-space:nowrap}
+.slide[data-layout="quadro"] .quadro-mais[hidden]{display:none}
+.slide[data-layout="quadro"] .quadro-mais .ico{font-size:26px;transform:rotate(90deg)}
+.slide[data-layout="quadro"] .quadro-mais:hover{background:var(--azul-900)}
+.slide[data-layout="quadro"] .quadro-mais:focus-visible,
+.slide[data-layout="quadro"] .quadro-desfazer-btn:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:3px}
+.slide[data-layout="quadro"] .quadro-desfazer{position:absolute;left:20px;bottom:12px}
+.slide[data-layout="quadro"] .quadro-desfazer-cx{display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 6px 0 24px;border-radius:999px;
+  border:1.5px solid var(--line);background:var(--azul-950);box-shadow:0 6px 18px rgba(0,0,0,.45);
+  font-size:var(--t-rotulo);color:var(--ink);white-space:nowrap}
+.slide[data-layout="quadro"] .quadro-desfazer-cx[hidden]{display:none}
+.slide[data-layout="quadro"] .quadro-desfazer-sep{color:var(--ink-dim)}
+.slide[data-layout="quadro"] .quadro-desfazer-btn{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 20px;border-radius:999px;
+  border:1.5px solid var(--laranja);background:none;cursor:pointer;font-family:var(--sans);font-size:var(--t-rotulo);font-weight:700;color:var(--laranja-claro)}
+.slide[data-layout="quadro"] .quadro-desfazer-btn:hover{background:rgba(247,148,29,.14)}
+.slide[data-layout="quadro"] .quadro-desfazer-btn .ico{font-size:24px;transform:rotate(180deg)}
+
+/* ---------- linha-exemplo (cinza, fora dos dados) e convite do quadro vazio ---------- */
+.slide[data-layout="quadro"] .quadro-linha-exemplo[hidden],
+.slide[data-layout="quadro"] .quadro-linha-vazio[hidden]{display:none}
+.slide[data-layout="quadro"] .quadro-linha-exemplo td{color:var(--exemplo)}
+.slide[data-layout="quadro"] .quadro-exemplo-txt{display:flex;align-items:center;gap:0;padding-left:14px}
+.slide[data-layout="quadro"] .quadro-linha-exemplo .quadro-data-rel,
+.slide[data-layout="quadro"] .quadro-linha-exemplo .quadro-aviso{color:var(--exemplo)}
+.slide[data-layout="quadro"] .quadro-exemplo-op{display:inline-flex;align-items:center;gap:10px;padding-left:14px;font-size:var(--t-rotulo)}
+.slide[data-layout="quadro"] .quadro-linha-vazio td{height:84px;padding:12px 18px}
+.slide[data-layout="quadro"] .quadro-vazio-btn{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;height:60px;
+  border:2px dashed rgba(247,148,29,.6);border-radius:14px;background:none;cursor:pointer;
+  font-family:var(--sans);font-size:var(--t-peq);font-weight:500;color:var(--laranja-claro)}
+.slide[data-layout="quadro"] .quadro-vazio-btn:hover{background:rgba(247,148,29,.1)}
+.slide[data-layout="quadro"] .quadro-vazio-btn:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:3px}
+
+/* ---------- rodapé: contador · gravação · dica · botões ---------- */
+.slide[data-layout="quadro"] .quadro-rodape{display:flex;align-items:center;gap:22px;padding:10px 24px;
+  border-top:1px solid var(--line);background:rgba(2,22,31,.4);border-radius:0 0 var(--raio) var(--raio)}
+.slide[data-layout="quadro"] .quadro-contador{display:flex;align-items:baseline;gap:10px;font-size:var(--t-peq);color:var(--ink-dim);white-space:nowrap}
+.slide[data-layout="quadro"] .quadro-contador b{font-family:var(--serif);font-size:var(--t-h3);font-weight:600;line-height:1;color:var(--ink);font-variant-numeric:lining-nums}
+.slide[data-layout="quadro"] .quadro-gravacao{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.02em;color:var(--ink-dim);white-space:nowrap}
+.slide[data-layout="quadro"] .quadro-gravacao .ico{font-size:24px}
+.slide[data-layout="quadro"] .quadro-gravacao[data-estado="gravado"] .ico{color:var(--ok)}
+.slide[data-layout="quadro"] .quadro-gravacao[data-estado="gravando"],
+.slide[data-layout="quadro"] .quadro-gravacao[data-estado="conflito"]{color:var(--alerta)}
+.slide[data-layout="quadro"] .quadro-dica{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;
+  font-family:var(--mono);font-size:var(--t-min);letter-spacing:.02em;color:var(--ink-dim)}
+/* com "Ordenar por votos" o rodapé não tem largura para a dica de teclas: ela sai e os botões ficam à direita */
+.slide[data-layout="quadro"] .quadro-rodape:has(.quadro-btn--ordenar) .quadro-dica{display:none}
+.slide[data-layout="quadro"] .quadro-btn--ordenar{margin-left:auto}
+.slide[data-layout="quadro"] .quadro-sobre:has(.quadro-mais:not([hidden])) + .quadro-rodape .quadro-dica{visibility:hidden}
+
+.slide[data-layout="quadro"] .quadro-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:12px;
+  height:52px;padding:0 24px;border-radius:999px;border:1.5px solid var(--line);background:var(--card-forte);cursor:pointer;
+  font-family:var(--sans);font-size:var(--t-peq);font-weight:500;color:var(--ink);white-space:nowrap}
+.slide[data-layout="quadro"] .quadro-btn:hover{border-color:var(--laranja)}
+.slide[data-layout="quadro"] .quadro-btn:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:3px}
+.slide[data-layout="quadro"] .quadro-btn--mais{background:var(--laranja);border-color:var(--laranja);color:var(--azul-950);font-weight:700}
+.slide[data-layout="quadro"] .quadro-btn--ordenar[data-estado="ativo"]{border-color:var(--laranja);background:rgba(247,148,29,.16);color:var(--laranja-claro)}
+.slide[data-layout="quadro"] .quadro-btn--limpar{min-width:292px}
+.slide[data-layout="quadro"] .quadro-btn--limpar:disabled{background:none;border-style:dashed;color:var(--exemplo);cursor:default}
+.slide[data-layout="quadro"] .quadro-btn--limpar:disabled:hover{border-color:var(--line)}
+
+/* ---------- estado: limpar armado (confirmação visível por 4 s; manter em sincronia com TEMPO_CONFIRMAR do JS) ---------- */
+.slide[data-layout="quadro"] .quadro-btn--limpar[data-estado="confirmar"]{border-color:var(--perigo);background:rgba(239,106,94,.14);color:var(--perigo)}
+.slide[data-layout="quadro"] .quadro-btn--limpar[data-estado="confirmar"]::after{content:"";position:absolute;left:0;bottom:0;height:5px;width:100%;
+  background:var(--perigo);transform-origin:left center;animation:quadro-espera 4s linear forwards}
+@keyframes quadro-espera{to{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){
+  .slide[data-layout="quadro"] .quadro-btn--limpar[data-estado="confirmar"]::after{animation:none}
+}

@@ -1,0 +1,117 @@
+/* ==========================================================================
+   32 · LAYOUT duas-colunas — comparar ou contrapor.
+   Compõe .cab · .corpo · .card · .rotulo · .lista · .corpo-txt (30-componentes.css).
+   Variantes por data-variante: 50-50 · 60-40 · antes-depois.
+   Ordem: layout → blocos (texto, lista, lado, trecho, seta) → variantes.
+   Modelo: conteudo/modelos/32-duas-colunas.html
+   ========================================================================== */
+
+/* ---- layout ---- */
+.slide[data-layout="duas-colunas"]{
+  --duas-linha:18px;              /* respiro vertical de cada item de lista */
+  --duas-seta:88px;               /* diâmetro do círculo da seta (antes-depois) */
+}
+.slide[data-layout="duas-colunas"] .sub{
+  text-wrap:pretty;               /* evita a palavra órfã na segunda linha */
+}
+.slide[data-layout="duas-colunas"] .duas-grade{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--gap);
+  align-items:stretch;
+}
+
+/* ---- blocos ---- */
+.slide[data-layout="duas-colunas"] .card{
+  padding:40px 44px 44px;
+}
+.slide[data-layout="duas-colunas"] .card h3{
+  margin-bottom:24px;
+}
+.slide[data-layout="duas-colunas"] .duas-texto h3{
+  margin-bottom:20px;
+}
+.slide[data-layout="duas-colunas"] .duas-texto .corpo-txt{
+  margin-bottom:28px;
+  color:var(--ink-dim);
+}
+
+/* listas: itens separados por filete (mesma gramática do layout conteudo) */
+.slide[data-layout="duas-colunas"] .lista{
+  gap:0;
+}
+.slide[data-layout="duas-colunas"] .lista li{
+  padding-top:var(--duas-linha);
+  padding-bottom:var(--duas-linha);
+  border-top:1px solid var(--line);
+}
+.slide[data-layout="duas-colunas"] .lista li::before{
+  top:calc(var(--duas-linha) + .52em);
+}
+.slide[data-layout="duas-colunas"] .duas-texto .lista{
+  border-bottom:1px solid var(--line);
+}
+
+/* ---- variante: 60-40 (texto + cartão de destaque) ---- */
+.slide[data-layout="duas-colunas"][data-variante="60-40"] .duas-grade{
+  grid-template-columns:minmax(0,3fr) minmax(0,2fr);
+  gap:var(--gap-g);
+}
+.slide[data-layout="duas-colunas"][data-variante="60-40"] .card h3{
+  margin-bottom:18px;
+}
+
+/* ---- variante: antes-depois (trecho mono grande de cada lado + seta no meio) ---- */
+.slide[data-layout="duas-colunas"][data-variante="antes-depois"] .duas-grade{
+  grid-template-columns:minmax(0,1fr) var(--duas-seta) minmax(0,1fr);
+  gap:var(--gap);
+}
+.slide[data-layout="duas-colunas"] .duas-lado{
+  display:flex;
+  flex-direction:column;
+  padding:32px 40px 40px;
+  border-top:4px solid var(--card-brd);   /* mesma espessura do filete laranja: os dois lados alinham */
+}
+.slide[data-layout="duas-colunas"] .duas-lado--proposta{
+  border-top-color:var(--laranja);
+}
+.slide[data-layout="duas-colunas"] .duas-trecho{
+  display:flex;
+  align-items:center;
+  min-height:160px;                 /* reserva duas linhas: os dois lados alinham as explicações */
+  margin-bottom:28px;
+  padding:20px 28px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(2,22,31,.55);
+  font-family:var(--mono);
+  font-size:var(--t-h3);
+  font-weight:500;
+  line-height:1.25;
+  color:var(--ink);
+  overflow-wrap:anywhere;
+}
+.slide[data-layout="duas-colunas"] .duas-lado--proposta .duas-trecho{
+  border-color:var(--laranja);
+  color:var(--laranja-claro);
+}
+.slide[data-layout="duas-colunas"] .duas-explica{
+  --duas-linha:0px;                 /* explicações compactas, sem filete */
+  gap:18px;
+}
+.slide[data-layout="duas-colunas"] .duas-explica li{
+  border-top:0;
+}
+.slide[data-layout="duas-colunas"] .duas-seta{
+  align-self:center;
+  justify-self:center;
+  display:grid;
+  place-items:center;
+  width:var(--duas-seta);
+  height:var(--duas-seta);
+  border:2px solid var(--laranja);
+  border-radius:50%;
+  background:var(--azul-900);
+  color:var(--laranja-claro);
+  font-size:44px;
+}

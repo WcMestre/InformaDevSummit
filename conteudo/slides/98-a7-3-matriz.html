@@ -1,0 +1,60 @@
+<section class="slide" id="a7-matriz" data-layout="matriz" data-bloco="a7" data-min="6">
+  <header class="cab">
+    <p class="kicker anim d1">Assunto 7 · Quem recebe o quê</p>
+    <h2 class="anim d2">Quem recebe <em>o quê</em></h2>
+    <p class="sub anim d3">Leia por linha. O traço marca o que não foi informado.</p>
+  </header>
+  <div class="corpo">
+    <div class="anim d4" data-sangra>
+      <table class="matriz-tabela">
+        <caption class="sr-only">Quem recebe o quê: GitHub, Claude, conta de Inovação e conta de Desenvolvimento, por usuário, time e máquina</caption>
+        <colgroup>
+          <col class="matriz-col-linha">
+          <col><col><col><col>
+        </colgroup>
+        <thead>
+          <tr>
+            <td class="matriz-canto" rowspan="2"><span class="sr-only">Quem</span></td>
+            <th scope="colgroup" colspan="2" class="matriz-grupo matriz-grupo--destaque">Por usuário</th>
+            <th scope="colgroup" colspan="2" class="matriz-grupo">Contas atuais</th>
+          </tr>
+          <tr>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">GitHub</span><span class="matriz-col-nota">usuário pago</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Claude</span><span class="matriz-col-nota">plano individual</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Conta de Inovação</span></th>
+            <th scope="col" class="matriz-col"><span class="matriz-col-nome">Conta de Desenvolvimento</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Cada usuário</span></th>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Recebe</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Recebe</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-alvo"/></svg>Time de Inovação</span></th>
+            <td class="matriz-celula" data-estado="nao"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span><span class="matriz-rotulo">Não recebe</span></span></td>
+            <td class="matriz-celula" data-estado="nao"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span><span class="matriz-rotulo">Não recebe</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Usa</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="matriz-linha"><span class="matriz-linha-txt"><svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg>Máquina da Pipeline</span></th>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="nd"><span class="matriz-conteudo matriz-conteudo--nd"><span class="matriz-traco" aria-hidden="true"></span><span class="sr-only">não informado</span></span></td>
+            <td class="matriz-celula" data-estado="sim"><span class="matriz-conteudo"><span class="matriz-ico"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span class="matriz-rotulo">Fica logada</span></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ul class="matriz-legenda anim d5" aria-label="Legenda dos estados">
+      <li><span class="matriz-ico matriz-ico--sim"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span>Recebe, usa ou fica logada</li>
+      <li><span class="matriz-ico matriz-ico--nao"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></span>Não recebe</li>
+      <li><span class="matriz-traco" aria-hidden="true"></span>Não informado</li>
+    </ul>
+  </div>
+</section>

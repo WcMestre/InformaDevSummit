@@ -1,0 +1,405 @@
+/* ==========================================================================
+   38 · LAYOUT linha-tempo — linha do tempo horizontal com marcos de dois tipos.
+   Mostra como um esquema (ex.: versionamento) se comporta ao longo do tempo:
+     marco OFICIAL        nó grande e cheio (círculo), rótulo grande em mono, legenda embaixo
+     marco INTERMEDIÁRIO  nó pequeno vazado (losango) sobre o eixo, rótulo menor
+   Compõe .cab · .corpo · .sr-only (núcleo). Sem JS e sem CSV: o HTML já é o dado.
+   Modelo: conteudo/modelos/38-linha-tempo.html
+
+   Variantes por data-variante na <section>:
+     uma-linha (padrão)  todos os marcos no mesmo eixo, em ordem cronológica
+     duas-linhas         oficiais na faixa de cima, intermediários na de baixo (mesmas colunas de tempo)
+
+   Densidade adaptativa (4 a 10 marcos): o número de colunas e o tamanho dos textos nascem de :has()
+   contando os <li> de .lt-marcos; nada a configurar. Com 7 ou mais marcos os textos encolhem um degrau.
+
+   Ordem: escopo e medidas → quadro → eixo → marcos → nós → chamadas → períodos → legenda → variantes.
+   ========================================================================== */
+
+/* ---- escopo e medidas (tudo em px do palco; fora do palco nada vaza) ---- */
+.slide[data-layout="linha-tempo"]{
+  --lt-eixo:rgba(234,242,246,.42);         /* eixo: ink do núcleo a 42% */
+  --lt-fio:rgba(247,148,29,.6);            /* filete laranja fino dos períodos */
+  --lt-listra:rgba(255,255,255,.04);       /* coluna de tempo dos períodos pares */
+  --lt-larg-chamada:380px;
+  --lt-alt-chamada:118px;                  /* reserva de altura quando há chamada */
+  --lt-gap-faixa:12px;                     /* entre as duas faixas (duas-linhas) */
+  --lt-gap-periodos:22px;                  /* entre a última faixa e os períodos */
+  --lt-alt-periodo:60px;
+  --lt-gutter:0px;                         /* coluna de rótulos das faixas (só duas-linhas) */
+}
+
+/* a coluna do corpo distribui quadro (em cima) e legenda (no pé) */
+.slide[data-layout="linha-tempo"] .corpo{
+  justify-content:space-between;
+  padding-bottom:8px;
+}
+.slide[data-layout="linha-tempo"] .cab{
+  margin-bottom:var(--gap);
+}
+
+/* ---- quadro: agrupa marcos + períodos; concentra as variáveis de medida ---- */
+.slide[data-layout="linha-tempo"] .lt-quadro{
+  --n:6;                                   /* nº de colunas; recalculado por :has() abaixo */
+  --lt-h-ver:64px;                         /* faixa do rótulo de versão */
+  --lt-h-no:60px;                          /* faixa do nó (eixo passa no meio) */
+  --lt-h-leg:112px;                        /* faixa da legenda do marco (até 3 linhas) */
+  --lt-d-of:44px;                          /* diâmetro do nó oficial */
+  --lt-d-in:22px;                          /* lado do nó intermediário */
+  --lt-fs-ver-of:44px;
+  --lt-fs-ver-in:30px;
+  --lt-fs-leg-of:var(--t-peq);
+  --lt-fs-leg-in:var(--t-rotulo);
+  --lt-pad-sup:0px;
+  --lt-pad-inf:0px;
+  --lt-h-faixa-1:calc(var(--lt-h-ver) + var(--lt-h-no) + var(--lt-h-leg));
+  --lt-h-faixa-2:0px;
+  --lt-y1:calc(var(--lt-pad-sup) + var(--lt-h-ver) + var(--lt-h-no) / 2);
+  --lt-y2:calc(var(--lt-pad-sup) + var(--lt-h-faixa-1) + var(--lt-gap-faixa) + var(--lt-h-ver) + var(--lt-h-no) / 2);
+  --lt-alto-marcos:calc(var(--lt-pad-sup) + var(--lt-h-faixa-1) + var(--lt-pad-inf));
+  position:relative;
+  padding-left:var(--lt-gutter);
+  margin-block:auto;                       /* centra o quadro no espaço entre o cabeçalho e a legenda */
+}
+
+/* nº de colunas = nº de marcos (4 a 10) */
+.slide[data-layout="linha-tempo"] .lt-quadro:has(.lt-marcos > :nth-child(4):last-child){--n:4}
+.slide[data-layout="linha-tempo"] .lt-quadro:has(.lt-marcos > :nth-child(5):last-child){--n:5}
+.slide[data-layout="linha-tempo"] .lt-quadro:has(.lt-marcos > :nth-child(6):last-child){--n:6}
+.slide[data-layout="linha-tempo"] .lt-quadro:has(.lt-marcos > :nth-child(7):last-child){--n:7}
+.slide[data-layout="linha-tempo"] .lt-quadro:has(.lt-marcos > :nth-child(8):last-child){--n:8}
+.slide[data-layout="linha-tempo"] .lt-quadro:has(.lt-marcos > :nth-child(9):last-child){--n:9}
+.slide[data-layout="linha-tempo"] .lt-quadro:has(.lt-marcos > :nth-child(10):last-child){--n:10}
+
+/* 7 ou mais marcos: um degrau abaixo nos textos */
+.slide[data-layout="linha-tempo"] .lt-quadro:has(.lt-marcos > :nth-child(7)){
+  --lt-fs-ver-of:36px;
+  --lt-fs-ver-in:28px;
+  --lt-fs-leg-of:var(--t-rotulo);
+  --lt-h-ver:56px;
+  --lt-h-leg:108px;
+  --lt-d-of:40px;
+}
+
+/* chamada presente: reserva altura onde o balão aparece */
+.slide[data-layout="linha-tempo"] .lt-quadro:has(.lt-chamada){
+  --lt-pad-sup:var(--lt-alt-chamada);
+}
+
+/* ---- eixo + marcos: grade de N colunas de tempo ---- */
+.slide[data-layout="linha-tempo"] .lt-marcos{
+  position:relative;
+  list-style:none;
+  display:grid;
+  grid-template-columns:repeat(var(--n),minmax(0,1fr));
+  grid-template-rows:var(--lt-h-faixa-1);
+  row-gap:var(--lt-gap-faixa);
+  padding-top:var(--lt-pad-sup);
+  padding-bottom:var(--lt-pad-inf);
+}
+
+/* eixo com ponta de seta (sentido do tempo): uma só peça recortada */
+.slide[data-layout="linha-tempo"] .lt-marcos::before,
+.slide[data-layout="linha-tempo"] .lt-marcos::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  height:24px;
+  background:var(--lt-eixo);
+  clip-path:polygon(0 calc(50% - 2px), calc(100% - 20px) calc(50% - 2px), calc(100% - 20px) 0, 100% 50%,
+                    calc(100% - 20px) 100%, calc(100% - 20px) calc(50% + 2px), 0 calc(50% + 2px));
+}
+.slide[data-layout="linha-tempo"] .lt-marcos::before{top:calc(var(--lt-y1) - 12px)}
+.slide[data-layout="linha-tempo"] .lt-marcos::after{display:none}   /* 2º eixo só em duas-linhas */
+
+/* ---- marco: coluna com versão · nó · legenda ---- */
+.slide[data-layout="linha-tempo"] .lt-marco{
+  position:relative;
+  z-index:1;
+  grid-row:1;
+  min-width:0;
+  padding:0 6px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+/* posição cronológica = ordem no HTML */
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(1){grid-column:1}
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(2){grid-column:2}
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(3){grid-column:3}
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(4){grid-column:4}
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(5){grid-column:5}
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(6){grid-column:6}
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(7){grid-column:7}
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(8){grid-column:8}
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(9){grid-column:9}
+.slide[data-layout="linha-tempo"] .lt-marcos > :nth-child(10){grid-column:10}
+
+.slide[data-layout="linha-tempo"] .lt-versao{
+  height:var(--lt-h-ver);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding-bottom:10px;
+  font-family:var(--mono);
+  font-weight:500;
+  white-space:nowrap;
+}
+.slide[data-layout="linha-tempo"] .lt-marco--oficial .lt-versao{
+  font-size:var(--lt-fs-ver-of);
+  font-weight:700;
+  color:var(--laranja-claro);
+}
+.slide[data-layout="linha-tempo"] .lt-marco--intermediario .lt-versao{
+  font-size:var(--lt-fs-ver-in);
+  color:var(--ink);
+}
+
+.slide[data-layout="linha-tempo"] .lt-rotulo{
+  display:block;
+  margin-top:8px;
+  line-height:1.25;
+}
+.slide[data-layout="linha-tempo"] .lt-marco--oficial .lt-rotulo{
+  font-size:var(--lt-fs-leg-of);
+  font-weight:500;
+  color:var(--ink);
+}
+.slide[data-layout="linha-tempo"] .lt-marco--intermediario .lt-rotulo{
+  font-size:var(--lt-fs-leg-in);
+  color:var(--ink-dim);
+}
+
+/* ---- nós: a forma também diz o tipo (círculo cheio × losango vazado) ---- */
+.slide[data-layout="linha-tempo"] .lt-no{
+  flex:none;
+  width:100%;
+  height:var(--lt-h-no);
+  display:grid;
+  place-items:center;
+}
+.slide[data-layout="linha-tempo"] .lt-no::before{
+  content:"";
+  box-sizing:border-box;
+}
+.slide[data-layout="linha-tempo"] .lt-no--oficial::before{
+  width:var(--lt-d-of);
+  height:var(--lt-d-of);
+  border-radius:50%;
+  background:var(--laranja);
+  box-shadow:0 0 0 7px rgba(247,148,29,.28);
+}
+.slide[data-layout="linha-tempo"] .lt-no--intermediario::before{
+  width:var(--lt-d-in);
+  height:var(--lt-d-in);
+  background:var(--azul-900);
+  border:3px solid var(--ink);
+  border-radius:3px;
+  transform:rotate(45deg);
+}
+
+/* ---- chamada (balão) apontando para um marco ---- */
+.slide[data-layout="linha-tempo"] .lt-chamada{
+  position:absolute;
+  z-index:1;
+  bottom:calc(100% + 18px);
+  left:50%;
+  transform:translateX(-50%);
+  width:var(--lt-larg-chamada);
+  padding:14px 22px;
+  background:var(--azul-700);
+  border:1.5px solid var(--laranja);
+  border-radius:16px;
+  font-size:var(--t-rotulo);
+  line-height:1.3;
+  color:var(--ink);
+  text-align:center;
+  text-wrap:balance;
+}
+/* marcos das pontas: o balão ancora na margem do quadro em vez de sair do palco */
+.slide[data-layout="linha-tempo"] .lt-marco:first-child .lt-chamada{left:0;transform:none}
+.slide[data-layout="linha-tempo"] .lt-marco:last-child .lt-chamada{left:auto;right:0;transform:none}
+/* pontinha do balão: losango opaco que cobre o filete do balão */
+.slide[data-layout="linha-tempo"] .lt-marco:has(> .lt-chamada)::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:50%;
+  bottom:calc(100% + 12px);
+  width:18px;
+  height:18px;
+  margin-left:-9px;
+  background:var(--azul-700);
+  border-right:1.5px solid var(--laranja);
+  border-bottom:1.5px solid var(--laranja);
+  transform:rotate(45deg);
+}
+
+/* ---- períodos (meses) sob o eixo: faixas alinhadas às colunas ---- */
+.slide[data-layout="linha-tempo"] .lt-periodos{
+  list-style:none;
+  display:grid;
+  grid-template-columns:repeat(var(--n),minmax(0,1fr));
+  margin-top:var(--lt-gap-periodos);
+}
+.slide[data-layout="linha-tempo"] .lt-periodo{
+  position:relative;
+  grid-row:1;
+  margin:0 3px;
+  height:var(--lt-alt-periodo);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 12px;
+  background:var(--card);
+  border:1px solid var(--card-brd);
+  border-top:3px solid var(--lt-fio);
+  border-radius:0 0 14px 14px;
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink);
+  text-align:center;
+}
+/* períodos pares: a coluna de tempo inteira ganha uma listra sutil atrás dos marcos */
+.slide[data-layout="linha-tempo"] .lt-periodo:nth-child(even)::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:-1px;
+  right:-1px;
+  bottom:calc(100% + var(--lt-gap-periodos) - 2px);
+  height:var(--lt-alto-marcos);
+  background:var(--lt-listra);
+  border-radius:14px 14px 0 0;
+  pointer-events:none;
+}
+/* início e extensão do período, em colunas de marco: data-de (1–10) e data-n (1–10) */
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="1"]{grid-column-start:1}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="2"]{grid-column-start:2}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="3"]{grid-column-start:3}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="4"]{grid-column-start:4}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="5"]{grid-column-start:5}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="6"]{grid-column-start:6}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="7"]{grid-column-start:7}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="8"]{grid-column-start:8}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="9"]{grid-column-start:9}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-de="10"]{grid-column-start:10}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="1"]{grid-column-end:span 1}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="2"]{grid-column-end:span 2}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="3"]{grid-column-end:span 3}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="4"]{grid-column-end:span 4}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="5"]{grid-column-end:span 5}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="6"]{grid-column-end:span 6}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="7"]{grid-column-end:span 7}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="8"]{grid-column-end:span 8}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="9"]{grid-column-end:span 9}
+.slide[data-layout="linha-tempo"] .lt-periodo[data-n="10"]{grid-column-end:span 10}
+
+/* ---- legenda fixa dos dois tipos: forma + rótulo, nunca só cor ---- */
+.slide[data-layout="linha-tempo"] .lt-legenda{
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:16px 56px;
+  margin-top:var(--gap);
+  padding-top:20px;
+  border-top:1px solid var(--line);
+}
+.slide[data-layout="linha-tempo"] .lt-legenda li{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  font-size:var(--t-peq);
+  line-height:1.25;
+  color:var(--ink-dim);
+}
+.slide[data-layout="linha-tempo"] .lt-legenda b{
+  font-weight:500;
+  color:var(--ink);
+}
+.slide[data-layout="linha-tempo"] .lt-legenda .lt-no{
+  --lt-h-no:34px;
+  --lt-d-of:24px;
+  --lt-d-in:16px;
+  width:34px;
+}
+
+/* ---- variante: duas-linhas (oficiais em cima, intermediários embaixo) ---- */
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"]{
+  --lt-gutter:184px;
+  --lt-larg-chamada:420px;
+  --lt-alt-chamada:100px;
+  --lt-alt-periodo:52px;
+  --lt-gap-periodos:18px;
+}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-quadro{
+  --lt-h-ver:52px;
+  --lt-h-no:48px;
+  --lt-h-leg:64px;                          /* legenda do oficial: até 2 linhas; o intermediário não tem legenda */
+  --lt-d-of:38px;
+  --lt-fs-ver-of:40px;
+  --lt-fs-ver-in:28px;
+  --lt-fs-leg-of:var(--t-rotulo);
+  --lt-h-faixa-2:calc(var(--lt-h-ver) + var(--lt-h-no));
+  --lt-alto-marcos:calc(var(--lt-pad-sup) + var(--lt-h-faixa-1) + var(--lt-gap-faixa) + var(--lt-h-faixa-2) + var(--lt-pad-inf));
+}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-quadro:has(.lt-marcos > :nth-child(7)){
+  --lt-fs-ver-of:34px;
+  --lt-fs-ver-in:26px;
+  --lt-h-ver:48px;
+  --lt-h-leg:64px;
+}
+/* a reserva de cima só existe se houver chamada em marco oficial; a de baixo, em intermediário */
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-quadro:has(.lt-chamada){--lt-pad-sup:0px}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-quadro:has(.lt-marco--oficial > .lt-chamada){--lt-pad-sup:var(--lt-alt-chamada)}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-quadro:has(.lt-marco--intermediario > .lt-chamada){--lt-pad-inf:var(--lt-alt-chamada)}
+
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-marcos{
+  grid-template-rows:var(--lt-h-faixa-1) var(--lt-h-faixa-2);
+}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-marco--intermediario{grid-row:2}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-marcos::after{
+  display:block;
+  top:calc(var(--lt-y2) - 12px);
+}
+/* intermediário: balão abre para baixo, ponta para cima */
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-marco--intermediario .lt-chamada{
+  bottom:auto;
+  top:calc(100% + 18px);
+}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-marco--intermediario:has(> .lt-chamada)::after{
+  bottom:auto;
+  top:calc(100% + 12px);
+  border:0;
+  border-left:1.5px solid var(--laranja);
+  border-top:1.5px solid var(--laranja);
+}
+
+/* rótulos das faixas na coluna lateral */
+.slide[data-layout="linha-tempo"] .lt-faixa{
+  display:none;
+}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-faixa{
+  display:block;
+  position:absolute;
+  left:0;
+  width:calc(var(--lt-gutter) - 24px);
+  transform:translateY(-50%);
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-faixa--oficial{
+  top:var(--lt-y1);
+  color:var(--laranja-claro);
+}
+.slide[data-layout="linha-tempo"][data-variante="duas-linhas"] .lt-faixa--intermediario{
+  top:var(--lt-y2);
+}

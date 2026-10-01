@@ -1,0 +1,41 @@
+/* ==========================================================================
+   00 · TOKENS — identidade Informa + régua de legibilidade para sala projetada
+   Palco fixo de 1920×1080 (todas as medidas abaixo estão em px do palco, não da janela).
+   ========================================================================== */
+:root{
+  /* marca */
+  --azul:#005679; --azul-700:#0a4a68; --azul-900:#04283a; --azul-950:#02161f;
+  --laranja:#f7941d; --laranja-claro:#fbb043;
+  --cinza:#6d6e71; --cinza-claro:#d1d3d4; --branco:#ffffff;
+
+  /* semântica */
+  --ok:#3fae6b; --alerta:#f0b429; --perigo:#ef6a5e;
+  /* formatos de atividade (validados p/ daltonismo no deck de 13/08): individual · subgrupos · plenária */
+  --f-individual:#3f83b7; --f-subgrupos:#2bb3a3; --f-plenaria:#a78bfa;
+
+  /* brainstorming / nuvem: o que fazemos bem (azul) × o que podemos melhorar (vermelho) — sempre acompanhados de ícone/rótulo */
+  --bom:#4aa3e8; --melhorar:#f0675c;
+
+  /* texto e superfícies (fundo escuro) */
+  --ink:#eaf2f6; --ink-dim:#9db6c4; --exemplo:#8aa3b2;
+  --line:rgba(255,255,255,.16); --card:rgba(255,255,255,.055); --card-brd:rgba(255,255,255,.13);
+  --card-forte:rgba(255,255,255,.10);
+
+  /* tipografia */
+  --serif:'Fraunces',Georgia,'Times New Roman',serif;
+  --sans:'Inter','Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono','Consolas',monospace;
+
+  /* régua de legibilidade — NADA abaixo de 20px no palco (auditoria falha) */
+  --t-display:112px; --t-h1:80px; --t-h2:56px; --t-h3:40px;
+  --t-lead:34px;  --t-corpo:30px; --t-peq:26px; --t-rotulo:22px; --t-min:20px;
+
+  /* área útil */
+  --safe-x:112px;  /* margem lateral */
+  --safe-t:128px;  /* abaixo da barra superior */
+  --safe-b:112px;  /* acima da trilha do dia */
+  --gap:32px; --gap-g:48px; --raio:20px;
+
+  /* logo: texto do wordmark (troca p/ azul em fundo claro: class="logo logo--claro") */
+  --logo-texto:#fff;
+}

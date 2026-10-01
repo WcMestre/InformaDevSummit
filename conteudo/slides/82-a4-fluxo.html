@@ -1,0 +1,125 @@
+<section class="slide" id="a4-fluxo" data-layout="fluxo" data-variante="colunas" data-bloco="a4" data-min="10">
+  <header class="cab">
+    <p class="kicker anim d1">Assunto 4 · Fluxo</p>
+    <h2 class="anim d2">Da ocorrência à <em>tarefa</em></h2>
+    <p class="sub anim d3">Leia da esquerda para a direita: quem age em cada etapa e o que fica registrado.</p>
+  </header>
+  <div class="corpo">
+    <ol class="fluxo-etapas" aria-label="Etapas do fluxo de ocorrências, da esquerda para a direita">
+      <li class="fluxo-etapa anim d3">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">1</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Etapa 1: </span>Entrada</h3>
+        </header>
+        <ul class="fluxo-nos" data-modo="alternativa" aria-label="Um destes canais abre a ocorrência">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="atendimento">
+              <span class="fluxo-ator" data-ator="atendimento"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Atendimento</span>
+              <p class="fluxo-no-txt">Abre a ocorrência</p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="comercial">
+              <span class="fluxo-ator" data-ator="comercial"><svg class="ico" aria-hidden="true"><use href="#i-ajustar"/></svg>Comercial</span>
+              <p class="fluxo-no-txt">Abre a ocorrência</p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="inovacao">
+              <span class="fluxo-ator" data-ator="inovacao"><svg class="ico" aria-hidden="true"><use href="#i-alvo"/></svg>Inovação</span>
+              <p class="fluxo-no-txt">Abre a ocorrência</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d4">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">2</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 2: </span>Coleta e análise</h3>
+          <p class="fluxo-atores">
+            <span class="fluxo-ator" data-ator="ia"><svg class="ico" aria-hidden="true"><use href="#i-play"/></svg>IA</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos" aria-label="Em sequência">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="ia">
+              <p class="fluxo-no-txt">Baixa as ocorrências <b>novas</b>, de um dia para o outro</p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="ia">
+              <p class="fluxo-no-txt">Analisa e gera o <b>relatório</b></p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="artefato" data-ator="ia">
+              <p class="fluxo-no-tipo"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg><span>Artefato</span></p>
+              <p class="fluxo-no-txt">Card no board do GitHub</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d5">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">3</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 3: </span>Aviso por tipo</h3>
+          <p class="fluxo-atores">
+            <span class="fluxo-ator" data-ator="ia"><svg class="ico" aria-hidden="true"><use href="#i-play"/></svg>IA</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos" data-modo="alternativa" aria-label="Um destes caminhos, conforme o tipo da ocorrência">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="ia">
+              <p class="fluxo-no-txt"><b>Melhorias</b> e <b>Customizações</b>: avisa a <b>Inovação</b></p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao" data-ator="ia">
+              <p class="fluxo-no-txt"><b>Bugs</b>: avisa o <b>QA</b></p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d6">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">4</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 4: </span>Estimativa</h3>
+          <p class="fluxo-atores" data-juntos>
+            <span class="fluxo-ator" data-ator="qa"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>QA</span>
+            <span class="fluxo-ator" data-ator="inovacao"><svg class="ico" aria-hidden="true"><use href="#i-alvo"/></svg>Inovação</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao">
+              <p class="fluxo-no-txt">Rodam o fluxo de <b>estimativa</b> de liberação</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li class="fluxo-etapa anim d7">
+        <header class="fluxo-etapa-cab">
+          <span class="fluxo-num" aria-hidden="true">5</span>
+          <h3 class="fluxo-titulo"><span class="sr-only">Depois, etapa 5: </span>Saídas</h3>
+          <p class="fluxo-atores" data-juntos>
+            <span class="fluxo-ator" data-ator="qa"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>QA</span>
+            <span class="fluxo-ator" data-ator="inovacao"><svg class="ico" aria-hidden="true"><use href="#i-alvo"/></svg>Inovação</span>
+          </p>
+        </header>
+        <ul class="fluxo-nos" data-modo="paralelo" aria-label="Em paralelo: duas saídas da estimativa">
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="artefato">
+              <p class="fluxo-no-tipo"><svg class="ico" aria-hidden="true"><use href="#i-quadro"/></svg><span>Artefato</span></p>
+              <p class="fluxo-no-txt"><b>Board de consulta</b>, para o Atendimento</p>
+            </div>
+          </li>
+          <li class="fluxo-no-item">
+            <div class="fluxo-no" data-tipo="acao">
+              <p class="fluxo-no-txt">Atribuem a <b>tarefa</b> no GitHub ao desenvolvedor</p>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+</section>

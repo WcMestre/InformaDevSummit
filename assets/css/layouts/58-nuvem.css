@@ -1,0 +1,147 @@
+/* ==========================================================================
+   58 · NUVEM — nuvem de palavras formada a partir do brainstorming.
+   Tudo escopado em .slide[data-layout="nuvem"]. Componentes do 30-componentes.css são compostos, não redefinidos.
+
+   Regras visuais (as mesmas que a legenda da tela explica ao público):
+     cor       azul (--bom) = fazemos bem · vermelho (--melhorar) = podemos melhorar
+     forma     vermelho leva sublinhado; quanto mais crítico, mais grosso o traço + brilho + barras (1 a 3)
+     votação   no ranking, cada termo vermelho tem o controle 1·2·3 (botões de 44 px; selecionado = vermelho cheio + barras + número)
+     tamanho   definido no JS (raiz do peso); aqui só peso tipográfico e marcas de criticidade
+
+   Geometria (px do palco, slide 1920x1080, área útil 1696x840):
+     topo (kicker+título | contadores+alternador) ~100 · corpo = resto
+     corpo: coluna esquerda (nuvem + legenda) | coluna direita 420 (ranking "Mais citados")
+   Ordem do arquivo: layout -> blocos -> estados -> variantes.
+   ========================================================================== */
+
+/* ---------- layout ---------- */
+.slide[data-layout="nuvem"] .nuvem-topo{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--gap);margin-bottom:20px}
+.slide[data-layout="nuvem"] .nuvem-topo .cab{margin-bottom:0;min-width:0}
+.slide[data-layout="nuvem"] .nuvem-topo .kicker{margin-bottom:10px}
+.slide[data-layout="nuvem"] .nuvem-corpo{flex-direction:row;gap:var(--gap)}
+.slide[data-layout="nuvem"] .nuvem-esq{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
+
+/* ---------- topo: contadores + alternador ---------- */
+.slide[data-layout="nuvem"] .nuvem-ctrl{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.slide[data-layout="nuvem"] .nuvem-stats{display:flex;gap:10px 28px;font-family:var(--mono);font-size:var(--t-rotulo);letter-spacing:.04em;color:var(--ink-dim)}
+.slide[data-layout="nuvem"] .nuvem-stat b{font-weight:500;color:var(--ink)}
+
+.slide[data-layout="nuvem"] .nuvem-alterna{display:inline-flex;padding:4px;gap:4px;border:1.5px solid var(--line);border-radius:999px;background:var(--card)}
+.slide[data-layout="nuvem"] .nuvem-alterna-btn{font:inherit;font-size:var(--t-peq);font-weight:500;line-height:1;padding:10px 26px;border:0;border-radius:999px;
+  background:transparent;color:var(--ink);cursor:pointer}
+.slide[data-layout="nuvem"] .nuvem-alterna-btn:hover{background:var(--card-forte)}
+.slide[data-layout="nuvem"] .nuvem-alterna-btn[aria-pressed="true"]{background:var(--laranja);color:var(--azul-950)}
+.slide[data-layout="nuvem"] .nuvem-alterna-btn:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:3px}
+
+/* ---------- a nuvem ---------- */
+.slide[data-layout="nuvem"] .nuvem-area{position:relative;flex:1;min-height:0;border:1px solid var(--card-brd);border-top:3px solid var(--laranja);
+  border-radius:var(--raio);background:rgba(2,22,31,.55)}
+.slide[data-layout="nuvem"] .nuvem-termos{position:absolute;inset:0}
+
+.slide[data-layout="nuvem"] .nuvem-termo{position:absolute;display:block;white-space:nowrap;font-family:var(--sans);font-weight:500;line-height:1.1;
+  letter-spacing:-.01em;cursor:default;border-radius:.16em;
+  transition:left .4s cubic-bezier(.2,.7,.2,1),top .4s cubic-bezier(.2,.7,.2,1),font-size .4s cubic-bezier(.2,.7,.2,1);
+  animation:nuvem-entra .45s ease-out both}
+.slide[data-layout="nuvem"] .nuvem-termo:hover{background:rgba(255,255,255,.08)}
+.slide[data-layout="nuvem"] .nuvem-termo:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:3px}
+@keyframes nuvem-entra{from{opacity:0}to{opacity:1}}
+
+/* cor + forma: azul liso; vermelho sublinhado (traço cresce com a criticidade) */
+.slide[data-layout="nuvem"] .nuvem-termo[data-lado="bom"]{color:var(--bom)}
+.slide[data-layout="nuvem"] .nuvem-termo[data-lado="melhorar"]{color:var(--melhorar);font-weight:600;
+  text-decoration:underline;text-decoration-thickness:.04em;text-underline-offset:.13em;text-decoration-skip-ink:auto}
+.slide[data-layout="nuvem"] .nuvem-termo[data-nivel="2"]{font-weight:700;text-decoration-thickness:.065em;text-shadow:0 0 .35em rgba(240,103,92,.38)}
+.slide[data-layout="nuvem"] .nuvem-termo[data-nivel="3"]{font-weight:700;text-decoration-thickness:.095em;
+  text-shadow:0 0 .28em rgba(240,103,92,.62),0 0 .8em rgba(240,103,92,.34)}
+
+/* frases: várias linhas, centralizadas */
+.slide[data-layout="nuvem"] .nuvem-termo--frase{white-space:normal;text-align:center;line-height:1.14;letter-spacing:0}
+
+/* sonda de medida (invisível, nunca anunciada) */
+.slide[data-layout="nuvem"] .nuvem-medida{visibility:hidden;pointer-events:none;left:0;top:0;transition:none;animation:none}
+
+/* barras de criticidade 1–3 (forma, não só cor): crescem em altura */
+.slide[data-layout="nuvem"] .nuvem-barras{display:inline-flex;align-items:flex-end;gap:max(2px,.05em);margin-left:.2em;text-decoration:none}
+.slide[data-layout="nuvem"] .nuvem-barras i{display:block;width:max(3px,.085em);border-radius:2px;background:currentColor}
+.slide[data-layout="nuvem"] .nuvem-barras i:nth-child(1){height:.3em}
+.slide[data-layout="nuvem"] .nuvem-barras i:nth-child(2){height:.44em}
+.slide[data-layout="nuvem"] .nuvem-barras i:nth-child(3){height:.58em}
+.slide[data-layout="nuvem"] .nuvem-barras[data-nivel="1"] i:nth-child(n+2),
+.slide[data-layout="nuvem"] .nuvem-barras[data-nivel="2"] i:nth-child(n+3){opacity:.28}
+
+/* dica (passar o mouse / focar) — projetada, ≥ 20px */
+.slide[data-layout="nuvem"] .nuvem-dica{position:absolute;z-index:3;display:flex;flex-direction:column;gap:2px;max-width:460px;padding:10px 18px;
+  background:var(--azul-900);border:1px solid var(--laranja);border-radius:12px;font-size:var(--t-rotulo);line-height:1.3;color:var(--ink);pointer-events:none}
+.slide[data-layout="nuvem"] .nuvem-dica[hidden]{display:none}
+.slide[data-layout="nuvem"] .nuvem-dica b{font-weight:600}
+.slide[data-layout="nuvem"] .nuvem-dica span{color:var(--ink-dim)}
+
+/* estado vazio */
+.slide[data-layout="nuvem"] .nuvem-vazio{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:0 80px;text-align:center}
+.slide[data-layout="nuvem"] .nuvem-vazio[hidden]{display:none}
+.slide[data-layout="nuvem"] .nuvem-vazio .ico{font-size:64px;color:var(--laranja-claro)}
+.slide[data-layout="nuvem"] .nuvem-vazio h3{font-weight:500}
+.slide[data-layout="nuvem"] .nuvem-vazio p{max-width:900px}
+.slide[data-layout="nuvem"] .nuvem-exemplo{display:flex;flex-wrap:nowrap;align-items:baseline;justify-content:center;gap:0 32px;margin-top:26px;
+  font-family:var(--sans);line-height:1.1;white-space:nowrap}
+.slide[data-layout="nuvem"] .nuvem-exemplo-a{font-size:26px}
+.slide[data-layout="nuvem"] .nuvem-exemplo-b{font-size:40px;font-weight:500}
+.slide[data-layout="nuvem"] .nuvem-exemplo-c{font-size:56px;font-weight:700;text-decoration:underline;text-decoration-thickness:.07em;text-underline-offset:.13em}
+
+/* ---------- legenda ---------- */
+.slide[data-layout="nuvem"] .nuvem-legenda{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);padding:14px 24px}
+.slide[data-layout="nuvem"] .nuvem-leg-item{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:start;min-width:0}
+.slide[data-layout="nuvem"] .nuvem-leg-item h4{grid-column:2;font-family:var(--sans);font-size:var(--t-peq);font-weight:600;line-height:1.2;margin:0 0 3px;letter-spacing:0}
+.slide[data-layout="nuvem"] .nuvem-leg-item p{grid-column:2;font-size:var(--t-rotulo);line-height:1.25;color:var(--ink-dim)}
+.slide[data-layout="nuvem"] .nuvem-selo{grid-row:1 / span 2;display:grid;place-items:center;width:42px;height:42px;font-size:26px;border:2px solid currentColor}
+.slide[data-layout="nuvem"] .nuvem-selo--bom{color:var(--bom);background:rgba(74,163,232,.16);border-radius:50%}
+.slide[data-layout="nuvem"] .nuvem-selo--melhorar{color:var(--melhorar);background:rgba(240,103,92,.16);border-radius:12px}
+.slide[data-layout="nuvem"] .nuvem-selo--tamanho{color:var(--laranja-claro);background:rgba(247,148,29,.14);border-radius:12px}
+
+/* ---------- ranking ---------- */
+.slide[data-layout="nuvem"] .nuvem-rank{flex:none;width:420px;display:flex;flex-direction:column;padding:22px 28px 18px}
+.slide[data-layout="nuvem"] .nuvem-rank h3{font-size:var(--t-lead);margin-bottom:2px}
+.slide[data-layout="nuvem"] .nuvem-rank-sub{font-size:var(--t-min);color:var(--ink-dim);margin-bottom:6px}
+.slide[data-layout="nuvem"] .nuvem-rank-grupo{display:flex;align-items:center;gap:12px;margin:10px 0 2px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.slide[data-layout="nuvem"] .nuvem-rank-nome{flex:1;font-size:var(--t-peq);font-weight:600;line-height:1.2}
+.slide[data-layout="nuvem"] .nuvem-rank-grupo .nuvem-selo{width:34px;height:34px;font-size:20px;border-width:1.5px}
+.slide[data-layout="nuvem"] .nuvem-rank-lista{list-style:none;flex:1 1 0;min-height:0;display:flex;flex-direction:column}
+.slide[data-layout="nuvem"] .nuvem-rank-lista[data-lado="melhorar"]{flex:none;min-height:0}
+.slide[data-layout="nuvem"] .nuvem-rank-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:14px;flex:1 1 0;min-height:34px;max-height:46px;
+  border-bottom:1px solid var(--line);font-size:var(--t-rotulo)}
+.slide[data-layout="nuvem"] .nuvem-rank-item:last-child{border-bottom:0}
+.slide[data-layout="nuvem"] .nuvem-rank-termo{font-size:24px;font-weight:500;white-space:nowrap}
+.slide[data-layout="nuvem"] .nuvem-rank-n{font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink);text-align:right;min-width:44px}
+.slide[data-layout="nuvem"] .nuvem-rank-crit{display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;font-weight:500;
+  font-variant-numeric:tabular-nums;color:var(--ink)}
+.slide[data-layout="nuvem"] .nuvem-rank-crit .nuvem-barras{font-size:26px;color:var(--melhorar);margin-left:0}
+
+/* vermelho: [termo / ×n · barras · média]  [1·2·3] */
+.slide[data-layout="nuvem"] .nuvem-rank-item[data-lado="melhorar"]{flex:none;height:56px;max-height:none}
+.slide[data-layout="nuvem"] .nuvem-rank-corpo{display:flex;flex-direction:column;min-width:0;line-height:1.15}
+.slide[data-layout="nuvem"] .nuvem-rank-meta{display:flex;align-items:center;gap:14px;font-size:var(--t-min);color:var(--ink-dim)}
+.slide[data-layout="nuvem"] .nuvem-rank-meta .nuvem-rank-n{min-width:0;text-align:left;color:var(--ink-dim)}
+.slide[data-layout="nuvem"] .nuvem-rank-meta .nuvem-rank-crit{color:var(--ink-dim)}
+.slide[data-layout="nuvem"] .nuvem-rank-escala{margin:0 0 2px;font-size:var(--t-min);line-height:1.2;color:var(--ink-dim)}
+
+/* controle de criticidade 1·2·3: alvo de 44 px; ícone (barras) + número; selecionado = cheio */
+.slide[data-layout="nuvem"] .nuvem-crit{display:inline-flex;gap:4px}
+.slide[data-layout="nuvem"] .nuvem-crit-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:44px;height:44px;padding:0 6px;
+  font:inherit;font-size:var(--t-rotulo);font-weight:600;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink);cursor:pointer;
+  background:transparent;border:1.5px solid var(--line);border-radius:12px}
+.slide[data-layout="nuvem"] .nuvem-crit-btn .nuvem-barras{font-size:24px;margin-left:0;color:var(--melhorar)}
+.slide[data-layout="nuvem"] .nuvem-crit-btn:hover{background:var(--card-forte)}
+.slide[data-layout="nuvem"] .nuvem-crit-btn[aria-pressed="true"]{background:var(--melhorar);border-color:var(--melhorar);color:var(--azul-950)}
+.slide[data-layout="nuvem"] .nuvem-crit-btn[aria-pressed="true"] .nuvem-barras{color:var(--azul-950)}
+.slide[data-layout="nuvem"] .nuvem-crit-btn:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:2px}
+.slide[data-layout="nuvem"] .nuvem-rank-vazio{display:flex;align-items:center;height:44px;font-size:var(--t-rotulo);color:var(--ink-dim);font-style:italic}
+.slide[data-layout="nuvem"] .nuvem-rank-info{margin-top:auto;padding-top:4px;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.02em;color:var(--ink-dim)}
+
+/* ---------- estados ---------- */
+.slide[data-layout="nuvem"] .nuvem-area[data-estado="vazio"] .nuvem-termos{visibility:hidden}
+
+.sem-anim .slide[data-layout="nuvem"] .nuvem-termo{animation:none;transition:none}
+@media (prefers-reduced-motion:reduce){
+  .slide[data-layout="nuvem"] .nuvem-termo{animation:none;transition:none}
+}

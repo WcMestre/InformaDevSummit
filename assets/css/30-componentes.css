@@ -1,0 +1,76 @@
+/* ==========================================================================
+   30 · COMPONENTES COMPARTILHADOS — vocabulário comum a todos os layouts.
+   Layouts NÃO redefinem estes; só os compõem. Precisou de algo novo? Prefixe com o nome do layout.
+   ========================================================================== */
+
+/* cabeçalho de tela: kicker + título + subtítulo */
+.cab{margin-bottom:var(--gap-g)}
+.kicker{display:flex;align-items:center;gap:16px;margin-bottom:18px;
+  font-family:var(--mono);font-size:var(--t-rotulo);letter-spacing:.24em;text-transform:uppercase;color:var(--laranja)}
+.kicker::before{content:"";width:48px;height:2px;background:var(--laranja);flex:none}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;line-height:1.08}
+h1{font-size:var(--t-h1)}
+h2{font-size:var(--t-h2)}
+h3{font-size:var(--t-h3)}
+h4{font-size:var(--t-lead);line-height:1.15}
+h1 em,h2 em,h3 em{font-style:italic;color:var(--laranja-claro)}
+.sub{font-size:var(--t-lead);font-weight:300;line-height:1.4;color:var(--ink-dim);max-width:1300px;margin-top:14px}
+.sub b,.corpo-txt b{color:var(--ink);font-weight:500}
+.corpo{flex:1;min-height:0;display:flex;flex-direction:column}
+.corpo-txt{font-size:var(--t-corpo);line-height:1.45;color:var(--ink);font-weight:400}
+.dim{color:var(--ink-dim)}
+.mono{font-family:var(--mono);color:var(--laranja-claro)}
+
+/* grades */
+.g2,.g3,.g4{display:grid;gap:var(--gap)}
+.g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+.linha{display:flex;gap:var(--gap);align-items:stretch}
+.cresce{flex:1;min-width:0}
+
+/* cartão */
+.card{background:var(--card);border:1px solid var(--card-brd);border-radius:var(--raio);padding:32px 36px;min-width:0}
+.card--destaque{border-top:4px solid var(--laranja)}
+.card--forte{background:var(--card-forte)}
+.card h3,.card h4{margin-bottom:14px}
+.rotulo{display:block;font-family:var(--mono);font-size:var(--t-rotulo);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:12px}
+.rotulo--laranja{color:var(--laranja-claro)}
+
+/* chip = rótulo curto em pílula */
+.chip{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:var(--t-min);font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;padding:6px 16px;border-radius:999px;border:1.5px solid var(--line);color:var(--ink);white-space:nowrap}
+.chip--tempo{border-color:var(--laranja);color:var(--laranja-claro)}
+.chip--individual{background:var(--f-individual);border-color:var(--f-individual);color:var(--azul-950)}
+.chip--subgrupos{background:var(--f-subgrupos);border-color:var(--f-subgrupos);color:#04222e}
+.chip--plenaria{background:var(--f-plenaria);border-color:var(--f-plenaria);color:#1b1040}
+.chip--ok{border-color:var(--ok);color:#7fd6a0}
+.chip--alerta{border-color:var(--alerta);color:var(--alerta)}
+.chip--perigo{border-color:var(--perigo);color:#f59a91}
+
+/* listas */
+.lista{list-style:none;display:flex;flex-direction:column;gap:14px}
+.lista li{position:relative;padding-left:34px;font-size:var(--t-corpo);line-height:1.35}
+.lista li::before{content:"";position:absolute;left:4px;top:.52em;width:12px;height:12px;border-radius:3px;background:var(--laranja);transform:rotate(45deg)}
+.lista--pros li::before{background:var(--ok);border-radius:50%;transform:none}
+.lista--contras li::before{background:var(--perigo);border-radius:50%;transform:none}
+.lista--numerada{counter-reset:n}
+.lista--numerada li{counter-increment:n;padding-left:56px}
+.lista--numerada li::before{content:counter(n);width:38px;height:38px;top:-2px;left:0;border-radius:50%;background:transparent;border:2px solid var(--laranja);
+  transform:none;display:grid;place-items:center;font-family:var(--mono);font-size:var(--t-min);color:var(--laranja-claro)}
+
+/* fato interno: sempre com origem e data (regra do projeto) */
+.fonte{display:flex;gap:12px;align-items:center;margin-top:18px;font-family:var(--mono);font-size:var(--t-min);color:var(--ink-dim);letter-spacing:.04em}
+.fonte::before{content:"origem";text-transform:uppercase;letter-spacing:.14em;border:1px solid var(--line);border-radius:6px;padding:2px 10px}
+
+/* marcação de conteúdo-modelo (desaparece quando o conteúdo real entra) */
+.ph{border-bottom:2px dashed rgba(247,148,29,.55);color:var(--ink-dim);font-style:italic}
+
+/* linha-exemplo em cinza: fora da ata/exportação */
+.exemplo{color:var(--exemplo);font-style:italic}
+.exemplo-marca{font-family:var(--mono);font-size:var(--t-min);font-style:normal;letter-spacing:.12em;text-transform:uppercase;
+  border:1px dashed var(--exemplo);border-radius:6px;padding:2px 10px;margin-right:12px;color:var(--exemplo)}
+
+/* número de destaque */
+.num{font-family:var(--serif);font-weight:600;line-height:1;color:#fff;font-variant-numeric:lining-nums}
+
+/* identificador de versão (ex.: 27.1.1): fonte monoespaçada — em Inter o kerning fecha os pontos e "27.1.1" lê como "27.11" */
+.versao{font-family:var(--mono);font-weight:500;letter-spacing:.02em;white-space:nowrap}

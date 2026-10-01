@@ -1,0 +1,447 @@
+/* ==========================================================================
+   LAYOUT encerramento — fecho do evento.
+   Variante padrão: duas colunas nos 840px úteis — à esquerda a mensagem de fechamento (serif grande) e a assinatura da marca
+   (logo + contato); à direita o card "Próximos passos", cada passo com espaços em branco para responsável e prazo.
+   Variante "resumo" (data-variante="resumo"; deck real: fechamento da manhã 11:55 e do dia 16:55): cabeçalho com a assinatura à direita e,
+   abaixo, duas colunas lidas ao vivo dos CSV — esquerda: decisões das propostas (1 = card com veredito grande; 2 ou mais = lista compacta,
+   uma linha por proposta) · números do Brainstorming · sugestões (um assunto, data-assunto-sugestoes, ou "todos": "Dúvidas e sugestões do dia",
+   com o assunto de origem em cada item); direita: Compromissos (tabela agrupada por assunto, pendências primeiro; lista longa = DUAS COLUNAS de
+   assuntos, data-comp-colunas; rolagem interna focável como último recurso) e "Antes de sair". Comportamento: assets/js/layouts/90-encerramento.js.
+   Impressão/PDF (@media print, no fim): a tabela deixa de rolar (todos os compromissos, sem o botão "+N abaixo"), termina sempre dentro do cartão
+   e a página cresce quando a lista é maior que a página.
+   Compõe .cab, .kicker, .sub, .card, .rotulo, .num e .logo do núcleo; o exclusivo leva o prefixo .encerramento-.
+   Ordem: layout → fecho → passos (padrão) · resumo: layout → assinatura → versão → brainstorming → sugestões → compromissos → antes de sair.
+   ========================================================================== */
+
+/* layout */
+.slide[data-layout="encerramento"] .encerramento-layout{flex:1;min-height:0;display:flex;gap:72px}
+
+/* ---------- coluna do fecho ---------- */
+.slide[data-layout="encerramento"] .encerramento-fecho{
+  flex:0 0 660px;display:flex;flex-direction:column;justify-content:space-between;min-height:0}
+.slide[data-layout="encerramento"] .encerramento-fecho .cab{margin-bottom:0}
+.slide[data-layout="encerramento"] .encerramento-fecho h1{font-size:var(--t-h1);line-height:1.06}
+.slide[data-layout="encerramento"] .encerramento-fecho .sub{font-size:var(--t-corpo);margin-top:28px}
+
+.slide[data-layout="encerramento"] .encerramento-assinatura{
+  display:flex;flex-direction:column;gap:32px;padding-top:32px;border-top:1px solid var(--line)}
+.slide[data-layout="encerramento"] .encerramento-assinatura .logo{height:120px;align-self:flex-start}
+.slide[data-layout="encerramento"] .encerramento-contato{
+  display:flex;flex-direction:column;gap:10px;font-style:normal}
+.slide[data-layout="encerramento"] .encerramento-contato p{
+  display:flex;align-items:baseline;gap:20px;font-size:var(--t-lead);font-weight:500;color:var(--ink)}
+.slide[data-layout="encerramento"] .encerramento-contato .rotulo{flex:0 0 150px;margin:0}
+
+/* ---------- card dos próximos passos ---------- */
+.slide[data-layout="encerramento"] .encerramento-passos{
+  flex:1;min-width:0;display:flex;flex-direction:column;padding:36px 44px 12px}
+.slide[data-layout="encerramento"] .encerramento-passos .rotulo{font-weight:500;margin-bottom:8px}
+.slide[data-layout="encerramento"] .encerramento-lista{
+  flex:1;min-height:0;list-style:none;counter-reset:passo;display:flex;flex-direction:column}
+.slide[data-layout="encerramento"] .encerramento-passo{
+  position:relative;flex:1 1 0;max-height:190px;counter-increment:passo;
+  display:flex;flex-direction:column;justify-content:center;gap:14px;
+  padding:0 0 0 72px;border-top:1px solid var(--line)}
+.slide[data-layout="encerramento"] .encerramento-passo:first-child{border-top:0}
+.slide[data-layout="encerramento"] .encerramento-passo::before{
+  content:counter(passo);position:absolute;left:0;top:50%;width:48px;height:48px;margin-top:-24px;
+  display:grid;place-items:center;border:2px solid var(--laranja);border-radius:50%;
+  font-family:var(--mono);font-size:var(--t-rotulo);font-weight:500;color:var(--laranja-claro)}
+.slide[data-layout="encerramento"] .encerramento-acao{font-size:var(--t-corpo);font-weight:500;line-height:1.25;color:var(--ink)}
+
+/* espaços em branco de responsável e prazo: rótulo + traço (nunca nome) */
+.slide[data-layout="encerramento"] .encerramento-campos{display:flex;gap:40px}
+.slide[data-layout="encerramento"] .encerramento-campo{display:flex;align-items:flex-end;gap:14px;min-width:0}
+.slide[data-layout="encerramento"] .encerramento-campo:first-child{flex:1.5 1 0}
+.slide[data-layout="encerramento"] .encerramento-campo:last-child{flex:1 1 0}
+.slide[data-layout="encerramento"] .encerramento-rot{
+  flex:none;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);padding-bottom:4px}
+.slide[data-layout="encerramento"] .encerramento-traco{flex:1;min-width:48px;height:34px;border-bottom:2px solid var(--ink-dim)}
+
+/* ==========================================================================
+   VARIANTE resumo — fechamento da manhã (lido ao vivo dos CSV; só leitura)
+   Cor nunca sozinha: todo estado leva ícone + rótulo. ok = --ok (texto em #7fd6a0 p/ contraste) · atenção = --alerta · recusa = --perigo.
+   ========================================================================== */
+.slide[data-layout="encerramento"][data-variante="resumo"]{
+  --enc-ok-txt:#7fd6a0;                 /* o mesmo verde de .chip--ok: texto pequeno em verde precisa de mais luz que o ícone */
+  --enc-ok:var(--ok);
+}
+
+/* medida com a tela oculta (JS): exibida só durante a conta, sem pintar */
+.slide[data-layout="encerramento"][data-medindo]{display:flex;visibility:hidden}
+
+/* ---------- layout: topo (título + assinatura) e corpo em duas colunas ---------- */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-resumo{flex:1;min-height:0;display:flex;flex-direction:column;gap:20px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-topo{display:flex;align-items:flex-start;justify-content:space-between;gap:48px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-topo .cab{flex:1;min-width:0;margin-bottom:0}
+.slide[data-layout="encerramento"][data-variante="resumo"] .kicker{margin-bottom:10px}
+.slide[data-layout="encerramento"][data-variante="resumo"] h1{font-size:var(--t-h2);line-height:1.06}
+.slide[data-layout="encerramento"][data-variante="resumo"] .sub{max-width:none;margin-top:8px;font-size:var(--t-peq);line-height:1.3}
+
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-corpo{
+  flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,664px) minmax(0,1fr);gap:40px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq{
+  min-height:0;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:16px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="nenhum"]{grid-template-rows:auto minmax(0,1fr)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-dir{
+  min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:16px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-card{padding:14px 28px;min-width:0;min-height:0}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-card .rotulo{margin:0;font-weight:500}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-topo-card{
+  display:flex;align-items:baseline;justify-content:space-between;gap:20px;margin-bottom:8px}
+
+/* ---------- assinatura (logo + contato + frase) no canto do cabeçalho ---------- */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-assinatura{
+  flex:none;align-items:flex-end;gap:10px;padding:0;border-top:0}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-marca{display:flex;align-items:center;gap:22px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-assinatura .logo{height:60px;align-self:center}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-contato{
+  gap:0;padding-left:22px;border-left:2px solid var(--line)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-contato p{
+  display:block;font-family:var(--mono);font-size:var(--t-rotulo);font-weight:500;line-height:1.35;letter-spacing:.02em}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-frase{
+  max-width:640px;text-align:right;font-family:var(--serif);font-style:italic;font-size:var(--t-peq);line-height:1.25;color:var(--ink-dim)}
+
+/* ---------- card: Versionamento · decisão da proposta ---------- */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao{
+  --est-cor:var(--alerta);border-top:4px solid var(--est-cor);display:flex;flex-direction:column;gap:8px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-estado="aceitar"]{--est-cor:var(--ok)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-estado="ajustar"]{--est-cor:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-estado="recusar"]{--est-cor:var(--perigo)}
+/* sem decisão: destaque de atenção (contorno tracejado âmbar, além do ícone e do rótulo) */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-estado="vazio"]{
+  border-color:var(--alerta);border-style:dashed;border-top-style:solid;background:rgba(240,180,41,.07)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-veredito{
+  display:flex;align-items:center;gap:16px;font-family:var(--serif);font-size:var(--t-h3);font-weight:600;line-height:1.1;color:var(--branco)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-selo{
+  flex:none;display:grid;place-items:center;width:48px;height:48px;border-radius:50%;font-size:30px;
+  background:var(--est-cor);color:var(--azul-950)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-estado="vazio"] .encerramento-selo{
+  background:none;border:2px dashed var(--alerta);color:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-maos{
+  font-size:var(--t-peq);font-weight:500;line-height:1.25;color:var(--ink);font-variant-numeric:tabular-nums}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-ajuste{
+  display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:16px;font-size:var(--t-peq);line-height:1.3;color:var(--ink)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-ajuste-rot{
+  padding-top:5px;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.14em;text-transform:uppercase;color:var(--laranja-claro)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-ajuste-txt{
+  display:block;min-width:0;max-height:2.6em;overflow:hidden;overflow-wrap:anywhere}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-dica{
+  display:flex;align-items:center;gap:12px;font-size:var(--t-peq);line-height:1.25;color:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-dica .ico{font-size:28px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-unica{display:flex;flex-direction:column;gap:8px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao .encerramento-topo-card{margin-bottom:0}
+
+/* várias propostas (modo "lista"): uma linha por proposta — selo (ícone) · bloco · veredito; linhas de apoio: mãos e ajuste.
+   Cor nunca sozinha: o selo leva o ícone da decisão e o veredito leva o rótulo. Sem decisão = selo tracejado + relógio. */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-modo="lista"]{gap:6px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-modo="lista"][data-estado="completo"]{--est-cor:var(--ok)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-modo="lista"][data-estado="pendente"]{--est-cor:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-decididas{
+  display:flex;align-items:center;gap:10px;font-size:var(--t-rotulo);font-weight:600;color:var(--alerta);white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-decididas .ico{font-size:28px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-decididas[data-estado="ok"]{color:var(--enc-ok-txt)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-decididas[data-estado="ok"] .ico{color:var(--enc-ok)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-props{list-style:none;display:flex;flex-direction:column}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop{
+  --est-cor:var(--alerta);
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:14px;row-gap:0;
+  padding:3px 0;border-top:1px solid var(--line)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop[data-estado="aceitar"]{--est-cor:var(--ok)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop[data-estado="ajustar"]{--est-cor:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop[data-estado="recusar"]{--est-cor:var(--perigo)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop .encerramento-selo{width:34px;height:34px;font-size:24px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop[data-estado="vazio"] .encerramento-selo{
+  background:none;border:2px dashed var(--alerta);color:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop-nome{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--t-peq);font-weight:500;line-height:1.2;color:var(--ink)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop-veredito{
+  font-family:var(--serif);font-size:var(--t-peq);font-weight:600;line-height:1.2;color:var(--branco);white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop[data-estado="vazio"] .encerramento-prop-veredito{color:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop-maos,
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop-ajuste{
+  grid-column:2 / -1;min-width:0;font-size:var(--t-rotulo);line-height:1.25;color:var(--ink-dim)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop-maos{font-variant-numeric:tabular-nums;white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop-ajuste{display:flex;align-items:baseline;gap:12px;color:var(--ink)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop-ajuste .encerramento-ajuste-rot{padding-top:0;flex:none}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prop-ajuste-txt{
+  display:block;min-width:0;flex:1;overflow:hidden;white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-densidade="sem-maos"] .encerramento-prop-maos,
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-densidade="minima"] .encerramento-prop-maos,
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-versao[data-densidade="minima"] .encerramento-prop-ajuste{display:none}
+
+/* ---------- card: Brainstorming · só números agregados ---------- */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-nums{
+  display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:18px;padding:0 0 8px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-total{
+  display:flex;flex-direction:column;gap:2px;padding-right:18px;border-right:1px solid var(--line);font-size:var(--t-peq);color:var(--ink)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-total .num{font-size:var(--t-h2);font-variant-numeric:lining-nums tabular-nums}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-lados{list-style:none;display:flex;flex-direction:column;gap:6px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-lado{
+  display:flex;align-items:center;gap:8px;font-size:var(--t-peq);line-height:1.2;color:var(--ink);white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-lado .ico{font-size:26px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-lado[data-lado="bom"] .ico{color:var(--bom)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-lado[data-lado="melhorar"] .ico{color:var(--melhorar)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-lado .num{
+  min-width:1.3ch;font-size:var(--t-h3);font-variant-numeric:lining-nums tabular-nums;text-align:right}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-crit{
+  display:flex;align-items:center;gap:12px;padding-top:10px;border-top:1px solid var(--line);font-size:var(--t-peq);line-height:1.25;color:var(--ink)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-crit .ico{font-size:28px;color:var(--ink-dim)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-crit[data-estado="atencao"] .ico{color:var(--melhorar)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-crit[data-estado="atencao"]{font-weight:600}
+
+/* ---------- card: Pipeline · sugestões (3 mais votadas) ---------- */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug{display:flex;flex-direction:column}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug .encerramento-topo-card{flex:none}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug .encerramento-vazio{flex:1;padding:0 0 8px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-total{
+  font-size:var(--t-peq);font-weight:500;color:var(--ink);white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-lista{list-style:none;display:flex;flex-direction:column;gap:6px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-item{
+  display:flex;align-items:center;gap:14px;min-height:40px;font-size:var(--t-peq);line-height:1.2}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-n{
+  flex:none;display:grid;place-items:center;width:34px;height:34px;border:2px solid var(--laranja);border-radius:50%;
+  font-family:var(--mono);font-size:var(--t-min);color:var(--laranja-claro)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-txt{
+  flex:1;min-width:0;overflow:hidden;white-space:nowrap;color:var(--ink)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-tipo{
+  flex:none;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-votos{
+  flex:none;padding:2px 14px;border:1.5px solid var(--laranja);border-radius:999px;
+  font-family:var(--mono);font-size:var(--t-min);font-weight:500;letter-spacing:.04em;color:var(--laranja-claro);white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-votos--zero{border-color:var(--line);color:var(--ink-dim)}
+
+/* "Dúvidas e sugestões do dia" (data-assunto-sugestoes="todos"): cada item ganha uma 2ª linha com o assunto de origem e o tipo (o JS marca a
+   lista com data-rotulado). Linha 1: nº · texto (a largura toda, para o texto dizer o que a sala pediu); linha 2: ASSUNTO · TIPO, 20 px,
+   e os votos à direita. */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-lista[data-rotulado] .encerramento-sug-item{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:14px;row-gap:0;align-items:center;min-height:0}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-lista[data-rotulado] .encerramento-sug-n{grid-column:1;grid-row:1 / span 2}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-lista[data-rotulado] .encerramento-sug-txt{grid-column:2 / -1;grid-row:1}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-lista[data-rotulado] .encerramento-sug-votos{grid-column:3;grid-row:2;padding:0 12px;line-height:1.3}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-meta{
+  grid-column:2;grid-row:2;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  font-family:var(--mono);font-size:var(--t-min);letter-spacing:.08em;line-height:1.15;text-transform:uppercase;color:var(--ink-dim)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-assunto{color:var(--laranja-claro)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-meta .encerramento-sug-tipo{margin-left:6px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug-meta .encerramento-sug-tipo::before{content:"· "}
+
+/* estado vazio (sem sugestões / sem compromissos) */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-vazio{
+  display:flex;align-items:center;gap:14px;padding:12px 0;font-size:var(--t-peq);line-height:1.3;color:var(--ink-dim)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-vazio .ico{font-size:32px}
+
+/* ---------- coluna esquerda com várias propostas (modo "lista"): brainstorming e sugestões ficam compactos ----------
+   A lista de decisões pede altura; os outros dois cards mantêm todo o conteúdo (números, criticidade 3, sugestões) em menos espaço.
+   Ainda faltando altura (5 propostas com mãos e ajuste), o JS desce de degrau: 3 → 2 → 1 sugestão (data-itens no card das sugestões),
+   depois tira as linhas de mãos (data-densidade="sem-maos") e por último as de ajuste ("minima"). A conta fica na coluna esquerda. */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"]{gap:12px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-card{padding:10px 24px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-brain{
+  display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:20px;row-gap:4px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-nums{display:contents}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-total{
+  grid-column:2;grid-row:1;flex-direction:row;align-items:baseline;justify-content:flex-end;gap:10px;padding:0;border-right:0;white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-total .num{font-size:var(--t-h3)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-lados{
+  grid-column:1 / -1;grid-row:2;flex-direction:row;flex-wrap:wrap;column-gap:14px;row-gap:2px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-lado{gap:6px;font-size:var(--t-rotulo)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-lado .ico{font-size:22px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-lado .num{font-size:30px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-crit{
+  grid-column:1 / -1;grid-row:3;padding-top:4px;font-size:var(--t-rotulo)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-sug-lista{gap:2px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-sug-item{min-height:34px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-sug-n{width:30px;height:30px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug[data-itens="2"] .encerramento-sug-item:nth-child(n+3),
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-sug[data-itens="1"] .encerramento-sug-item:nth-child(n+2){display:none}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-esq[data-modo="lista"] .encerramento-topo-card{margin-bottom:4px}
+
+/* ---------- card: Compromissos (tabela agrupada, rolagem interna) ---------- */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-comp{display:flex;flex-direction:column;position:relative}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-comp .encerramento-topo-card{flex:none;align-items:center;min-height:36px}   /* altura fixa: mostrar/ocultar o botão "+N" não move a tabela */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-contador{
+  display:flex;align-items:center;gap:12px;font-size:var(--t-peq);font-weight:600;color:var(--alerta);white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-contador .ico{font-size:30px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-contador[data-estado="ok"]{color:var(--enc-ok-txt)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-contador[data-estado="ok"] .ico{color:var(--enc-ok)}
+
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela{
+  --enc-linha:60px;--enc-fonte:var(--t-peq);
+  position:relative;flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.28) transparent;
+  scroll-padding-top:44px;border:1px solid var(--line);border-radius:14px;background:rgba(2,22,31,.35)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-comp[data-densidade="compacta"] .encerramento-tabela{--enc-linha:52px;--enc-fonte:24px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela[data-mais-baixo]{
+  -webkit-mask-image:linear-gradient(var(--branco) calc(100% - 48px),transparent);mask-image:linear-gradient(var(--branco) calc(100% - 48px),transparent)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tab{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tab thead th{
+  position:sticky;top:0;z-index:2;height:40px;padding:2px 16px;background:var(--azul-900);border-bottom:2px solid rgba(247,148,29,.5);text-align:left;
+  font-family:var(--mono);font-size:var(--t-rotulo);font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tab thead th:nth-child(2){width:250px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tab thead th:nth-child(3){width:250px}
+
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-grupo th{
+  height:36px;padding:0 16px;background:rgba(255,255,255,.07);border-bottom:1px solid var(--line);text-align:left;font-weight:500}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-grupo-in{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-grupo-nome{
+  font-family:var(--mono);font-size:var(--t-rotulo);letter-spacing:.14em;text-transform:uppercase;color:var(--laranja-claro)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-grupo-n{font-family:var(--mono);font-size:var(--t-rotulo);color:var(--ink)}
+
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-linha td{
+  height:var(--enc-linha);padding:4px 16px;vertical-align:middle;border-bottom:1px solid var(--line);font-size:var(--enc-fonte);line-height:1.22;color:var(--ink)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tab tbody tr:last-child td{border-bottom:0}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-acao-txt{
+  display:block;max-height:2.44em;overflow:hidden;overflow-wrap:anywhere}      /* 2 linhas (line-height 1.22); o JS encurta na última palavra inteira */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-semacao{font-style:italic;color:var(--ink-dim)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-resp-txt{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prazo{white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-data{font-variant-numeric:tabular-nums}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-dmais{
+  margin-left:10px;font-family:var(--mono);font-size:var(--t-rotulo);color:var(--ink-dim)}
+/* faltando: ícone + rótulo âmbar (nunca só cor) */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-falta{
+  display:inline-flex;align-items:center;gap:10px;font-size:var(--enc-fonte);font-weight:500;color:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-falta .ico{font-size:28px}
+
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-comp .encerramento-vazio{
+  flex-direction:column;justify-content:center;min-height:100%;padding:20px 48px;text-align:center}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-comp .encerramento-vazio .ico{font-size:56px;color:var(--alerta)}
+
+/* a região da tabela é focável (Tab) para rolar pelo teclado: foco sempre visível */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela:focus{outline:none}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:3px}
+
+/* "+N compromissos abaixo": mesmo gesto do quadro, mas na linha do título (não cobre nenhuma linha da tabela); clicar rola */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-mais{
+  display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 14px 0 16px;
+  border:1.5px solid var(--laranja);border-radius:999px;background:none;cursor:pointer;
+  font-family:var(--sans);font-size:var(--t-rotulo);font-weight:600;line-height:1;color:var(--laranja-claro);white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-mais .ico{font-size:24px;transform:rotate(90deg)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-mais:hover{background:rgba(247,148,29,.14)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-mais:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:3px}
+
+/* ---------- card: Antes de sair (pronto quando) ---------- */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-antes{padding:12px 28px 4px}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prontos{
+  font-family:var(--mono);font-size:var(--t-rotulo);font-weight:500;letter-spacing:.04em;color:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-prontos[data-estado="ok"]{color:var(--enc-ok-txt)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-checks{list-style:none;display:flex;flex-direction:column}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-check{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;min-height:48px;padding:4px 0;border-top:1px solid var(--line)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-check .ico{font-size:34px;color:var(--alerta)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-check[data-estado="ok"] .ico{color:var(--enc-ok)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-check-txt{font-size:var(--t-peq);line-height:1.2;color:var(--ink)}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-check-rot{
+  padding:3px 16px;border:1.5px solid var(--alerta);border-radius:999px;font-size:var(--t-rotulo);font-weight:600;line-height:1.25;color:var(--alerta);text-align:right}
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-check[data-estado="ok"] .encerramento-check-rot{
+  border-color:var(--enc-ok);color:var(--enc-ok-txt)}
+
+/* ---------- lista longa: DUAS COLUNAS de assuntos (o JS marca a tela com data-comp-colunas) ----------
+   Cabem os 9 compromissos de 6 assuntos sem rolar: a coluna da esquerda estreita (as propostas não precisam de mais), a tabela vira dois
+   blocos lado a lado (cada um com o seu cabeçalho; a ordem de leitura é a da esquerda para a direita, pendências primeiro) e, em cada
+   linha, responsável e prazo ficam EMPILHADOS à direita da ação (o cabeçalho mostra os dois rótulos na mesma ordem). Ação a 22 px
+   (20 px na densidade compacta), até 3 linhas; responsável até 2. O arranjo de uma coluna (a manhã) não muda. */
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-corpo{
+  grid-template-columns:minmax(0,600px) minmax(0,1fr);gap:32px}
+/* a coluna da esquerda mais estreita: rótulos de card com menos espaçamento entre letras, para não quebrar nem encostar no total */
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-esq .encerramento-card .rotulo{letter-spacing:.03em;white-space:nowrap}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-esq[data-modo="lista"] .encerramento-lados{column-gap:10px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-esq[data-modo="lista"] .encerramento-lado{gap:5px;font-size:var(--t-min)}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-esq[data-modo="lista"] .encerramento-lado .num{font-size:28px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-prop{padding:2px 0}
+/* "Antes de sair" mais baixa: a altura que sobra vai para os compromissos */
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-antes{padding:8px 28px 2px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-check{min-height:40px;padding:2px 0}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-comp{padding:12px 20px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tabela{
+  --enc-fonte:22px;--enc-meta:212px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-content:start;scroll-padding-top:56px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-comp[data-densidade="compacta"] .encerramento-tabela{--enc-fonte:20px;--enc-meta:190px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab,
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab thead,
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab tbody,
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab .encerramento-grupo,
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab .encerramento-grupo th{display:block}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab[hidden]{display:none}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab--2{border-left:1px solid var(--line)}
+/* cabeçalho: Ação · Responsável (linha 1) · Prazo (linha 2) */
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab thead tr{
+  display:grid;grid-template-columns:minmax(0,1fr) var(--enc-meta);grid-template-rows:auto auto}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab thead th{
+  display:block;height:auto;padding:2px 12px;line-height:1.1;letter-spacing:.1em;width:auto}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab thead th:nth-child(1){grid-column:1;grid-row:1 / span 2;padding-left:16px;align-self:center}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab thead th:nth-child(2){grid-column:2;grid-row:1;padding-bottom:0;border-bottom:0}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab thead th:nth-child(3){grid-column:2;grid-row:2;padding-top:0}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab thead th:nth-child(1){border-bottom:2px solid rgba(247,148,29,.5)}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-grupo th{height:28px;padding:0 16px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-grupo-in{align-items:center}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-grupo-nome{letter-spacing:.06em}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab tbody tr.encerramento-linha{
+  display:grid;grid-template-columns:minmax(0,1fr) var(--enc-meta);grid-template-rows:1fr auto auto 1fr;align-items:center;
+  border-bottom:1px solid var(--line)}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab tbody tr:last-child{border-bottom:0}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-linha td{
+  display:block;height:auto;min-width:0;padding:2px 12px;border-bottom:0;line-height:1.12}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-linha td.encerramento-acao{grid-column:1;grid-row:1 / span 4;padding-left:16px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-linha td.encerramento-resp{grid-column:2;grid-row:2;padding-bottom:0}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-linha td.encerramento-prazo{grid-column:2;grid-row:3;padding-top:0}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-acao-txt{max-height:3.54em}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-resp-txt{max-height:2.36em;white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-falta{gap:8px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-falta .ico{font-size:24px}
+.slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-dmais{margin-left:8px;font-size:var(--t-min)}
+
+/* [hidden] vence os display: acima (mesma especificidade, vem por último) */
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-card[hidden],
+.slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-card [hidden]{display:none}
+
+/* ==========================================================================
+   IMPRESSÃO / PDF (resumo) — página 1920×1080 sem moldura: a tabela mostra TODOS os compromissos (sem rolagem, sem máscara e sem o botão
+   "+N abaixo") e a altura que a moldura oculta deixa livre volta para o conteúdo. Fonte da tabela 22 px (piso 20 px).
+   Densidade por quantidade (CSS puro, :has sobre as linhas da tabela, grupos incluídos): até 12 linhas, ação em 2 linhas · de 13 a 15,
+   2 linhas com a linha mais baixa (30 px) · de 16 a 18, ação em 1 linha (20 px) · acima de 18 a página cresce e o excedente segue na página
+   seguinte (nenhum compromisso se perde).
+   ========================================================================== */
+@media print{
+  .slide[data-layout="encerramento"][data-variante="resumo"]{padding-top:28px;padding-bottom:28px}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-resumo{gap:12px}
+  /* max-content (e não auto): as linhas da coluna da direita nunca encolhem abaixo do conteúdo, então o cartão dos compromissos sempre
+     contém a própria tabela (com auto, faltando altura a trilha encolhia o cartão e a tabela passava da borda dele) */
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-dir{grid-template-rows:max-content max-content;align-content:start;gap:12px}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-antes{padding:8px 28px 2px}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-check{min-height:40px;padding:2px 0}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-mais{display:none !important}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela,
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-comp[data-densidade="compacta"] .encerramento-tabela{
+    --enc-linha:36px;--enc-fonte:22px;
+    flex:none;height:auto;overflow:visible;-webkit-mask-image:none;mask-image:none}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tab thead th{position:static;height:34px}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tab thead th:nth-child(2){width:230px}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tab thead th:nth-child(3){width:240px}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-grupo th{height:32px}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-linha td{padding:2px 16px;line-height:1.12}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-acao-txt{max-height:2.24em}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-comp .encerramento-vazio{min-height:0}
+  /* 13 a 15 linhas (os 9 compromissos do dia, com seus assuntos): a ação continua em até 2 linhas, 22 px; a linha só cresce quando o texto pede */
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela:has(tbody tr:nth-child(13)){--enc-linha:30px}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela:has(tbody tr:nth-child(13)) .encerramento-grupo th{height:28px}
+  /* 16 a 18 linhas: ação em uma linha só, 20 px */
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela:has(tbody tr:nth-child(16)){--enc-fonte:20px}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela:has(tbody tr:nth-child(16)) .encerramento-acao-txt{
+    max-height:1.12em;overflow-wrap:normal;white-space:nowrap;text-overflow:ellipsis}
+  .slide[data-layout="encerramento"][data-variante="resumo"] .encerramento-tabela:has(tbody tr:nth-child(16)) .encerramento-falta .ico{font-size:22px}
+  /* duas colunas de assuntos (data-comp-colunas): cada bloco tem a metade das linhas; as larguras de uma coluna (230/240 px) não valem aqui,
+     a coluna de responsável e prazo é a da tela (--enc-meta). Folga de 14 px no fundo do cartão: a tabela termina sempre DENTRO dele. */
+  .slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab thead th:nth-child(2),
+  .slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tab thead th:nth-child(3){width:auto}
+  .slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-comp{padding-bottom:14px}
+  .slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tabela,
+  .slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-comp[data-densidade="compacta"] .encerramento-tabela{--enc-fonte:22px;--enc-meta:212px}
+  /* as regras de 13 e 16 linhas acima contam as linhas de UMA tabela; em duas colunas a ação continua em até 3 linhas, a 22 px, e é a
+     página que cresce (a partir de 9 linhas por coluna, ~14 compromissos): o que passar segue na página seguinte, nada se perde */
+  .slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tabela:has(tbody tr:nth-child(16)){--enc-fonte:22px}
+  .slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas] .encerramento-tabela:has(tbody tr:nth-child(16)) .encerramento-acao-txt{
+    max-height:3.54em;white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
+  .slide[data-layout="encerramento"][data-variante="resumo"][data-comp-colunas]:has(.encerramento-tab tbody tr:nth-child(9)){height:auto;min-height:1080px}
+  /* acima de 18: a página cresce; o que passar segue na página seguinte */
+  .slide[data-layout="encerramento"][data-variante="resumo"]:has(.encerramento-tab tbody tr:nth-child(19)){height:auto;min-height:1080px}
+}

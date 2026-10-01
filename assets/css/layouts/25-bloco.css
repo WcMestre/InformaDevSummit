@@ -1,0 +1,77 @@
+/* ==========================================================================
+   LAYOUT bloco — abertura de um assunto.
+   Duas colunas nos 840px úteis: à esquerda o "relógio" (horário de início enorme, término/duração e a
+   divisão do tempo); à direita o conteúdo (nome, objetivo, entregas, perfis).
+   Compõe .card, .rotulo, .chip e .lista--numerada do 30-componentes.css; o que é exclusivo leva o prefixo .bloco-.
+   Ordem: layout → blocos (relógio, principal) → estados → variante intocável.
+   ========================================================================== */
+
+/* layout */
+.slide[data-layout="bloco"]{--bloco-hora:136px;--bloco-coluna:520px}
+.slide[data-layout="bloco"] .bloco-layout{flex:1;min-height:0;display:flex;gap:72px}
+
+/* ---------- coluna do relógio ---------- */
+.slide[data-layout="bloco"] .bloco-relogio{
+  flex:0 0 var(--bloco-coluna);display:flex;flex-direction:column;justify-content:space-between;gap:var(--gap);
+  padding:36px 40px;border-top:4px solid var(--laranja)}
+.slide[data-layout="bloco"] .bloco-hora{
+  font-family:var(--mono);font-size:var(--bloco-hora);font-weight:600;line-height:1;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;color:var(--branco)}
+.slide[data-layout="bloco"] .bloco-dados{display:flex;flex-direction:column}
+.slide[data-layout="bloco"] .bloco-dados>div{
+  display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding:10px 0;border-top:1px solid var(--line)}
+.slide[data-layout="bloco"] .bloco-dados dt{
+  font-family:var(--mono);font-size:var(--t-rotulo);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+.slide[data-layout="bloco"] .bloco-dados dd{
+  font-family:var(--mono);font-size:var(--t-h3);font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink)}
+
+/* divisão do tempo: barra proporcional. Mesma codificação do cronograma (20-cronograma.css): azul = apresentação
+   (--bom, o mesmo de --cron-apres) · laranja = definições. Forma acompanha a cor na legenda: quadrado × pílula. */
+.slide[data-layout="bloco"] .bloco-barra{
+  display:flex;height:28px;border-radius:999px;overflow:hidden;background:var(--card-forte);margin-bottom:22px}
+.slide[data-layout="bloco"] .bloco-seg{display:block;height:100%;min-width:0}
+.slide[data-layout="bloco"] .bloco-seg--apres,
+.slide[data-layout="bloco"] .bloco-amostra--apres{
+  background:var(--bom)}
+.slide[data-layout="bloco"] .bloco-seg--def,
+.slide[data-layout="bloco"] .bloco-amostra--def{background:var(--laranja)}
+.slide[data-layout="bloco"] .bloco-legenda{list-style:none;display:flex;flex-direction:column;gap:10px}
+.slide[data-layout="bloco"] .bloco-legenda li{display:flex;align-items:center;gap:16px;font-size:var(--t-peq);color:var(--ink)}
+.slide[data-layout="bloco"] .bloco-legenda b{
+  margin-left:auto;font-family:var(--mono);font-weight:500;font-size:var(--t-peq);font-variant-numeric:tabular-nums}
+.slide[data-layout="bloco"] .bloco-amostra{flex:none;width:28px;height:18px;border-radius:5px}
+.slide[data-layout="bloco"] .bloco-amostra--def{border-radius:999px}
+.slide[data-layout="bloco"] .bloco-legenda li.bloco-zero{color:var(--ink-dim)}
+
+/* ---------- coluna principal ---------- */
+.slide[data-layout="bloco"] .bloco-principal{flex:1;min-width:0;display:flex;flex-direction:column}
+.slide[data-layout="bloco"] .bloco-principal .cab{margin-bottom:24px}
+.slide[data-layout="bloco"] .bloco-principal h1{font-size:var(--t-h1)}
+.slide[data-layout="bloco"] .bloco-principal .rotulo{font-weight:500}
+
+.slide[data-layout="bloco"] .bloco-objetivo{
+  flex:1 1 auto;display:flex;flex-direction:column;padding:24px 36px 28px;margin-bottom:36px}
+.slide[data-layout="bloco"] .bloco-objetivo .rotulo{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.slide[data-layout="bloco"] .bloco-objetivo-txt{
+  margin-block:auto;font-family:var(--serif);font-size:var(--t-h3);font-weight:500;line-height:1.22;letter-spacing:-.01em;color:var(--branco)}
+
+.slide[data-layout="bloco"] .bloco-duas{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:var(--gap-g)}
+.slide[data-layout="bloco"] .bloco-duas .lista{gap:12px}
+.slide[data-layout="bloco"] .bloco-duas .lista li{min-height:38px;display:flex;align-items:center}
+
+.slide[data-layout="bloco"] .bloco-perfis{list-style:none;display:flex;flex-wrap:wrap;gap:14px}
+.slide[data-layout="bloco"] .bloco-perfis .chip{font-size:var(--t-rotulo);padding:10px 20px}
+.slide[data-layout="bloco"] .bloco-perfis .ico{color:var(--laranja-claro)}
+
+/* ---------- variante: intocável (data-bloco-tipo="intocavel") ---------- */
+.slide[data-layout="bloco"] .bloco-intocavel{display:none}
+.slide[data-layout="bloco"][data-bloco-tipo="intocavel"] .bloco-intocavel{display:block}
+.slide[data-layout="bloco"][data-bloco-tipo="intocavel"] .bloco-relogio{
+  border:1.5px solid var(--laranja);border-top-width:4px}
+.slide[data-layout="bloco"] .bloco-selo{
+  display:inline-flex;align-items:center;gap:12px;padding:8px 22px 8px 16px;border-radius:999px;
+  background:var(--laranja);color:var(--azul-950);
+  font-family:var(--mono);font-size:var(--t-rotulo);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.slide[data-layout="bloco"] .bloco-selo .ico{font-size:1.3em;stroke-width:2.4}
+.slide[data-layout="bloco"] .bloco-porque{margin-top:16px;font-size:var(--t-peq);line-height:1.35;color:var(--ink)}
+.slide[data-layout="bloco"] .bloco-porque b{font-weight:600;color:var(--laranja-claro)}

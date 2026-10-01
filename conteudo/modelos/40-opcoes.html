@@ -1,0 +1,308 @@
+<!--
+  LAYOUT  opcoes  — REPERTÓRIO pronto: 2 a 4 opções lado a lado, para comparar ANTES de decidir.
+  Vem sempre ANTES da tela "proposta" (regra "a tela guia, não anuncia"): aqui a sala lê; quem decide é a próxima tela.
+
+  ANATOMIA
+    .cab                       kicker · h2 (uma linha) · .sub opcional (uma linha)
+    .corpo
+      .opcoes-grade            grade de cartões, UMA coluna por opção; as faixas internas se alinham entre os cartões (subgrid)
+        article.card.opcoes-card   (1 por opção)
+          .opcoes-topo         h3 com .opcoes-letra (A, B, C, D) + nome  ·  p.opcoes-desc (uma linha)
+          .opcoes-bloco.opcoes-bloco--pros     h4.rotulo (ícone check + "Prós")        + ul.lista.lista--pros
+          .opcoes-bloco.opcoes-bloco--contras  h4.rotulo (ícone x + "Contras")         + ul.lista.lista--contras
+          .opcoes-quando       faixa laranja "Quando faz sentido" (obrigatória)
+          .opcoes-custo        "Custo de adotar" (opcional; se faltar em uma opção, as demais podem ter)
+      p.opcoes-leitura         rodapé opcional "Como ler esta tela"
+
+  ATRIBUTOS  id · data-layout="opcoes" · data-bloco · [data-min] · [data-modelo] · data-n="2|3|4"  (n = número de cartões)
+  TABELA CSV  nenhuma (tela de leitura, não grava).
+
+  LIMITES DE TEXTO  (medidos em Chrome, 1920x1080 e 1366x768; a tela NUNCA reduz fonte sozinha — estourou, a auditoria acusa)
+    data-n  corpo  prós | contras          quando faz sentido   custo de adotar   .sub / rodapé
+    2       30 px  até 3 cada, lado a lado  até 2 linhas (~70)   até 1 linha (~30)  com itens de 1 linha cabem .sub E rodapé;
+                   cada item até 2 linhas (~40 car.)                                 com itens de 2 linhas, só um dos dois
+    3       26 px  até 3 cada, empilhados   até 2 linhas (~70)   até 1 linha (~28)  nenhum dos dois (a tela já usa toda a altura)
+                   cada item 1 linha (~30 car.)
+    4       26 px  até 2 cada, empilhados   até 3 linhas (~55)   omitir             sem .sub: itens até 2 linhas (~36 car.)
+                                                                                    com .sub: itens de 1 linha (~22 car.); sem rodapé
+  Descrição (.opcoes-desc): 1 linha em n=2/3 (~34 car.); até 2 linhas em n=4 (~40 car.).
+  Nome da opção: até ~20 caracteres em n=3/4 e ~34 em n=2 (mais que isso quebra e empurra o cartão).
+  Mais de 4 opções: dividir em duas telas (nunca reduzir fonte). Não repetir itens entre prós e contras.
+  Nenhuma opção vem marcada como "recomendada": a recomendação é a proposta da tela seguinte (layout proposta).
+-->
+
+<!-- ===== n = 3 (padrão) ===== -->
+<section class="slide" id="modelo-opcoes" data-layout="opcoes" data-bloco="b1" data-min="5" data-modelo data-n="3">
+  <header class="cab">
+    <p class="kicker anim d1">Repertório</p>
+    <h2 class="anim d2">Três caminhos para <em>comparar antes de decidir</em></h2>
+  </header>
+  <div class="corpo">
+    <div class="opcoes-grade anim d3">
+      <article class="card opcoes-card">
+        <header class="opcoes-topo">
+          <h3><span class="opcoes-letra">A</span>Nome da opção</h3>
+          <p class="opcoes-desc">Uma linha que descreve a opção.</p>
+        </header>
+        <section class="opcoes-bloco opcoes-bloco--pros">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-check"/></svg>Prós</h4>
+          <ul class="lista lista--pros">
+            <li>Vantagem 1</li>
+            <li>Vantagem 2</li>
+            <li>Vantagem 3</li>
+          </ul>
+        </section>
+        <section class="opcoes-bloco opcoes-bloco--contras">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-x"/></svg>Contras</h4>
+          <ul class="lista lista--contras">
+            <li>Desvantagem 1</li>
+            <li>Desvantagem 2</li>
+            <li>Desvantagem 3</li>
+          </ul>
+        </section>
+        <div class="opcoes-quando">
+          <h4 class="rotulo rotulo--laranja">Quando faz sentido</h4>
+          <p>Cenário em que esta opção é a melhor escolha.</p>
+        </div>
+        <p class="opcoes-custo"><span class="rotulo">Custo de adotar</span>Tempo, esforço ou risco.</p>
+      </article>
+
+      <article class="card opcoes-card">
+        <header class="opcoes-topo">
+          <h3><span class="opcoes-letra">B</span>Nome da opção</h3>
+          <p class="opcoes-desc">Uma linha que descreve a opção.</p>
+        </header>
+        <section class="opcoes-bloco opcoes-bloco--pros">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-check"/></svg>Prós</h4>
+          <ul class="lista lista--pros">
+            <li>Vantagem 1</li>
+            <li>Vantagem 2</li>
+            <li>Vantagem 3</li>
+          </ul>
+        </section>
+        <section class="opcoes-bloco opcoes-bloco--contras">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-x"/></svg>Contras</h4>
+          <ul class="lista lista--contras">
+            <li>Desvantagem 1</li>
+            <li>Desvantagem 2</li>
+            <li>Desvantagem 3</li>
+          </ul>
+        </section>
+        <div class="opcoes-quando">
+          <h4 class="rotulo rotulo--laranja">Quando faz sentido</h4>
+          <p>Cenário em que esta opção é a melhor escolha.</p>
+        </div>
+        <p class="opcoes-custo"><span class="rotulo">Custo de adotar</span>Tempo, esforço ou risco.</p>
+      </article>
+
+      <article class="card opcoes-card">
+        <header class="opcoes-topo">
+          <h3><span class="opcoes-letra">C</span>Nome da opção</h3>
+          <p class="opcoes-desc">Uma linha que descreve a opção.</p>
+        </header>
+        <section class="opcoes-bloco opcoes-bloco--pros">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-check"/></svg>Prós</h4>
+          <ul class="lista lista--pros">
+            <li>Vantagem 1</li>
+            <li>Vantagem 2</li>
+            <li>Vantagem 3</li>
+          </ul>
+        </section>
+        <section class="opcoes-bloco opcoes-bloco--contras">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-x"/></svg>Contras</h4>
+          <ul class="lista lista--contras">
+            <li>Desvantagem 1</li>
+            <li>Desvantagem 2</li>
+            <li>Desvantagem 3</li>
+          </ul>
+        </section>
+        <div class="opcoes-quando">
+          <h4 class="rotulo rotulo--laranja">Quando faz sentido</h4>
+          <p>Cenário em que esta opção é a melhor escolha.</p>
+        </div>
+        <p class="opcoes-custo"><span class="rotulo">Custo de adotar</span>Tempo, esforço ou risco.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== n = 2 ===== -->
+<section class="slide" id="modelo-opcoes-2" data-layout="opcoes" data-bloco="b1" data-min="5" data-modelo data-n="2">
+  <header class="cab">
+    <p class="kicker anim d1">Repertório</p>
+    <h2 class="anim d2">Dois caminhos <em>lado a lado</em></h2>
+    <p class="sub anim d3">Uma linha de contexto que diz o que está sendo comparado.</p>
+  </header>
+  <div class="corpo">
+    <div class="opcoes-grade anim d4">
+      <article class="card opcoes-card">
+        <header class="opcoes-topo">
+          <h3><span class="opcoes-letra">A</span>Nome da opção</h3>
+          <p class="opcoes-desc">Uma linha que descreve a opção.</p>
+        </header>
+        <section class="opcoes-bloco opcoes-bloco--pros">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-check"/></svg>Prós</h4>
+          <ul class="lista lista--pros">
+            <li>Vantagem 1</li>
+            <li>Vantagem 2</li>
+            <li>Vantagem 3</li>
+          </ul>
+        </section>
+        <section class="opcoes-bloco opcoes-bloco--contras">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-x"/></svg>Contras</h4>
+          <ul class="lista lista--contras">
+            <li>Desvantagem 1</li>
+            <li>Desvantagem 2</li>
+            <li>Desvantagem 3</li>
+          </ul>
+        </section>
+        <div class="opcoes-quando">
+          <h4 class="rotulo rotulo--laranja">Quando faz sentido</h4>
+          <p>Cenário em que esta opção é a melhor escolha.</p>
+        </div>
+        <p class="opcoes-custo"><span class="rotulo">Custo de adotar</span>Tempo, esforço ou risco.</p>
+      </article>
+
+      <article class="card opcoes-card">
+        <header class="opcoes-topo">
+          <h3><span class="opcoes-letra">B</span>Nome da opção</h3>
+          <p class="opcoes-desc">Uma linha que descreve a opção.</p>
+        </header>
+        <section class="opcoes-bloco opcoes-bloco--pros">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-check"/></svg>Prós</h4>
+          <ul class="lista lista--pros">
+            <li>Vantagem 1</li>
+            <li>Vantagem 2</li>
+            <li>Vantagem 3</li>
+          </ul>
+        </section>
+        <section class="opcoes-bloco opcoes-bloco--contras">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-x"/></svg>Contras</h4>
+          <ul class="lista lista--contras">
+            <li>Desvantagem 1</li>
+            <li>Desvantagem 2</li>
+            <li>Desvantagem 3</li>
+          </ul>
+        </section>
+        <div class="opcoes-quando">
+          <h4 class="rotulo rotulo--laranja">Quando faz sentido</h4>
+          <p>Cenário em que esta opção é a melhor escolha.</p>
+        </div>
+        <p class="opcoes-custo"><span class="rotulo">Custo de adotar</span>Tempo, esforço ou risco.</p>
+      </article>
+    </div>
+    <p class="opcoes-leitura anim d4"><span class="rotulo">Como ler esta tela</span>Compare as opções linha a linha. Nada aqui é decisão: a proposta vem na tela seguinte.</p>
+  </div>
+</section>
+
+<!-- ===== n = 4 ===== -->
+<section class="slide" id="modelo-opcoes-4" data-layout="opcoes" data-bloco="b1" data-min="5" data-modelo data-n="4">
+  <header class="cab">
+    <p class="kicker anim d1">Repertório</p>
+    <h2 class="anim d2">Quatro caminhos <em>em uma só tela</em></h2>
+    <p class="sub anim d3">Até dois prós e dois contras por opção; o detalhe fica para a conversa.</p>
+  </header>
+  <div class="corpo">
+    <div class="opcoes-grade anim d4">
+      <article class="card opcoes-card">
+        <header class="opcoes-topo">
+          <h3><span class="opcoes-letra">A</span>Nome da opção</h3>
+          <p class="opcoes-desc">Uma linha que descreve a opção.</p>
+        </header>
+        <section class="opcoes-bloco opcoes-bloco--pros">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-check"/></svg>Prós</h4>
+          <ul class="lista lista--pros">
+            <li>Vantagem 1</li>
+            <li>Vantagem 2</li>
+          </ul>
+        </section>
+        <section class="opcoes-bloco opcoes-bloco--contras">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-x"/></svg>Contras</h4>
+          <ul class="lista lista--contras">
+            <li>Desvantagem 1</li>
+            <li>Desvantagem 2</li>
+          </ul>
+        </section>
+        <div class="opcoes-quando">
+          <h4 class="rotulo rotulo--laranja">Quando faz sentido</h4>
+          <p>Cenário em que esta opção é a melhor escolha.</p>
+        </div>
+      </article>
+
+      <article class="card opcoes-card">
+        <header class="opcoes-topo">
+          <h3><span class="opcoes-letra">B</span>Nome da opção</h3>
+          <p class="opcoes-desc">Uma linha que descreve a opção.</p>
+        </header>
+        <section class="opcoes-bloco opcoes-bloco--pros">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-check"/></svg>Prós</h4>
+          <ul class="lista lista--pros">
+            <li>Vantagem 1</li>
+            <li>Vantagem 2</li>
+          </ul>
+        </section>
+        <section class="opcoes-bloco opcoes-bloco--contras">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-x"/></svg>Contras</h4>
+          <ul class="lista lista--contras">
+            <li>Desvantagem 1</li>
+            <li>Desvantagem 2</li>
+          </ul>
+        </section>
+        <div class="opcoes-quando">
+          <h4 class="rotulo rotulo--laranja">Quando faz sentido</h4>
+          <p>Cenário em que esta opção é a melhor escolha.</p>
+        </div>
+      </article>
+
+      <article class="card opcoes-card">
+        <header class="opcoes-topo">
+          <h3><span class="opcoes-letra">C</span>Nome da opção</h3>
+          <p class="opcoes-desc">Uma linha que descreve a opção.</p>
+        </header>
+        <section class="opcoes-bloco opcoes-bloco--pros">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-check"/></svg>Prós</h4>
+          <ul class="lista lista--pros">
+            <li>Vantagem 1</li>
+            <li>Vantagem 2</li>
+          </ul>
+        </section>
+        <section class="opcoes-bloco opcoes-bloco--contras">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-x"/></svg>Contras</h4>
+          <ul class="lista lista--contras">
+            <li>Desvantagem 1</li>
+            <li>Desvantagem 2</li>
+          </ul>
+        </section>
+        <div class="opcoes-quando">
+          <h4 class="rotulo rotulo--laranja">Quando faz sentido</h4>
+          <p>Cenário em que esta opção é a melhor escolha.</p>
+        </div>
+      </article>
+
+      <article class="card opcoes-card">
+        <header class="opcoes-topo">
+          <h3><span class="opcoes-letra">D</span>Nome da opção</h3>
+          <p class="opcoes-desc">Uma linha que descreve a opção.</p>
+        </header>
+        <section class="opcoes-bloco opcoes-bloco--pros">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-check"/></svg>Prós</h4>
+          <ul class="lista lista--pros">
+            <li>Vantagem 1</li>
+            <li>Vantagem 2</li>
+          </ul>
+        </section>
+        <section class="opcoes-bloco opcoes-bloco--contras">
+          <h4 class="rotulo"><svg class="ico"><use href="#i-x"/></svg>Contras</h4>
+          <ul class="lista lista--contras">
+            <li>Desvantagem 1</li>
+            <li>Desvantagem 2</li>
+          </ul>
+        </section>
+        <div class="opcoes-quando">
+          <h4 class="rotulo rotulo--laranja">Quando faz sentido</h4>
+          <p>Cenário em que esta opção é a melhor escolha.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

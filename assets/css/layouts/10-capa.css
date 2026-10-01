@@ -1,0 +1,44 @@
+/* ==========================================================================
+   LAYOUT capa — abertura do evento.
+   Três faixas em coluna (marca · título · rodapé) distribuídas nos 840px úteis do palco;
+   decoração de arcos concêntricos ancorada no canto inferior direito, atrás de tudo.
+   Ordem: layout → blocos (marca, título, rodapé) → decoração.
+   ========================================================================== */
+
+/* layout */
+.slide[data-layout="capa"]{justify-content:space-between}
+
+/* marca */
+.slide[data-layout="capa"] .capa-marca{flex:none}
+.slide[data-layout="capa"] .capa-marca .logo{height:128px}
+
+/* título (mantém a altura natural: se o texto passar do limite a tela estoura para baixo — a auditoria acusa — e nunca se sobrepõe) */
+.slide[data-layout="capa"] .capa-titulo{margin:0;flex:none}
+.slide[data-layout="capa"] .capa-titulo .kicker{margin-bottom:20px}
+.slide[data-layout="capa"] .capa-titulo h1{
+  font-size:var(--t-display);line-height:1.02;letter-spacing:-.02em;max-width:1340px;text-wrap:balance}
+.slide[data-layout="capa"] .capa-titulo .sub{margin-top:24px;max-width:1040px}
+
+/* rodapé: frase-guia + metadados */
+.slide[data-layout="capa"] .capa-rodape{flex:none;display:flex;flex-direction:column;gap:32px}
+.slide[data-layout="capa"] .capa-frase{
+  max-width:1080px;padding-left:32px;border-left:4px solid var(--laranja);
+  font-family:var(--serif);font-style:italic;font-weight:400;font-size:var(--t-h3);line-height:1.25;color:var(--ink)}
+.slide[data-layout="capa"] .capa-meta{
+  display:flex;flex-wrap:wrap;gap:16px 56px;list-style:none;padding-top:24px;border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:var(--t-rotulo);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+.slide[data-layout="capa"] .capa-meta li{display:flex;align-items:center;gap:18px}
+.slide[data-layout="capa"] .capa-meta li::before{
+  content:"";width:10px;height:10px;background:var(--laranja);transform:rotate(45deg);flex:none}
+
+/* decoração de marca (não informa nada; ignorada pela auditoria via [data-decor]) */
+.slide[data-layout="capa"] .capa-decor{position:absolute;inset:0;overflow:hidden}
+.slide[data-layout="capa"] .capa-arcos{
+  position:absolute;right:-72px;bottom:-260px;width:1040px;height:1040px;overflow:visible;
+  fill:none;stroke:var(--laranja);stroke-width:12;stroke-linecap:round}
+/* do arco interno (mais marcado) ao externo (quase some) */
+.slide[data-layout="capa"] .capa-arcos path{opacity:.20}
+.slide[data-layout="capa"] .capa-arcos path:nth-child(2){opacity:.14}
+.slide[data-layout="capa"] .capa-arcos path:nth-child(3){opacity:.10}
+.slide[data-layout="capa"] .capa-arcos path:nth-child(4){opacity:.07}
+.slide[data-layout="capa"] .capa-arcos path:nth-child(5){opacity:.05}

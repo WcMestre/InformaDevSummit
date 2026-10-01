@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+{{CSP}}
+<title>{{TITULO}}</title>
+{{BASE}}
+<!-- favicon próprio (ícone laranja sobre azul): o logo branco some em aba clara; data: já é permitido por img-src -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%22-17%20-33%20120%20120%22%3E%3Crect%20x=%22-17%22%20y=%22-33%22%20width=%22120%22%20height=%22120%22%20rx=%2222%22%20fill=%22%2304283a%22/%3E%3Cpath%20fill=%22%23f7941e%22%20d=%22M85.49,49.57s0-.53,0-1.53a44.7,44.7,0,0,0-.41-4.47,44.33,44.33,0,0,0-1.62-6.83,48.92,48.92,0,0,0-3.63-8.45,56.66,56.66,0,0,0-15.18-17.8A49.89,49.89,0,0,0,52.73,3.56a48.82,48.82,0,0,0-7-2.26C44.56,1,43.33.75,42.08.58L41.14.44l-1-.1L38.52.16C37.34.07,35.86,0,34.61,0s-2.54,0-3.82.1a40.42,40.42,0,0,0-7.72,1.18,31.14,31.14,0,0,0-14,7.48A28.78,28.78,0,0,0,1.24,21.64a29.88,29.88,0,0,0-.91,12.9,31.3,31.3,0,0,0,3.11,9.8,32.54,32.54,0,0,0,4.21,6.29A30.35,30.35,0,0,0,11,54c.84.71,1.31,1.06,1.31,1.06l1.43-.85s-.06-.58-.21-1.61-.36-2.51-.54-4.34-.34-4-.33-6.33a40.23,40.23,0,0,1,.78-7.4,25.78,25.78,0,0,1,2.7-7.25,20.58,20.58,0,0,1,2.19-3.2,25.16,25.16,0,0,1,2.68-2.9,29.17,29.17,0,0,1,7.16-5,23.73,23.73,0,0,1,4.67-1.74c.83-.24,1.69-.39,2.57-.56s1.56-.2,2.52-.28l1.61-.05.4,0h.85c.89,0,1.78.08,2.67.15a35.84,35.84,0,0,1,5.37,1,47.49,47.49,0,0,1,10.22,4.07,51.12,51.12,0,0,1,8.78,6,50.36,50.36,0,0,1,6.82,6.91,49.76,49.76,0,0,1,4.7,6.84,50.15,50.15,0,0,1,2.78,5.85,39.76,39.76,0,0,1,1.3,4l.37,1.49Z%22%3E%3C/path%3E%3Cpath%20fill=%22%23fbb040%22%20d=%22M72.65,49.44s0-.28,0-.81-.08-1.34-.22-2.33a21.1,21.1,0,0,0-.85-3.56,25,25,0,0,0-1.89-4.42,29,29,0,0,0-3.23-4.76A29.88,29.88,0,0,0,61.75,29a26,26,0,0,0-6.2-3.62,25.38,25.38,0,0,0-3.64-1.18c-.63-.14-1.27-.29-1.93-.38l-.49-.07L49,23.73l-.84-.1c-.61,0-1.39-.08-2-.08s-1.32,0-2,.05a20.7,20.7,0,0,0-4,.62,16.24,16.24,0,0,0-7.3,3.91,14.93,14.93,0,0,0-4.1,6.72,15.52,15.52,0,0,0-.48,6.74,16.17,16.17,0,0,0,1.63,5.11A16.41,16.41,0,0,0,32,50a15.81,15.81,0,0,0,1.77,1.76c.43.36.68.55.68.55l.74-.45s0-.3-.11-.84-.18-1.31-.28-2.26-.18-2.08-.17-3.31a21,21,0,0,1,.41-3.86,13.23,13.23,0,0,1,1.41-3.79,10.48,10.48,0,0,1,1.14-1.67A14.24,14.24,0,0,1,39,34.6,15.31,15.31,0,0,1,42.74,32a11.6,11.6,0,0,1,2.44-.91c.43-.12.88-.2,1.34-.29s.81-.11,1.32-.15l.84,0H49s-.17,0-.08,0h.39c.46,0,.93,0,1.4.07a18,18,0,0,1,2.79.51,24.75,24.75,0,0,1,5.35,2.12,27.23,27.23,0,0,1,4.58,3.15A25.71,25.71,0,0,1,67,40.06a24,24,0,0,1,3.91,6.63,21.71,21.71,0,0,1,.68,2.08c.12.51.19.78.19.78Z%22%3E%3C/path%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/fontes/fontes.css">
+{{CSS_LINKS}}
+</head>
+<body>
+<div id="stage" data-chrome="on">
+  <svg class="sprite" aria-hidden="true" focusable="false"><defs>
+{{SPRITE}}
+  </defs></svg>
+
+  <header class="moldura-topo">
+    <svg class="logo" viewBox="0 0 503.94 164.06" role="img" aria-label="Informa Solutions"><use href="#logo-informa"/></svg>
+    <div class="cron" id="cron" hidden>
+      <svg class="ico" id="cronIco"><use href="#i-pause"/></svg>
+      <span id="cronTempo">10:00</span><small id="cronRot">cronômetro</small>
+    </div>
+    <div class="moldura-dir">
+      <button type="button" class="dados-chip dados-chip--neutro" id="dadosChip" aria-label="Base de dados CSV"></button>
+      <span class="moldura-bloco" id="blocoNome"></span>
+      <span class="relogio" id="relogio" hidden></span>
+      <span class="moldura-cont"><b id="cur">01</b> / <span id="tot">00</span></span>
+    </div>
+  </header>
+
+  <main id="deck">
+{{SLIDES}}
+  </main>
+
+  <div class="dica" id="dica"><span><svg class="ico ico--esq" aria-hidden="true"><use href="#i-seta"/></svg> <svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg> navegar · O visão geral · T cronômetro · D dados CSV · F tela cheia · ? ajuda</span></div>
+  <nav class="trilha" id="trilha" aria-label="Trilha do dia"></nav>
+  <div class="progresso" id="barra"></div>
+
+  <section class="visao" id="visao" hidden aria-label="Visão geral"></section>
+  <section class="dados-painel" id="dadosPainel" hidden aria-label="Base de dados CSV"></section>
+
+  <section class="ajuda" id="ajuda" hidden aria-label="Atalhos">
+    <div class="ajuda-caixa">
+      <h2>Atalhos</h2>
+      <div class="ajuda-grade">
+        <div><span>Próxima / anterior</span><span class="teclas"><kbd><svg class="ico" aria-hidden="true"><use href="#i-seta"/></svg><span class="sr-only">seta direita</span></kbd> <kbd><svg class="ico ico--esq" aria-hidden="true"><use href="#i-seta"/></svg><span class="sr-only">seta esquerda</span></kbd> <kbd>Espaço</kbd></span></div>
+        <div><span>Primeira / última</span><span class="teclas"><kbd>Home</kbd> <kbd>End</kbd></span></div>
+        <div><span>Visão geral</span><kbd>O</kbd></div>
+        <div><span>Tela cheia</span><kbd>F</kbd></div>
+        <div><span>Cronômetro: iniciar / pausar</span><kbd>T</kbd></div>
+        <div><span>Cronômetro: reiniciar</span><kbd>R</kbd></div>
+        <div><span>Cronômetro: ± 1 minuto</span><span class="teclas"><kbd>+</kbd> <kbd>-</kbd></span></div>
+        <div><span>Cronômetro: ocultar</span><span class="teclas"><kbd>Shift</kbd> + <kbd>T</kbd></span></div>
+        <div><span>Base de dados (CSV)</span><kbd>D</kbd></div>
+        <div><span>Relógio real</span><kbd>H</kbd></div>
+        <div><span>Apagar tela (logo)</span><kbd>B</kbd></div>
+        <div><span>Ir para a tela nº</span><span class="teclas"><kbd>G</kbd> + número + <kbd>Enter</kbd></span></div>
+        <div><span>Dinâmica: iniciar o passo nº</span><span class="teclas"><kbd>1</kbd> – <kbd>9</kbd></span></div>
+        <div><span>Dinâmica: só concluir o passo</span><span class="teclas"><kbd>Shift</kbd> + <kbd>1</kbd> – <kbd>9</kbd></span></div>
+        <div><span>Proposta: aceitar / ajustar / recusar</span><span class="teclas"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></span></div>
+        <div><span>Brainstorm: digitar</span><kbd>Enter</kbd></div>
+        <div><span>Fechar painéis, sair do campo</span><kbd>Esc</kbd></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="apagao" id="apagao" hidden>
+    <svg class="logo" viewBox="0 0 503.94 164.06" role="img" aria-label="Informa Solutions"><use href="#logo-informa"/></svg>
+    <p class="apagao-dica">B ou Esc volta</p>
+  </div>
+  <div class="ir-para" id="irPara" hidden role="status" aria-live="polite">
+    <span>Ir para a tela:</span> <b id="irParaN">_</b> <small>Enter vai · Esc cancela</small>
+  </div>
+</div>
+<script type="application/json" id="dados-esquema">{{DADOS_ESQUEMA}}</script>
+<script type="application/json" id="dados-sementes">{{DADOS_SEMENTES}}</script>
+{{JS_SCRIPTS}}
+</body>
+</html>

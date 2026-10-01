@@ -1,0 +1,95 @@
+<section class="slide" id="a0-brainstorm" data-layout="brainstorm" data-bloco="a0" data-min="35" data-rodada="1" data-meta="3" data-tabela="brainstorming">
+  <div class="brainstorm-topo anim d1">
+    <header class="cab">
+      <p class="kicker">Assunto 0 · Brainstorming</p>
+      <h2>Práticas <em>boas</em> e a <em>melhorar</em></h2>
+    </header>
+    <div class="brainstorm-instrucao">
+      <p class="brainstorm-regra">
+        <span class="brainstorm-regra-item"><svg class="ico brainstorm-ico--bom" aria-hidden="true"><use href="#i-check"/></svg><b data-brainstorm-meta>3</b> práticas boas</span>
+        <span class="brainstorm-regra-sep" aria-hidden="true">·</span>
+        <span class="brainstorm-regra-item"><svg class="ico brainstorm-ico--melhorar" aria-hidden="true"><use href="#i-alerta"/></svg><b data-brainstorm-meta>3</b> a melhorar</span>
+        <span>por pessoa</span>
+      </p>
+      <p class="brainstorm-apoio"><span data-brainstorm-resumo>nenhum participante ainda</span> · <kbd>Enter</kbd> digitar · <kbd>Esc</kbd> navegar</p>
+    </div>
+  </div>
+
+  <div class="corpo brainstorm-corpo">
+    <div class="brainstorm-progresso anim d2" role="group" aria-label="Progresso por participante">
+      <div class="brainstorm-chips" data-densidade="amplo">
+        <span class="brainstorm-pessoa brainstorm-pessoa--exemplo"><span class="exemplo-marca">exemplo</span><span class="brainstorm-pessoa-nome">Pessoa 1</span><span class="brainstorm-cont brainstorm-cont--bom"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><span class="brainstorm-cont-rot">bom</span><span class="brainstorm-cont-n">2/3</span></span><span class="brainstorm-cont brainstorm-cont--melhorar"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg><span class="brainstorm-cont-rot">melhorar</span><span class="brainstorm-cont-n">1/3</span></span></span>
+      </div>
+    </div>
+
+    <div class="brainstorm-colunas anim d3">
+      <article class="card brainstorm-col" data-tipo="bom" aria-label="O que fazemos bem">
+        <header class="brainstorm-col-cab">
+          <span class="brainstorm-col-ico" aria-hidden="true"><svg class="ico"><use href="#i-check"/></svg></span>
+          <h3>O que fazemos bem</h3>
+          <p class="brainstorm-contador"><b class="num" data-brainstorm-n>0</b><span data-brainstorm-n-rot>itens</span></p>
+        </header>
+        <ul class="brainstorm-lista" data-tipo="bom" data-rolagem tabindex="0" aria-label="Apontamentos sobre o que fazemos bem">
+          <li class="brainstorm-item brainstorm-item--exemplo">
+            <div class="brainstorm-item-corpo">
+              <span class="brainstorm-quem">Pessoa 1</span>
+              <span class="brainstorm-texto exemplo"><span class="exemplo-marca">exemplo</span>Uma prática que funciona, em uma frase curta</span>
+            </div>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card brainstorm-col" data-tipo="melhorar" aria-label="O que podemos melhorar">
+        <header class="brainstorm-col-cab">
+          <span class="brainstorm-col-ico" aria-hidden="true"><svg class="ico"><use href="#i-alerta"/></svg></span>
+          <h3>O que podemos melhorar</h3>
+          <p class="brainstorm-legenda">criticidade 1 a 3</p>
+          <p class="brainstorm-contador"><b class="num" data-brainstorm-n>0</b><span data-brainstorm-n-rot>itens</span></p>
+        </header>
+        <ul class="brainstorm-lista" data-tipo="melhorar" data-rolagem tabindex="0" aria-label="Apontamentos sobre o que podemos melhorar">
+          <li class="brainstorm-item brainstorm-item--exemplo">
+            <div class="brainstorm-item-corpo">
+              <span class="brainstorm-quem">Pessoa 1</span>
+              <span class="brainstorm-texto exemplo"><span class="exemplo-marca">exemplo</span>Um ponto a melhorar, em uma frase curta</span>
+              <span class="brainstorm-crit" data-nivel="2" role="img" aria-label="Criticidade 2 de 3"><span></span><span></span><span></span></span>
+            </div>
+          </li>
+        </ul>
+      </article>
+    </div>
+
+    <form class="brainstorm-entrada anim d4" aria-label="Registrar apontamento" autocomplete="off" novalidate>
+      <label class="brainstorm-campo brainstorm-campo--participante">
+        <span class="brainstorm-campo-rot" data-erro="Falta o nome">Participante</span>
+        <input class="brainstorm-input" type="text" data-campo="participante" maxlength="40" placeholder="Quem fala" enterkeyhint="next">
+      </label>
+      <datalist data-brainstorm-sugestoes></datalist>
+
+      <fieldset class="brainstorm-campo brainstorm-campo--tipo">
+        <legend class="brainstorm-campo-rot">Tipo</legend>
+        <div class="brainstorm-segmento">
+          <label><input class="brainstorm-radio" type="radio" data-campo="tipo" value="bom" checked><span class="brainstorm-seg brainstorm-seg--bom"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Bom</span></label>
+          <label><input class="brainstorm-radio" type="radio" data-campo="tipo" value="melhorar"><span class="brainstorm-seg brainstorm-seg--melhorar"><svg class="ico" aria-hidden="true"><use href="#i-alerta"/></svg>Melhorar</span></label>
+        </div>
+      </fieldset>
+
+      <label class="brainstorm-campo brainstorm-campo--texto">
+        <span class="brainstorm-campo-rot" data-erro="Falta o texto">Apontamento</span>
+        <input class="brainstorm-input" type="text" data-campo="texto" maxlength="160" placeholder="Uma frase curta, concreta" enterkeyhint="send">
+      </label>
+
+      <fieldset class="brainstorm-campo brainstorm-campo--criticidade" hidden>
+        <legend class="brainstorm-campo-rot">Criticidade</legend>
+        <div class="brainstorm-segmento brainstorm-segmento--crit">
+          <label><input class="brainstorm-radio" type="radio" data-campo="criticidade" value="1" aria-label="Criticidade 1 de 3, baixa"><span class="brainstorm-seg brainstorm-seg--melhorar">1</span></label>
+          <label><input class="brainstorm-radio" type="radio" data-campo="criticidade" value="2" aria-label="Criticidade 2 de 3, média" checked><span class="brainstorm-seg brainstorm-seg--melhorar">2</span></label>
+          <label><input class="brainstorm-radio" type="radio" data-campo="criticidade" value="3" aria-label="Criticidade 3 de 3, alta"><span class="brainstorm-seg brainstorm-seg--melhorar">3</span></label>
+        </div>
+      </fieldset>
+
+      <button type="submit" class="brainstorm-btn brainstorm-btn--forte"><svg class="ico" aria-hidden="true"><use href="#i-mais"/></svg>Adicionar</button>
+    </form>
+  </div>
+
+  <p class="sr-only" role="status" aria-live="polite" data-brainstorm-status></p>
+</section>

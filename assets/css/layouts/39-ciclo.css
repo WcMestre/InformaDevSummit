@@ -1,0 +1,283 @@
+/* ==========================================================================
+   39 · LAYOUT ciclo — uma volta de N semanas em duas faixas (ciclo × cooldown), com laço de retorno.
+   Mostra o RITMO que se repete: números grandes, barra de semanas numeradas e a seta "volta ao início".
+     faixa CICLO     cheio laranja, borda contínua, ícone play
+     faixa COOLDOWN  listrado azul-água, borda tracejada, ícone pause
+   A diferença nunca é só cor: rótulo + padrão (cheio × listrado) + borda (contínua × tracejada) + ícone.
+   Compõe .cab · .corpo · .rotulo · .num · .sr-only · .ico (núcleo). Sem JS e sem CSV: o HTML já é o dado.
+   Modelo: conteudo/modelos/39-ciclo.html
+
+   Ordem: escopo e medidas → quadro → faixas (números) → semanas (barra) → laço de retorno → legenda.
+   ========================================================================== */
+
+/* ---- escopo e medidas (px do palco) ---- */
+.slide[data-layout="ciclo"]{
+  --ciclo-n:8;                             /* nº de semanas (colunas); recalculado por :has() abaixo */
+  --ciclo-gap:8px;                         /* vão entre semanas */
+  --ciclo-alt-sem:140px;                   /* altura da barra de semanas */
+  --ciclo-alt-volta:100px;                  /* altura do laço de retorno */
+  --ciclo-traco:5px;                       /* espessura do laço */
+  --ciclo-cor-ciclo:var(--laranja);
+  --ciclo-cor-cool:var(--f-subgrupos);
+}
+.slide[data-layout="ciclo"] .cab{
+  margin-bottom:var(--gap);
+}
+.slide[data-layout="ciclo"] .corpo{
+  justify-content:space-between;
+  padding-bottom:8px;
+}
+
+/* o <em> do título acompanha a cor do cooldown (a frase "6 semanas de ciclo, 2 de cooldown" é o código de cores do diagrama) */
+.slide[data-layout="ciclo"] h2 em{
+  color:var(--ciclo-cor-cool);
+}
+
+/* nº de semanas = nº de <li> em .ciclo-semanas (4 a 10) */
+.slide[data-layout="ciclo"]:has(.ciclo-semanas > :nth-child(4):last-child){--ciclo-n:4}
+.slide[data-layout="ciclo"]:has(.ciclo-semanas > :nth-child(5):last-child){--ciclo-n:5}
+.slide[data-layout="ciclo"]:has(.ciclo-semanas > :nth-child(6):last-child){--ciclo-n:6}
+.slide[data-layout="ciclo"]:has(.ciclo-semanas > :nth-child(7):last-child){--ciclo-n:7}
+.slide[data-layout="ciclo"]:has(.ciclo-semanas > :nth-child(8):last-child){--ciclo-n:8}
+.slide[data-layout="ciclo"]:has(.ciclo-semanas > :nth-child(9):last-child){--ciclo-n:9}
+.slide[data-layout="ciclo"]:has(.ciclo-semanas > :nth-child(10):last-child){--ciclo-n:10}
+
+/* ---- quadro: faixas + semanas + laço, centrado entre o cabeçalho e a legenda ---- */
+.slide[data-layout="ciclo"] .ciclo-quadro{
+  margin-block:auto;
+}
+
+/* ---- faixas: o número grande de cada período, alinhado às colunas de semana ---- */
+.slide[data-layout="ciclo"] .ciclo-faixas{
+  display:grid;
+  grid-template-columns:repeat(var(--ciclo-n),minmax(0,1fr));
+  column-gap:var(--ciclo-gap);
+  margin-bottom:20px;
+}
+.slide[data-layout="ciclo"] .ciclo-faixa{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  min-width:0;
+  padding:24px 28px 20px;
+  border-top:6px solid var(--ciclo-cor-ciclo);
+  border-radius:0 0 var(--raio) var(--raio);
+  background:var(--card);
+}
+.slide[data-layout="ciclo"] .ciclo-faixa--cooldown{
+  border-top:6px dashed var(--ciclo-cor-cool);
+}
+.slide[data-layout="ciclo"] .ciclo-num{
+  flex:none;
+  font-size:168px;
+  line-height:.9;
+  color:var(--laranja-claro);
+}
+.slide[data-layout="ciclo"] .ciclo-faixa--cooldown .ciclo-num{
+  color:var(--ciclo-cor-cool);
+}
+.slide[data-layout="ciclo"] .ciclo-faixa-txt{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.slide[data-layout="ciclo"] .ciclo-faixa-rot{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--laranja-claro);
+}
+.slide[data-layout="ciclo"] .ciclo-faixa--cooldown .ciclo-faixa-rot{
+  color:var(--ciclo-cor-cool);
+}
+.slide[data-layout="ciclo"] .ciclo-faixa-rot .ico{
+  font-size:26px;
+}
+.slide[data-layout="ciclo"] .ciclo-un{
+  font-size:var(--t-h3);
+  line-height:1.1;
+  color:var(--ink);
+}
+
+/* posição das faixas: início (data-de) e extensão (data-n), em colunas de semana (1 a 10) */
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="1"]{grid-column-start:1}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="2"]{grid-column-start:2}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="3"]{grid-column-start:3}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="4"]{grid-column-start:4}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="5"]{grid-column-start:5}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="6"]{grid-column-start:6}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="7"]{grid-column-start:7}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="8"]{grid-column-start:8}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="9"]{grid-column-start:9}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-de="10"]{grid-column-start:10}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-n="1"]{grid-column-end:span 1}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-n="2"]{grid-column-end:span 2}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-n="3"]{grid-column-end:span 3}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-n="4"]{grid-column-end:span 4}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-n="5"]{grid-column-end:span 5}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-n="6"]{grid-column-end:span 6}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-n="7"]{grid-column-end:span 7}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-n="8"]{grid-column-end:span 8}
+.slide[data-layout="ciclo"] .ciclo-faixa[data-n="9"]{grid-column-end:span 9}
+
+/* ---- semanas: a barra, uma coluna por semana, numerada ---- */
+.slide[data-layout="ciclo"] .ciclo-semanas{
+  list-style:none;
+  display:grid;
+  grid-template-columns:repeat(var(--ciclo-n),minmax(0,1fr));
+  column-gap:var(--ciclo-gap);
+}
+.slide[data-layout="ciclo"] .ciclo-sem{
+  position:relative;
+  overflow:hidden;
+  height:var(--ciclo-alt-sem);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  border:3px solid var(--ciclo-cor-ciclo);
+  border-radius:12px;
+  background-color:var(--ciclo-cor-ciclo);
+  color:var(--azul-950);
+}
+.slide[data-layout="ciclo"] .ciclo-sem--cooldown{
+  border:3px dashed var(--ciclo-cor-cool);
+  border-radius:36px;
+  background-color:var(--azul-900);
+  color:var(--ink);
+}
+/* listras do cooldown: camada atrás do texto */
+.slide[data-layout="ciclo"] .ciclo-sem--cooldown::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(135deg,var(--ciclo-cor-cool) 0 6px,transparent 6px 18px);
+  opacity:.3;
+  pointer-events:none;
+}
+.slide[data-layout="ciclo"] .ciclo-sem-rot,
+.slide[data-layout="ciclo"] .ciclo-sem-num{
+  position:relative;                       /* acima das listras */
+}
+.slide[data-layout="ciclo"] .ciclo-sem-rot{
+  font-family:var(--mono);
+  font-size:var(--t-rotulo);
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.slide[data-layout="ciclo"] .ciclo-sem-num{
+  font-family:var(--serif);
+  font-size:72px;
+  font-weight:600;
+  line-height:1;
+  font-variant-numeric:lining-nums;
+}
+
+/* ---- laço de retorno: sai do fim da última semana, volta por baixo e entra no início ---- */
+.slide[data-layout="ciclo"] .ciclo-volta{
+  position:relative;
+  height:var(--ciclo-alt-volta);
+  margin:6px calc(100% / var(--ciclo-n) / 2) 36px;   /* de centro a centro das semanas das pontas */
+  border:var(--ciclo-traco) solid var(--ink);
+  border-top:0;
+  border-radius:0 0 40px 40px;
+}
+.slide[data-layout="ciclo"] .ciclo-volta::before{      /* ponta da seta, subindo para a semana 1 */
+  content:"";
+  position:absolute;
+  left:calc(var(--ciclo-traco) / -2 - 20px);   /* o left parte da borda interna: recua meio traço e meia ponta */
+  top:-6px;
+  width:40px;
+  height:30px;
+  background:var(--ink);
+  clip-path:polygon(50% 0,100% 100%,0 100%);
+}
+.slide[data-layout="ciclo"] .ciclo-volta-rot{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  transform:translate(-50%,50%);
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:10px 32px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background-color:var(--azul-900);
+  font-size:var(--t-peq);
+  font-weight:500;
+  line-height:1.2;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.slide[data-layout="ciclo"] .ciclo-volta-rot .ico{
+  font-size:30px;
+  color:var(--laranja-claro);
+}
+
+/* ---- legenda: forma + rótulo, nunca só cor ---- */
+.slide[data-layout="ciclo"] .ciclo-legenda{
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:16px 56px;
+  margin-top:var(--gap);
+  padding-top:20px;
+  border-top:1px solid var(--line);
+}
+.slide[data-layout="ciclo"] .ciclo-legenda li{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  font-size:var(--t-peq);
+  line-height:1.25;
+  color:var(--ink-dim);
+}
+.slide[data-layout="ciclo"] .ciclo-legenda b{
+  font-weight:500;
+  color:var(--ink);
+}
+.slide[data-layout="ciclo"] .ciclo-amostra{
+  position:relative;
+  overflow:hidden;
+  flex:none;
+  width:56px;
+  height:32px;
+  border:3px solid var(--ciclo-cor-ciclo);
+  border-radius:8px;
+  background-color:var(--ciclo-cor-ciclo);
+}
+.slide[data-layout="ciclo"] .ciclo-amostra--cooldown{
+  border:3px dashed var(--ciclo-cor-cool);
+  border-radius:16px;
+  background-color:var(--azul-900);
+}
+.slide[data-layout="ciclo"] .ciclo-amostra--cooldown::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(135deg,var(--ciclo-cor-cool) 0 4px,transparent 4px 12px);
+  opacity:.5;
+}
+.slide[data-layout="ciclo"] .ciclo-amostra--volta{
+  overflow:visible;
+  display:grid;
+  place-items:center;
+  height:40px;
+  border:0;
+  background:transparent;
+  color:var(--ink);
+}
+.slide[data-layout="ciclo"] .ciclo-amostra--volta .ico{
+  font-size:36px;
+}

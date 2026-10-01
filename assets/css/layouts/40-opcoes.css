@@ -1,0 +1,196 @@
+/* ==========================================================================
+   40 · LAYOUT opcoes — repertório: 2 a 4 opções lado a lado, para comparar antes de decidir.
+   Compõe .cab · .corpo · .card · .rotulo · .lista(--pros|--contras) (30-componentes.css).
+   Variantes por data-n: 2 · 3 (padrão) · 4 — mudam número de colunas e corpo do texto.
+   Ordem: layout → grade → cartão (topo · blocos · faixa "quando" · custo) → rodapé → variantes.
+   Modelo: conteudo/modelos/40-opcoes.html
+   ========================================================================== */
+
+/* ---- layout: cabeçalho mais compacto para dar altura às colunas ---- */
+.slide[data-layout="opcoes"]{
+  --opcoes-n:3;                     /* número de colunas (sobrescrito por data-n) */
+  --opcoes-fs:var(--t-peq);         /* corpo dos itens (prós, contras, texto da faixa) */
+  --opcoes-pad:22px;                /* respiro interno do cartão */
+  --opcoes-letra:56px;              /* diâmetro do selo da letra */
+}
+.slide[data-layout="opcoes"] .cab{
+  margin-bottom:24px;
+}
+.slide[data-layout="opcoes"] .corpo{
+  gap:var(--gap);
+}
+
+/* ---- grade: uma coluna por opção; as linhas internas se alinham entre os cartões (subgrid) ---- */
+.slide[data-layout="opcoes"] .opcoes-grade{
+  flex:1 0 auto;                /* nunca encolhe: se o texto não couber, a auditoria acusa em vez de sobrepor o rodapé */
+  display:grid;
+  grid-template-columns:repeat(var(--opcoes-n),minmax(0,1fr));
+  grid-template-rows:auto 1fr 1fr auto auto;   /* topo · prós · contras · quando · custo */
+  column-gap:var(--gap);
+  row-gap:0;
+}
+
+/* ---- cartão ---- */
+.slide[data-layout="opcoes"] .opcoes-card{
+  grid-row:span 5;
+  display:grid;
+  grid-template-rows:subgrid;
+  padding:var(--opcoes-pad);
+  font-size:var(--opcoes-fs);
+}
+
+/* topo: selo da letra + nome + descrição */
+.slide[data-layout="opcoes"] .opcoes-topo{
+  padding-bottom:10px;
+}
+.slide[data-layout="opcoes"] .opcoes-topo h3{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  margin-bottom:6px;
+}
+.slide[data-layout="opcoes"] .opcoes-letra{
+  flex:none;
+  display:grid;
+  place-items:center;
+  width:var(--opcoes-letra);
+  height:var(--opcoes-letra);
+  border:2px solid var(--laranja);
+  border-radius:50%;
+  font-size:var(--t-h3);
+  line-height:1;
+  color:var(--laranja-claro);
+}
+.slide[data-layout="opcoes"] .opcoes-desc{
+  font-size:var(--opcoes-fs);
+  line-height:1.25;
+  color:var(--ink-dim);
+}
+
+/* blocos de prós e contras: separados por filete fino */
+.slide[data-layout="opcoes"] .opcoes-bloco{
+  padding:12px 0;
+  border-top:1px solid var(--line);
+}
+.slide[data-layout="opcoes"] .opcoes-bloco .rotulo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+.slide[data-layout="opcoes"] .opcoes-bloco .lista{
+  gap:8px;
+}
+.slide[data-layout="opcoes"] .opcoes-bloco .lista li{
+  font-size:var(--opcoes-fs);
+  line-height:1.25;
+}
+/* marcador acompanha o corpo menor */
+.slide[data-layout="opcoes"] .opcoes-bloco .lista li::before{
+  top:.45em;
+}
+
+/* faixa destacada: quando faz sentido */
+.slide[data-layout="opcoes"] .opcoes-quando{
+  padding:12px 20px 12px;
+  background:rgba(247,148,29,.12);
+  border-left:4px solid var(--laranja);
+  border-radius:0 12px 12px 0;
+}
+.slide[data-layout="opcoes"] .opcoes-quando .rotulo{
+  margin-bottom:6px;
+}
+.slide[data-layout="opcoes"] .opcoes-quando p{
+  font-size:var(--opcoes-fs);
+  line-height:1.25;
+  color:var(--ink);
+}
+
+/* custo de adotar (opcional) */
+.slide[data-layout="opcoes"] .opcoes-custo{
+  margin-top:12px;
+  font-size:var(--opcoes-fs);
+  line-height:1.25;
+  color:var(--ink-dim);
+}
+.slide[data-layout="opcoes"] .opcoes-custo .rotulo{
+  margin-bottom:2px;
+}
+
+/* ---- rodapé opcional: como ler esta tela ---- */
+.slide[data-layout="opcoes"] .opcoes-leitura{
+  display:flex;
+  align-items:baseline;
+  gap:24px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+  font-size:var(--t-peq);
+  line-height:1.25;
+  color:var(--ink-dim);
+}
+.slide[data-layout="opcoes"] .opcoes-leitura .rotulo{
+  display:inline-block;
+  flex:none;
+  margin-bottom:0;
+  color:var(--laranja-claro);
+}
+
+/* ---- variantes ---- */
+.slide[data-layout="opcoes"][data-n="2"]{
+  --opcoes-n:2;
+  --opcoes-fs:var(--t-corpo);
+  --opcoes-pad:28px;
+}
+/* n=2: os cartões são largos, então prós e contras ficam lado a lado (uma linha de leitura a menos) */
+.slide[data-layout="opcoes"][data-n="2"] .opcoes-grade{
+  grid-template-rows:auto 1fr auto auto;       /* topo · prós|contras · quando · custo */
+}
+.slide[data-layout="opcoes"][data-n="2"] .opcoes-card{
+  grid-row:span 4;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.slide[data-layout="opcoes"][data-n="2"] .opcoes-topo,
+.slide[data-layout="opcoes"][data-n="2"] .opcoes-quando,
+.slide[data-layout="opcoes"][data-n="2"] .opcoes-custo{
+  grid-column:1 / -1;
+}
+.slide[data-layout="opcoes"][data-n="2"] .opcoes-bloco--pros{
+  padding-right:28px;
+}
+.slide[data-layout="opcoes"][data-n="2"] .opcoes-bloco--contras{
+  padding-left:28px;
+  border-left:1px solid var(--line);
+}
+.slide[data-layout="opcoes"][data-n="2"] .opcoes-quando{
+  margin-top:0;
+}
+.slide[data-layout="opcoes"][data-n="3"]{
+  --opcoes-n:3;
+}
+.slide[data-layout="opcoes"][data-n="4"]{
+  --opcoes-n:4;
+  --opcoes-pad:20px;
+  --opcoes-letra:52px;
+}
+.slide[data-layout="opcoes"][data-n="4"] .opcoes-topo{
+  padding-bottom:8px;
+}
+.slide[data-layout="opcoes"][data-n="4"] .opcoes-bloco{
+  padding:10px 0;
+}
+.slide[data-layout="opcoes"][data-n="4"] .opcoes-bloco .rotulo{
+  margin-bottom:8px;
+}
+.slide[data-layout="opcoes"][data-n="4"] .opcoes-bloco .lista{
+  gap:6px;
+}
+.slide[data-layout="opcoes"][data-n="4"] .opcoes-quando{
+  padding:10px 16px 10px;
+}
+.slide[data-layout="opcoes"][data-n="4"] .opcoes-topo h3{
+  font-size:var(--t-lead);
+  gap:14px;
+}
+.slide[data-layout="opcoes"][data-n="4"] .opcoes-letra{
+  font-size:var(--t-lead);
+}

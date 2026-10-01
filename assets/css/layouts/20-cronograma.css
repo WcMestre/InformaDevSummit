@@ -1,0 +1,214 @@
+/* ==========================================================================
+   LAYOUT cronograma — agenda do dia (linhas geradas por assets/js/layouts/20-cronograma.js).
+   Cada bloco é uma linha: horário · nome · divisão apresentação/definições · duração.
+   Três modos automáticos, definidos pelo JS em data-densidade:
+     amplo (até 6 blocos) · medio (7 a 9) · colunas (10 ou mais: DUAS COLUNAS manhã | tarde, almoço como faixa
+     central; cada linha tem duas fileiras — hora, nome e duração em cima, barra com os minutos embaixo).
+   Marcações: pausa = listrado + ícone; intocável = cadeado + selo + filete laranja (como na trilha).
+   Ordem deste arquivo: variáveis → cabeçalho → linhas → divisão → total → estados → modos.
+   ========================================================================== */
+
+/* ---------- variáveis do layout (densidade amplo é o padrão) ---------- */
+.slide[data-layout="cronograma"]{
+  --cron-apres:var(--bom);          /* segmento "Apresentação" */
+  --cron-def:var(--laranja);        /* segmento "Definições" */
+  --cron-gap:10px;
+  --cron-h-min:80px;
+  --cron-h-max:112px;
+  --cron-raio:var(--raio);
+  --cron-fs-nome:var(--t-lead);
+  --cron-fs-hora:var(--t-corpo);
+  --cron-fs-rot:var(--t-rotulo);
+  --cron-barra:14px;
+  --cron-gap-col:var(--gap);
+  --cron-col-hora:300px;
+  --cron-col-div:600px;
+  --cron-col-min:130px;
+}
+
+.slide[data-layout="cronograma"] .cab{margin-bottom:var(--gap)}
+
+/* ---------- lista ---------- */
+.slide[data-layout="cronograma"] .cronograma-lista{
+  flex:1;min-height:0;list-style:none;display:flex;flex-direction:column;gap:var(--cron-gap)}
+.slide[data-layout="cronograma"] .cronograma-lista:empty,
+.slide[data-layout="cronograma"] .cronograma-total:empty{display:none}
+
+.slide[data-layout="cronograma"] .cronograma-linha{
+  position:relative;flex:1 1 0;min-height:var(--cron-h-min);max-height:var(--cron-h-max);
+  display:grid;grid-template-columns:var(--cron-col-hora) minmax(0,1fr) var(--cron-col-div) var(--cron-col-min);
+  align-items:center;column-gap:var(--cron-gap-col);padding:0 var(--cron-gap-col);
+  background:var(--card);border:1px solid var(--card-brd);border-radius:var(--cron-raio);overflow:hidden}
+
+/* horário: início em destaque, fim em cinza */
+.slide[data-layout="cronograma"] .cronograma-hora{
+  display:flex;align-items:baseline;gap:.5em;white-space:nowrap;
+  font-family:var(--mono);font-size:var(--cron-fs-hora);font-variant-numeric:tabular-nums;color:var(--ink-dim)}
+.slide[data-layout="cronograma"] .cronograma-ini{color:var(--branco);font-weight:500}
+
+/* nome do bloco */
+.slide[data-layout="cronograma"] .cronograma-nome{display:flex;align-items:center;gap:16px;min-width:0}
+.slide[data-layout="cronograma"] .cronograma-nome .ico{font-size:1.15em;color:var(--laranja-claro)}
+.slide[data-layout="cronograma"] .cronograma-titulo{
+  min-width:0;font-family:var(--serif);font-weight:600;font-size:var(--cron-fs-nome);line-height:1.15;letter-spacing:-.01em;color:var(--branco)}
+.slide[data-layout="cronograma"] .cronograma-selo{
+  flex:none;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--laranja-claro);border:1.5px solid var(--laranja);border-radius:999px;padding:2px 14px;white-space:nowrap}
+
+/* duração */
+.slide[data-layout="cronograma"] .cronograma-min{
+  justify-self:end;white-space:nowrap;font-family:var(--mono);font-size:var(--cron-fs-rot);color:var(--ink-dim)}
+.slide[data-layout="cronograma"] .cronograma-min b{font-size:1.45em;font-weight:500;color:var(--branco)}
+
+/* ---------- divisão: barra de 2 segmentos + rótulos ---------- */
+.slide[data-layout="cronograma"] .cronograma-divisao{display:flex;flex-direction:column;gap:8px;min-width:0}
+.slide[data-layout="cronograma"] .cronograma-barra{
+  display:flex;gap:2px;height:var(--cron-barra);border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08)}
+.slide[data-layout="cronograma"] .cronograma-seg{flex-basis:0;min-width:6px;display:block}
+.slide[data-layout="cronograma"] .cronograma-seg--apres{background:var(--cron-apres)}
+.slide[data-layout="cronograma"] .cronograma-seg--def{background:var(--cron-def)}
+.slide[data-layout="cronograma"] .cronograma-rotulos{display:flex;flex-wrap:wrap;gap:0 28px;font-size:var(--cron-fs-rot);line-height:1.25;color:var(--ink-dim)}
+.slide[data-layout="cronograma"] .cronograma-par{display:inline-flex;align-items:center;gap:10px;white-space:nowrap}
+.slide[data-layout="cronograma"] .cronograma-par b{font-weight:500;color:var(--ink)}
+
+/* texto dentro do segmento: só no modo colunas */
+.slide[data-layout="cronograma"] .cronograma-seg-tx{display:none}
+
+/* marcadores de legenda: forma + cor (nunca só cor) */
+.slide[data-layout="cronograma"] .cronograma-ponto{flex:none;display:inline-block;width:.62em;height:.62em}
+.slide[data-layout="cronograma"] .cronograma-ponto--apres{background:var(--cron-apres);border-radius:3px}
+.slide[data-layout="cronograma"] .cronograma-ponto--def{background:var(--cron-def);border-radius:50%}
+.slide[data-layout="cronograma"] .cronograma-ponto--pausa{border-radius:3px;border:1.5px solid var(--ink-dim);
+  background:repeating-linear-gradient(135deg,transparent 0 3px,var(--ink-dim) 3px 5px)}
+
+/* ---------- pausa: linha e barra listradas ---------- */
+.slide[data-layout="cronograma"] .cronograma-linha[data-tipo="pausa"]{
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,.03) 0 12px,rgba(255,255,255,.08) 12px 24px)}
+.slide[data-layout="cronograma"] .cronograma-linha[data-tipo="pausa"] .cronograma-titulo{font-weight:400;font-style:italic}
+.slide[data-layout="cronograma"] .cronograma-barra--pausa{
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,.06) 0 8px,rgba(255,255,255,.26) 8px 16px)}
+
+/* ---------- intocável: filete laranja à direita, como na trilha ---------- */
+.slide[data-layout="cronograma"] .cronograma-linha[data-tipo="intocavel"]{border-color:rgba(247,148,29,.45)}
+.slide[data-layout="cronograma"] .cronograma-linha[data-tipo="intocavel"]::after{
+  content:"";position:absolute;right:0;top:0;bottom:0;width:6px;background:var(--laranja)}
+
+/* ---------- horários que não encadeiam ---------- */
+.slide[data-layout="cronograma"] .cronograma-linha[data-aviso]{border-color:var(--alerta)}
+.slide[data-layout="cronograma"] .cronograma-aviso-ico{font-size:1em;color:var(--alerta);align-self:center}
+
+/* ---------- total do dia ---------- */
+.slide[data-layout="cronograma"] .cronograma-total{
+  flex:none;display:flex;align-items:center;flex-wrap:wrap;column-gap:var(--gap-g);row-gap:12px;margin-top:20px;padding-top:20px;
+  border-top:1px solid var(--line)}
+.slide[data-layout="cronograma"] .cronograma-efetivas{display:flex;align-items:center;gap:18px;font-size:var(--t-peq);color:var(--ink)}
+.slide[data-layout="cronograma"] .cronograma-efetivas .ico{font-size:40px;color:var(--laranja)}
+.slide[data-layout="cronograma"] .cronograma-efetivas .num{font-size:var(--t-h3)}
+.slide[data-layout="cronograma"] .cronograma-efetivas-tx{display:flex;flex-direction:column;line-height:1.2}
+.slide[data-layout="cronograma"] .cronograma-efetivas-tx small{font-size:var(--t-min);color:var(--ink-dim)}
+.slide[data-layout="cronograma"] .cronograma-legenda{
+  flex:1;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 28px;font-size:var(--t-rotulo);color:var(--ink-dim)}
+.slide[data-layout="cronograma"] .cronograma-leg{display:inline-flex;align-items:center;gap:10px;white-space:nowrap}
+.slide[data-layout="cronograma"] .cronograma-leg .ico{color:var(--laranja-claro)}
+.slide[data-layout="cronograma"] .cronograma-dia{
+  margin-left:auto;display:flex;align-items:baseline;gap:14px;white-space:nowrap;
+  font-family:var(--mono);font-size:var(--t-peq);font-variant-numeric:tabular-nums;color:var(--ink)}
+.slide[data-layout="cronograma"] .cronograma-dia-rot{font-size:var(--t-min);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+.slide[data-layout="cronograma"] .cronograma-alerta{
+  flex-basis:100%;display:flex;align-items:center;gap:12px;font-size:var(--t-rotulo);color:var(--alerta)}
+
+/* ---------- estado vazio ---------- */
+.slide[data-layout="cronograma"] .cronograma-vazio{
+  padding:var(--gap);border:2px dashed var(--line);border-radius:var(--raio);font-size:var(--t-peq);color:var(--ink-dim)}
+
+/* ==========================================================================
+   DENSIDADES
+   ========================================================================== */
+
+/* médio: 7 a 9 blocos — linhas de uma linha de texto, barra fina */
+.slide[data-layout="cronograma"][data-densidade="medio"]{
+  --cron-gap:8px;--cron-h-min:52px;--cron-h-max:74px;--cron-raio:16px;
+  --cron-fs-nome:var(--t-corpo);--cron-fs-hora:var(--t-peq);--cron-fs-rot:var(--t-rotulo);--cron-barra:10px;
+  --cron-col-hora:270px;--cron-col-div:600px;--cron-col-min:120px}
+.slide[data-layout="cronograma"][data-densidade="medio"] .cronograma-divisao{gap:4px}
+
+
+/* colunas: 10 ou mais blocos — duas colunas (manhã | tarde) e, entre elas, a pausa mais longa (almoço) como faixa vertical.
+   Cada linha tem duas fileiras: hora · nome · duração (em cima) e a barra com os minutos dentro dos segmentos (embaixo). */
+.slide[data-layout="cronograma"][data-densidade="colunas"]{
+  --cron-gap:8px;--cron-h-min:80px;--cron-h-max:88px;--cron-raio:14px;
+  --cron-fs-nome:var(--t-lead);--cron-fs-hora:var(--t-peq);--cron-fs-rot:var(--t-rotulo);--cron-barra:32px;
+  --cron-gap-col:24px;--cron-faixa:196px;--cron-gap-grupos:24px}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cab{margin-bottom:var(--gap)}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .sub{display:none}
+/* aviso de horários que não encadeiam: no cabeçalho, à direita do título (não consome altura das linhas) */
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cab{position:relative}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cab .cronograma-alerta{
+  position:absolute;right:0;bottom:6px;width:auto;max-width:900px;flex-basis:auto}
+
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-lista{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--cron-gap-grupos);align-items:stretch;
+  overflow:hidden}   /* corta o excesso (mais de 7 linhas por coluna) para a auditoria acusar 'recortado' em vez de cobrir o rodapé em silêncio */
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-lista[data-faixa="sim"]{
+  grid-template-columns:minmax(0,1fr) var(--cron-faixa) minmax(0,1fr)}
+
+.slide[data-layout="cronograma"] .cronograma-grupo{display:flex;flex-direction:column;min-width:0;min-height:0;list-style:none}
+.slide[data-layout="cronograma"] .cronograma-grupo-cab{
+  flex:none;display:flex;align-items:baseline;gap:18px;margin-bottom:10px;padding:0 4px 8px;border-bottom:2px solid var(--laranja);
+  font-family:var(--mono);font-size:var(--t-rotulo);color:var(--ink-dim);white-space:nowrap}
+.slide[data-layout="cronograma"] .cronograma-grupo-nome{
+  font-size:var(--t-peq);letter-spacing:.16em;text-transform:uppercase;color:var(--laranja-claro)}
+.slide[data-layout="cronograma"] .cronograma-grupo-faixa{color:var(--ink)}
+.slide[data-layout="cronograma"] .cronograma-grupo-ef{margin-left:auto}
+.slide[data-layout="cronograma"] .cronograma-grupo-lista{
+  flex:1;min-height:0;list-style:none;display:flex;flex-direction:column;justify-content:flex-start;gap:var(--cron-gap)}
+
+/* linha em duas fileiras */
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-linha{
+  flex:0 1 var(--cron-h-max);grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto;
+  align-content:center;row-gap:6px;padding:0 18px}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-hora{grid-column:1;grid-row:1}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-nome{grid-column:2;grid-row:1}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-min{grid-column:3;grid-row:1;font-size:var(--t-peq);line-height:1}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-divisao{grid-column:1 / -1;grid-row:2;gap:0}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-titulo{
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:var(--cron-fs-nome)}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-nome .ico{font-size:1em}
+
+/* 7 linhas por coluna (14 blocos): linhas mais baixas, barra e nome menores */
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-lista[data-cheio="sim"]{
+  --cron-gap:6px;--cron-h-min:68px;--cron-h-max:76px;--cron-barra:28px;--cron-fs-nome:var(--t-corpo)}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-lista[data-cheio="sim"] .cronograma-linha{row-gap:2px}
+
+/* barra com os minutos dentro: texto escuro sobre azul e laranja; forma (quadrado | círculo) + número.
+   Os rótulos por extenso (.cronograma-rotulos) ganham .sr-only pelo JS: só leitor de tela. */
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-barra{height:var(--cron-barra);border-radius:8px}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-seg{
+  min-width:64px;display:flex;align-items:center;justify-content:center;border-radius:6px;overflow:hidden}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-seg-tx{
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:var(--t-peq);font-style:normal;font-weight:700;line-height:1;
+  color:var(--azul-950)}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-seg .cronograma-ponto{background:var(--azul-950);width:.6em;height:.6em}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-barra--pausa{
+  display:flex;align-items:center;justify-content:center;border-radius:6px}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-seg-tx--pausa{
+  padding:0 14px;border-radius:999px;background:var(--azul-900);color:var(--ink);font-weight:500;letter-spacing:.08em}
+
+/* faixa central (almoço): vertical, listrada, com ícone, nome, horário e duração empilhados */
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-linha[data-faixa="central"]{
+  flex:none;max-height:none;grid-template-columns:minmax(0,1fr);grid-template-rows:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:var(--gap) 8px;text-align:center}
+.slide[data-layout="cronograma"] .cronograma-linha[data-faixa="central"] .cronograma-nome{order:1;flex-direction:column;gap:14px}
+.slide[data-layout="cronograma"] .cronograma-linha[data-faixa="central"] .cronograma-nome .ico{font-size:64px}
+.slide[data-layout="cronograma"] .cronograma-linha[data-faixa="central"] .cronograma-titulo{white-space:normal;font-size:var(--t-h3)}
+.slide[data-layout="cronograma"] .cronograma-linha[data-faixa="central"] .cronograma-hora{order:2;flex-direction:column;align-items:center;gap:2px}
+.slide[data-layout="cronograma"] .cronograma-linha[data-faixa="central"] .cronograma-ate{display:none}
+.slide[data-layout="cronograma"] .cronograma-linha[data-faixa="central"] .cronograma-ini{font-size:var(--t-lead)}
+.slide[data-layout="cronograma"] .cronograma-linha[data-faixa="central"] .cronograma-fim::before{content:"até ";font-size:var(--t-rotulo)}
+.slide[data-layout="cronograma"] .cronograma-linha[data-faixa="central"] .cronograma-min{order:3;justify-self:center;font-size:var(--t-peq)}
+.slide[data-layout="cronograma"] .cronograma-linha[data-faixa="central"] .cronograma-min b{font-size:var(--t-h3)}
+
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-total{margin-top:16px;padding-top:16px}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-efetivas .ico{font-size:36px}
+.slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-efetivas .num{font-size:var(--t-h3)}
+.slide[data-layout="cronograma"] .cronograma-leg--nota{font-style:italic}

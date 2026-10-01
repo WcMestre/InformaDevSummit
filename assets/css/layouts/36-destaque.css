@@ -1,0 +1,84 @@
+/* ==========================================================================
+   36 · LAYOUT destaque — frase-guia ou pergunta: quase só tipografia.
+   Compõe .cab · .kicker · .corpo · .rotulo (30-componentes.css).
+   Variantes por data-variante: pergunta · afirmacao.
+   Ordem: layout → frase/filete → "Para pensar" → variantes.
+   Modelo: conteudo/modelos/36-destaque.html
+   ========================================================================== */
+
+/* ---- layout: a frase ocupa o centro óptico do espaço livre; o "Para pensar" ancora no pé ---- */
+.slide[data-layout="destaque"]{
+  --destaque-frase:80px;            /* tamanho da frase (serif 72–96px) */
+  --destaque-larg:1560px;           /* medida máxima da frase */
+}
+.slide[data-layout="destaque"] .cab{
+  margin-bottom:0;
+}
+.slide[data-layout="destaque"] .corpo{
+  padding-bottom:24px;              /* respiro entre "Para pensar" e a trilha do dia */
+}
+
+/* ---- frase e filete ---- */
+.slide[data-layout="destaque"] .destaque-frase{
+  max-width:var(--destaque-larg);
+  font-size:var(--destaque-frase);
+  line-height:1.1;
+  letter-spacing:-.015em;
+  margin-top:auto;                  /* margens automáticas centram a frase no espaço livre */
+  text-wrap:balance;
+}
+.slide[data-layout="destaque"] .destaque-filete{
+  display:block;
+  width:160px;
+  height:4px;
+  margin-top:48px;
+  border-radius:2px;
+  background:var(--laranja);
+}
+
+/* ---- "Para pensar" ---- */
+.slide[data-layout="destaque"] .destaque-pensar{
+  margin-top:auto;
+}
+.slide[data-layout="destaque"] .destaque-pensar .rotulo{
+  margin-bottom:22px;
+}
+.slide[data-layout="destaque"] .destaque-perguntas{
+  list-style:none;
+  counter-reset:pergunta;
+  display:grid;
+  gap:16px;
+}
+.slide[data-layout="destaque"] .destaque-perguntas li{
+  counter-increment:pergunta;
+  display:flex;
+  gap:20px;
+  max-width:1400px;
+  font-size:var(--t-corpo);
+  line-height:1.35;
+  color:var(--ink);
+}
+.slide[data-layout="destaque"] .destaque-perguntas li::before{
+  content:counter(pergunta);
+  flex:none;
+  width:38px;
+  height:38px;
+  margin-top:1px;
+  display:grid;
+  place-items:center;
+  border:2px solid var(--laranja);
+  border-radius:50%;
+  font-family:var(--mono);
+  font-size:var(--t-min);
+  color:var(--laranja-claro);
+}
+
+/* ---- variante: afirmacao (frase maior, filete vertical à esquerda, sem "Para pensar") ---- */
+.slide[data-layout="destaque"][data-variante="afirmacao"]{
+  --destaque-frase:96px;
+}
+.slide[data-layout="destaque"][data-variante="afirmacao"] .destaque-frase{
+  margin-bottom:auto;
+  padding-left:56px;
+  border-left:6px solid var(--laranja);
+}

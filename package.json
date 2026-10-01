@@ -1,0 +1,17 @@
+{
+  "name": "informa-dev-summit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Apresentação de facilitação do 1º Informa DEV Summit (02/10/2026) — site estático para GitHub Pages",
+  "scripts": {
+    "montar": "python ferramentas/montar.py",
+    "montar:catalogo": "python ferramentas/montar.py --modelos",
+    "montar:final": "python ferramentas/montar.py --final",
+    "verificar": "python ferramentas/montar.py --verificar",
+    "capturar": "node ferramentas/capturar.cjs --out capturas --viewport 1920x1080,1366x768",
+    "servir": "python -m http.server 8080"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^24.0.0"
+  }
+}

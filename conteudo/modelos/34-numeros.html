@@ -1,0 +1,92 @@
+<!--
+  LAYOUT  numeros  — painel de indicadores (KPIs): 3 ou 4 tiles com número grande, rótulo, descrição e ORIGEM.
+  Estilos: assets/css/layouts/34-numeros.css (escopado em .slide[data-layout="numeros"]). Sem JS, sem CSV.
+
+  ANATOMIA
+    .cab    kicker · h2 (<em>) · .sub
+    .corpo  > .numeros-grade > 3 ou 4 × article.card.card--destaque.numeros-tile
+    cada tile:  .rotulo (nome do indicador, mono)  ·  p.num.numeros-valor (número em serif)
+                ·  p.numeros-desc (descrição em até 3 linhas)  ·  p.fonte (origem · data) — OBRIGATÓRIA em todo tile
+
+  ATRIBUTOS   id, data-layout="numeros", data-bloco, [data-min], [data-modelo], data-n = 3 | 4
+    data-n="3"   três colunas; número em 104px
+    data-n="4"   quatro colunas; número em 72px
+    Unidade junto do número: <span class="numeros-unidade">min</span> (0,4× o tamanho do número).
+
+  CLASSES PRÓPRIAS   .numeros-grade · .numeros-tile · .numeros-valor · .numeros-unidade · .numeros-desc
+  ENTRADAS           .anim .d1…d7 (cab d1–d3; tiles d4…d7 em sequência)
+
+  REGRA DE OURO: NÚMERO SEM ORIGEM NÃO ENTRA. Todo tile leva .fonte ("Origem · dd/mm/aaaa"); nunca nome de pessoa
+  junto de métrica; nunca nome de cliente. Os valores deste modelo (0.000, 00/00…) são placeholders, não dados.
+
+  LIMITES DE TEXTO (testados com +40% de texto)
+    número: até ~8 caracteres ("2.199", "95/100", "12 min") — em data-n="4" prefira até 6; acima disso, mude para data-n="3"
+    rótulo: até ~22 caracteres em data-n="4" (uma linha; maiúsculas mono) · descrição: até 3 linhas (~28 caracteres por linha em 4 tiles)
+    .fonte: origem curta ("Sistema · dd/mm/aaaa"); o texto quebra em 2 linhas sem cortar
+    título: até 2 linhas · sub: até 2 linhas
+-->
+<section class="slide" id="modelo-numeros-3" data-layout="numeros" data-n="3" data-bloco="b1" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título do painel com <em>três indicadores</em></h2>
+    <p class="sub anim d3">Um número por tile, cada um com origem e data.</p>
+  </header>
+  <div class="corpo">
+    <div class="numeros-grade">
+      <article class="card card--destaque numeros-tile anim d4">
+        <span class="rotulo rotulo--laranja">Indicador A</span>
+        <p class="num numeros-valor">0.000</p>
+        <p class="numeros-desc">Descrição curta do que o número mede, em até três linhas.</p>
+        <p class="fonte">Fonte A · dd/mm/aaaa</p>
+      </article>
+      <article class="card card--destaque numeros-tile anim d5">
+        <span class="rotulo rotulo--laranja">Indicador B</span>
+        <p class="num numeros-valor">00/100</p>
+        <p class="numeros-desc">Descrição curta do que o número mede, em até três linhas.</p>
+        <p class="fonte">Fonte B · dd/mm/aaaa</p>
+      </article>
+      <article class="card card--destaque numeros-tile anim d6">
+        <span class="rotulo rotulo--laranja">Indicador C</span>
+        <p class="num numeros-valor">00 <span class="numeros-unidade">min</span></p>
+        <p class="numeros-desc">Descrição curta do que o número mede, em até três linhas.</p>
+        <p class="fonte">Fonte C · dd/mm/aaaa</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="modelo-numeros-4" data-layout="numeros" data-n="4" data-bloco="b1" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título do painel com <em>quatro indicadores</em></h2>
+    <p class="sub anim d3">Quatro tiles: números curtos, origem sempre à vista.</p>
+  </header>
+  <div class="corpo">
+    <div class="numeros-grade">
+      <article class="card card--destaque numeros-tile anim d4">
+        <span class="rotulo rotulo--laranja">Indicador A</span>
+        <p class="num numeros-valor">0.000</p>
+        <p class="numeros-desc">Descrição curta do que o número mede.</p>
+        <p class="fonte">Fonte A · dd/mm/aaaa</p>
+      </article>
+      <article class="card card--destaque numeros-tile anim d5">
+        <span class="rotulo rotulo--laranja">Indicador B</span>
+        <p class="num numeros-valor">00/100</p>
+        <p class="numeros-desc">Descrição curta do que o número mede.</p>
+        <p class="fonte">Fonte B · dd/mm/aaaa</p>
+      </article>
+      <article class="card card--destaque numeros-tile anim d6">
+        <span class="rotulo rotulo--laranja">Indicador C</span>
+        <p class="num numeros-valor">00 <span class="numeros-unidade">min</span></p>
+        <p class="numeros-desc">Descrição curta do que o número mede.</p>
+        <p class="fonte">Fonte C · dd/mm/aaaa</p>
+      </article>
+      <article class="card card--destaque numeros-tile anim d7">
+        <span class="rotulo rotulo--laranja">Indicador D</span>
+        <p class="num numeros-valor">00%</p>
+        <p class="numeros-desc">Descrição curta do que o número mede.</p>
+        <p class="fonte">Fonte D · dd/mm/aaaa</p>
+      </article>
+    </div>
+  </div>
+</section>

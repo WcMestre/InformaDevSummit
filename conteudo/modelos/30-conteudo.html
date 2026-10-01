@@ -1,0 +1,85 @@
+<!--
+  LAYOUT  conteudo  — tela de conteúdo padrão (a mais usada): repertório, contexto, regras, passos.
+  Estilos: assets/css/layouts/30-conteudo.css (tudo escopado em .slide[data-layout="conteudo"]). Sem JS, sem CSV (tela só de leitura).
+
+  ANATOMIA
+    .cab    kicker · h2 (com <em> em itálico laranja) · .sub
+    .corpo  a composição da variante (lista | lista numerada | lista + nota)
+    .fonte  opcional, SEMPRE que houver fato interno com número: origem e data ("Nome da fonte · dd/mm/aaaa")
+
+  ATRIBUTOS   id, data-layout="conteudo", data-bloco, [data-min], [data-modelo], data-variante = lista | numerada | com-nota
+    lista      ul.lista — cada item vira uma linha com filete; o corpo respira em 34px (--t-lead)
+    numerada   ul.lista.lista--numerada — passos em ordem (1, 2, 3…)
+    com-nota   .conteudo-grade = ul.lista (30px) + aside.card.conteudo-nota (atenção: ícone alerta + rótulo "Atenção" + texto).
+               A nota nunca depende só de cor: leva ícone, rótulo e borda superior.
+
+  CLASSES PRÓPRIAS   .conteudo-grade · .conteudo-nota · .conteudo-nota-topo · .conteudo-nota-ico
+  ENTRADAS           .anim .d1…d7 (cab d1–d3, corpo d4, nota d5)
+
+  LIMITES DE TEXTO (testados com +40% de texto)
+    título: até 2 linhas (~44 caracteres por linha) · sub: até 2 linhas
+    lista / numerada: 3 a 4 itens, cada um em até 2 linhas (~60 caracteres por linha); 5 itens só se todos cabem em 1 linha e sem .fonte;
+                      acima disso, divida a tela
+    com-nota: 3 a 4 itens (~38 caracteres por linha) · nota: título de até 2 linhas + até 4 linhas de texto
+    .fonte: uma linha; não empilhar duas fontes — se há duas origens, cite as duas separadas por " · "
+
+  REGRAS   fato interno com número SEMPRE leva .fonte com origem e data; nunca nome de pessoa junto de métrica.
+           Tela de facilitação guia, não anuncia: não peça resposta aqui sem ter dado o material antes.
+-->
+<section class="slide" id="modelo-conteudo" data-layout="conteudo" data-variante="lista" data-bloco="b1" data-min="5" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título da tela em <em>uma ou duas linhas</em></h2>
+    <p class="sub anim d3">Subtítulo que contextualiza o que a sala vai ver ou decidir nesta tela.</p>
+  </header>
+  <div class="corpo anim d4">
+    <ul class="lista">
+      <li>Primeiro ponto do conteúdo — <b>destaque</b> em peso 500.</li>
+      <li>Segundo ponto do conteúdo, em uma ou duas linhas no máximo.</li>
+      <li>Terceiro ponto do conteúdo, mantendo o texto curto e legível à distância.</li>
+      <li>Quarto ponto do conteúdo, quando a tela pedir mais um item.</li>
+    </ul>
+    <p class="fonte">Nome da fonte · dd/mm/aaaa</p>
+  </div>
+</section>
+
+<section class="slide" id="modelo-conteudo-numerada" data-layout="conteudo" data-variante="numerada" data-bloco="b1" data-min="5" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título da tela com <em>passos em ordem</em></h2>
+    <p class="sub anim d3">Use a lista numerada quando a ordem importa: passos e etapas.</p>
+  </header>
+  <div class="corpo anim d4">
+    <ol class="lista lista--numerada">
+      <li><b>Passo 1</b> — descreva a primeira ação em uma frase curta.</li>
+      <li><b>Passo 2</b> — descreva a segunda ação, dependente da primeira.</li>
+      <li><b>Passo 3</b> — descreva a terceira ação e o que sai dela.</li>
+      <li><b>Passo 4</b> — descreva o fechamento da sequência.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide" id="modelo-conteudo-nota" data-layout="conteudo" data-variante="com-nota" data-bloco="b1" data-min="5" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título da tela com <em>nota de atenção</em></h2>
+    <p class="sub anim d3">A lista conduz a leitura; a nota ao lado guarda o que não pode passar batido.</p>
+  </header>
+  <div class="corpo">
+    <div class="conteudo-grade">
+      <ul class="lista anim d4">
+        <li>Primeiro ponto do conteúdo — <b>destaque</b> em peso 500.</li>
+        <li>Segundo ponto do conteúdo, em uma ou duas linhas.</li>
+        <li>Terceiro ponto do conteúdo, curto e legível à distância.</li>
+      </ul>
+      <aside class="card card--destaque conteudo-nota anim d5" aria-label="Atenção">
+        <div class="conteudo-nota-topo">
+          <svg class="ico conteudo-nota-ico" aria-hidden="true" focusable="false"><use href="#i-alerta"/></svg>
+          <span class="rotulo rotulo--laranja">Atenção</span>
+        </div>
+        <h4>Título da nota</h4>
+        <p class="corpo-txt dim">Texto da nota em até quatro linhas: o risco, o limite ou a condição que a sala precisa ter em mente.</p>
+      </aside>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,38 @@
+/* ==========================================================================
+   10 · PALCO — 1920×1080 fixo, escalado para caber na janela (letterbox).
+   Garante o mesmo layout em qualquer projetor/TV/notebook.
+   ========================================================================== */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--azul-950)}
+body{font-family:var(--sans);color:var(--ink);overflow:hidden;font-size:var(--t-corpo);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+#stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;
+  transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center center;overflow:hidden;
+  background:
+    radial-gradient(1200px 800px at 82% -10%, rgba(247,148,29,.09), transparent 60%),
+    radial-gradient(1000px 700px at 0% 110%, rgba(0,86,121,.55), transparent 55%),
+    linear-gradient(160deg,#063a52 0%, var(--azul-900) 45%, var(--azul-950) 100%)}
+
+#deck{position:absolute;inset:0}
+.slide{position:absolute;inset:0;padding:var(--safe-t) var(--safe-x) var(--safe-b);
+  display:none;flex-direction:column;justify-content:flex-start;overflow:hidden}
+.slide.active{display:flex}
+.slide>*{position:relative;z-index:1}
+.slide [data-decor]{pointer-events:none;z-index:0}
+
+/* entrada escalonada (desligada em print e com prefers-reduced-motion) */
+.anim{opacity:0;transform:translateY(18px)}
+.slide.active .anim{animation:subir .7s cubic-bezier(.2,.7,.2,1) forwards}
+.slide.active .d1{animation-delay:.05s}.slide.active .d2{animation-delay:.15s}
+.slide.active .d3{animation-delay:.25s}.slide.active .d4{animation-delay:.35s}
+.slide.active .d5{animation-delay:.45s}.slide.active .d6{animation-delay:.55s}
+.slide.active .d7{animation-delay:.65s}
+@keyframes subir{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .anim{opacity:1;transform:none}.slide.active .anim{animation:none}
+}
+.sem-anim .anim{opacity:1 !important;transform:none !important;animation:none !important}
+
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}

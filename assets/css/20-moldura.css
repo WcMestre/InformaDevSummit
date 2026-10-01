@@ -1,0 +1,121 @@
+/* ==========================================================================
+   20 · MOLDURA — elementos fixos do palco: logo, bloco atual, cronômetro, relógio,
+   contador, trilha do dia, barra de progresso, visão geral, ajuda e apagão.
+   ========================================================================== */
+.logo{display:block;height:44px;width:auto;aspect-ratio:503.94/164.06;flex:none}
+.logo--claro{--logo-texto:var(--azul)}
+.logo-texto{fill:var(--logo-texto,#fff)}   /* wordmark do símbolo #logo-informa; o ícone laranja é fixo */
+.ico{width:1em;height:1em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.125em}
+.ico--cheio{fill:currentColor;stroke:none}
+
+/* barra superior */
+.moldura-topo{position:absolute;left:0;right:0;top:0;height:96px;z-index:30;
+  display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;padding:0 var(--safe-x);
+  background:linear-gradient(180deg,rgba(2,22,31,.72),transparent);transition:opacity .35s}
+.moldura-topo .logo{height:46px;grid-column:1;justify-self:start}
+.moldura-topo .cron{grid-column:2}
+.moldura-topo .moldura-dir{grid-column:3}
+.moldura-bloco{font-family:var(--mono);font-size:var(--t-rotulo);letter-spacing:.18em;text-transform:uppercase;color:var(--laranja-claro);
+  white-space:nowrap}
+.moldura-dir{justify-self:end;min-width:0;max-width:100%;display:flex;flex-wrap:nowrap;align-items:center;gap:24px;font-family:var(--mono);font-size:var(--t-rotulo);color:var(--ink-dim)}
+.moldura-dir b{color:var(--ink);font-weight:500}
+.moldura-dir>*{flex:none}
+/* só o chip CSV (mais específico que 25-dados.css) e o nome do bloco encolhem; o contador "NN / 21" nunca quebra */
+.moldura-dir>.dados-chip{flex:0 0 auto;max-width:440px}   /* o chip só é cortado pelo max-width (status dos dados tem prioridade) */
+.moldura-dir>.moldura-bloco{flex:0 100 auto;min-width:0}   /* o nome do bloco cede antes do chip */
+.moldura-cont{white-space:nowrap}
+/* cronômetro visível: a barra cede espaço ao centro — o nome do bloco já está na trilha do dia */
+#stage.com-cron .moldura-bloco{display:none}
+.moldura-dir>.dados-chip:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:3px}
+.relogio{letter-spacing:.06em}
+.relogio[hidden]{display:none}
+
+/* cronômetro (centro da barra superior) */
+.cron{display:flex;align-items:center;gap:16px;font-family:var(--mono);font-size:34px;font-weight:500;
+  color:var(--ink);background:rgba(2,22,31,.62);border:1px solid var(--line);border-radius:999px;padding:8px 26px 8px 20px;
+  font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.cron[hidden]{display:none}
+.cron .ico{font-size:30px;color:var(--ink-dim)}
+.cron>*{white-space:nowrap}
+.cron small{font-size:var(--t-min);color:var(--ink-dim);letter-spacing:.14em;text-transform:uppercase}
+.cron.rodando .ico{color:var(--ok)}
+.cron.alerta{color:var(--alerta);border-color:var(--alerta)}
+.cron.estourado{color:var(--perigo);border-color:var(--perigo);animation:pulsa 1.2s ease-in-out infinite}
+@keyframes pulsa{50%{background:rgba(239,106,94,.22)}}
+
+/* trilha do dia (base) — segmentos proporcionais à duração de cada bloco */
+.trilha{position:absolute;left:var(--safe-x);right:var(--safe-x);bottom:26px;height:56px;z-index:30;display:flex;gap:6px;transition:opacity .35s}
+.trilha-seg{position:relative;min-width:0;border-radius:10px;background:rgba(255,255,255,.07);overflow:hidden;
+  display:flex;align-items:center;padding:0 14px;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em;
+  color:var(--ink-dim);white-space:nowrap}
+.trilha-seg .tx{position:relative;z-index:1;overflow:hidden;text-overflow:ellipsis}
+.trilha-seg .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(247,148,29,.30);transition:width .4s}
+.trilha-seg.feito{color:var(--ink)}
+.trilha-seg.feito .fill{width:100%;background:rgba(255,255,255,.10)}
+.trilha-seg.atual{color:#fff;box-shadow:inset 0 0 0 2px var(--laranja)}
+.trilha-seg.pausa{background:repeating-linear-gradient(135deg,rgba(255,255,255,.04) 0 10px,rgba(255,255,255,.09) 10px 20px)}
+.trilha-seg.intocavel::after{content:"";position:absolute;right:0;top:0;bottom:0;width:6px;background:var(--laranja)}
+.trilha-seg.estreito .tx{visibility:hidden}
+
+.progresso{position:absolute;left:0;bottom:0;height:5px;width:0;z-index:31;background:linear-gradient(90deg,var(--laranja),var(--laranja-claro));
+  box-shadow:0 0 12px rgba(247,148,29,.5);transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* dica de teclas: cobre a própria trilha por ~8s no início (não invade a área útil) e some sozinha */
+.dica{position:absolute;left:var(--safe-x);right:var(--safe-x);bottom:26px;height:56px;z-index:32;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:var(--t-min);letter-spacing:.04em;color:var(--ink);
+  background:var(--azul-900);border:1px solid var(--line);border-radius:10px;transition:opacity .8s}
+.dica.some{opacity:0;pointer-events:none}
+
+/* visibilidade da moldura por slide: data-chrome="off" (capa) | "min" (só logo e contador) */
+#stage[data-chrome="off"] .moldura-topo,
+#stage[data-chrome="off"] .progresso,
+#stage[data-chrome="off"] .trilha{opacity:0;pointer-events:none}
+#stage[data-chrome="min"] .trilha,
+#stage[data-chrome="min"] .moldura-bloco{opacity:0}
+
+/* visão geral (O): fundo opaco; o cabeçalho é fixo no topo da rolagem, então nunca é cortado ao centralizar a miniatura atual */
+.visao{position:absolute;inset:0;z-index:60;background:var(--azul-950);overflow:auto;padding:0 var(--safe-x) 60px}
+.visao[hidden]{display:none}
+.visao-cab{position:sticky;top:0;z-index:5;margin:0 calc(-1*var(--safe-x)) 28px;padding:36px var(--safe-x) 18px;background:var(--azul-950);border-bottom:1px solid var(--line)}
+.visao h2{font-family:var(--serif);font-size:var(--t-h3);font-weight:600;margin-bottom:8px}
+.visao .sub-v{font-family:var(--mono);font-size:var(--t-min);color:var(--ink-dim);letter-spacing:.06em}
+.visao-grade{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.miniatura{position:relative;border:2px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;background:var(--azul-900);text-align:left;color:inherit;font:inherit;scroll-margin:190px 0 40px}
+.miniatura:hover,.miniatura.sel{border-color:var(--laranja)}
+.miniatura:focus-visible{outline:3px solid var(--laranja-claro);outline-offset:3px}
+.miniatura .moldura-mini{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--azul-900)}
+.miniatura .moldura-mini>.slide{display:flex;transform-origin:0 0;width:1920px;height:1080px;pointer-events:none}
+.miniatura .legenda{display:flex;gap:14px;align-items:baseline;padding:10px 14px;font-family:var(--mono);font-size:var(--t-min);color:var(--ink-dim);background:var(--azul-900);border-top:1px solid var(--line)}
+.miniatura .legenda b{color:var(--laranja-claro);font-weight:500}
+.miniatura.atual-mini::before{content:"";position:absolute;inset:0;z-index:2;border:3px solid var(--laranja);border-radius:10px;pointer-events:none}
+
+/* ajuda (?) */
+.ajuda{position:absolute;inset:0;z-index:70;background:rgba(2,22,31,.94);display:flex;align-items:center;justify-content:center}
+.ajuda[hidden]{display:none}
+.ajuda-caixa{width:1400px;background:var(--azul-900);border:1px solid var(--line);border-radius:var(--raio);padding:48px 56px}
+.ajuda-caixa h2{font-family:var(--serif);font-size:var(--t-h3);font-weight:600;margin-bottom:26px}
+.ajuda-grade{display:grid;grid-template-columns:1fr 1fr;gap:14px 48px;font-size:var(--t-peq)}
+.ajuda-grade div{display:flex;justify-content:space-between;align-items:center;gap:18px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.ajuda-grade .teclas{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;flex:none}
+.ajuda kbd{display:inline-flex;align-items:center;justify-content:center;align-self:center;flex:none;line-height:1.3;white-space:nowrap}
+.ajuda kbd .ico{font-size:24px}
+.ico--esq{transform:scaleX(-1)}
+kbd{font-family:var(--mono);font-size:var(--t-min);background:rgba(255,255,255,.1);border:1px solid var(--line);border-radius:8px;padding:2px 10px;color:var(--laranja-claro)}
+
+/* modo G: rótulo visível enquanto se digita o número da tela */
+/* fica sobre a trilha do dia (fora da área útil do slide), então não cobre conteúdo */
+.ir-para{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:65;display:flex;align-items:baseline;gap:18px;padding:8px 32px;
+  background:var(--azul-900);border:2px solid var(--laranja);border-radius:var(--raio);font-family:var(--mono);font-size:var(--t-peq);color:var(--ink);white-space:nowrap}
+.ir-para[hidden]{display:none}
+.ir-para b{min-width:3.6ch;font-size:var(--t-h3);font-weight:500;color:var(--laranja-claro);letter-spacing:.06em}
+.ir-para small{font-size:var(--t-min);color:var(--ink-dim)}
+
+/* apagão (B) */
+.apagao{position:absolute;inset:0;z-index:80;background:var(--azul-950);display:flex;align-items:center;justify-content:center}
+.apagao[hidden]{display:none}
+.apagao .logo{height:120px;opacity:.9}
+.apagao-dica{position:absolute;left:0;right:0;bottom:36px;text-align:center;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em;color:var(--ink-dim);opacity:.85}
+
+.moldura-bloco{max-width:380px;overflow:hidden;text-overflow:ellipsis}
+
+#stage.cursor-oculto,#stage.cursor-oculto *{cursor:none !important}

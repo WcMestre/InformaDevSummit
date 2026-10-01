@@ -1,0 +1,48 @@
+<!--
+  LAYOUT  destaque  — frase-guia ou pergunta para a sala: quase só tipografia.
+  Estilos: assets/css/layouts/36-destaque.css (escopado em .slide[data-layout="destaque"]). Sem JS, sem CSV.
+
+  ANATOMIA
+    .cab    só o kicker (contexto curto: "Pergunta para a sala", "Princípio"…)
+    .corpo  h2.destaque-frase (serif grande, <em> em itálico laranja)  ·  .destaque-filete (filete laranja)
+            ·  aside.destaque-pensar  OPCIONAL: .rotulo "Para pensar" + ol.destaque-perguntas com 2 ou 3 perguntas
+
+  ATRIBUTOS   id, data-layout="destaque", data-bloco, [data-min], [data-modelo], data-variante = pergunta | afirmacao
+    pergunta    frase em 80px terminada em "?", filete horizontal abaixo e bloco "Para pensar" ancorado ao pé
+    afirmacao   frase em 96px com filete vertical à esquerda; sem "Para pensar" (a frase é a tela)
+
+  CLASSES PRÓPRIAS   .destaque-frase · .destaque-filete · .destaque-pensar · .destaque-perguntas
+  ENTRADAS           .anim .d1…d7
+
+  LIMITES DE TEXTO (testados com +40% de texto)
+    frase: até ~110 caracteres em "pergunta" (3 linhas) e ~80 em "afirmacao" (4 linhas); mais que isso deixa de ser frase-guia
+    "Para pensar": 2 a 3 perguntas, cada uma em até 2 linhas (~75 caracteres por linha)
+  REGRAS   tela de facilitação guia, não anuncia: a pergunta só aparece depois do repertório (conteúdo, números, comparação).
+           Se a frase citar número interno, leve a origem e a data numa tela anterior ou inclua .fonte.
+-->
+<section class="slide" id="modelo-destaque-pergunta" data-layout="destaque" data-variante="pergunta" data-bloco="b1" data-min="2" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Pergunta para a sala</p>
+  </header>
+  <div class="corpo">
+    <h2 class="destaque-frase anim d2">Frase-guia da tela, escrita como <em>uma pergunta para a sala</em>?</h2>
+    <span class="destaque-filete anim d3" aria-hidden="true"></span>
+    <aside class="destaque-pensar anim d4" aria-label="Para pensar">
+      <span class="rotulo rotulo--laranja">Para pensar</span>
+      <ol class="destaque-perguntas">
+        <li>Primeira pergunta de apoio, em uma ou duas linhas.</li>
+        <li>Segunda pergunta de apoio, em uma ou duas linhas.</li>
+        <li>Terceira pergunta de apoio, em uma ou duas linhas.</li>
+      </ol>
+    </aside>
+  </div>
+</section>
+
+<section class="slide" id="modelo-destaque-afirmacao" data-layout="destaque" data-variante="afirmacao" data-bloco="b1" data-min="1" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Princípio</p>
+  </header>
+  <div class="corpo">
+    <h2 class="destaque-frase anim d2">Frase-guia da tela, escrita como <em>uma afirmação</em> que a sala leva.</h2>
+  </div>
+</section>

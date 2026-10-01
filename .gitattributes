@@ -1,0 +1,12 @@
+# Texto em LF no repositório e no checkout (o montar.py também grava index.html/catalogo.html em LF e calcula o ?v= sobre LF).
+# Ao criar o repositório (ou se a árvore veio com CRLF): git add --renormalize .
+* text=auto eol=lf
+# Base de dados: CSV em CRLF (UTF-8 com BOM, separador ';' — abre direto no Excel pt-BR)
+*.csv text eol=crlf
+# Binários: nunca converter
+*.woff2 binary
+*.woff binary
+*.png binary
+*.jpg binary
+*.ico binary
+*.pdf binary

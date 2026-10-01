@@ -1,0 +1,287 @@
+<!--
+  LAYOUT  dinamica  — condução de uma atividade cronometrada, inteira numa tela projetada (a tela "guia", não "anuncia").
+
+  PARA QUE SERVE
+    Quem conduz abre esta tela e tem TUDO: objetivo, passos com tempo e formato, o que significa "pronto" e como abrir,
+    destravar e fechar. É a tela 2 de cada assunto (padrão de assunto, docs/PADROES.md seção 6).
+
+  ANATOMIA (ordem no HTML = ordem de leitura)
+    section.slide[data-layout="dinamica"][data-min = minutos do bloco]
+      header.cab
+        .dinamica-cab-topo   .kicker  +  p.dinamica-dica (dica das teclas; o intervalo "1–N" é sincronizado pelo JS)
+                             [+ button.dinamica-desfazer, criado pelo JS; só aparece depois de uma mudança de passo]
+        h2  (título da dinâmica)
+      .corpo.dinamica-corpo
+        .card.card--destaque.dinamica-objetivo      rótulo "Objetivo" + p.dinamica-frase (UMA frase; <em> destaca a decisão)
+        .dinamica-colunas                           grade 830px | 1fr, gap 48px
+          .dinamica-esq                             coluna dos PASSOS
+            .dinamica-resumo      h3.rotulo + p.dinamica-total (role="status"; VAZIO, o JS preenche "Σ soma de alvo min")
+            .dinamica-barra       (VAZIA, aria-hidden; o JS desenha um segmento por passo, largura proporcional aos minutos)
+            ol.dinamica-passos > li.passo[data-min="N"] > button.passo-ac
+                span.passo-num          círculo com o número (CSS counter); o JS troca por ícone check (feito) / play (em curso)
+                span.passo-txt          span.passo-nome (+ span.passo-detalhe opcional)
+                span.chip.chip--individual|--subgrupos|--plenaria   ícone + rótulo (formato nunca só por cor)
+                span.passo-tempo        "N min" (o JS repõe a partir de data-min: data-min é a fonte da verdade)
+          .dinamica-dir                             coluna da CONDUÇÃO
+            .card.dinamica-pronto     h3.rotulo + ul.lista.dinamica-criterios (2 a 4 critérios objetivos)
+            .card.dinamica-conducao   h3.rotulo + dl.dinamica-etapas > .etapa × 3 (dt + dd): Abrir · Se travar · Fechar
+
+  ATRIBUTOS
+    data-min (seção)     minutos do bloco; a SOMA dos .passo[data-min] tem de ser IGUAL (o montar.py reprova o build; o JS mostra o
+                         estado OK com ícone check ou ERRO com ícone alerta, "a conta não fecha: faltam/sobram N min", ao vivo)
+    data-min (.passo)    minutos do passo (inteiro >= 1)
+    data-estado (.passo) escrito só pelo JS: "feito" | "em-curso" (não escreva no HTML)
+    data-modelo          conteúdo-modelo; remova ao inserir o conteúdo real
+
+  INTERAÇÃO (assets/js/layouts/50-dinamica.js)
+    clicar num passo, ou teclas 1–9 com a tela ativa e sem foco editável: inicia o cronômetro do núcleo no tempo do passo
+    (SUMMIT.cron.definir) e marca "em curso"; o passo que estava em curso passa a "feito" (esmaecido, ícone check).
+    Clicar (ou teclar) no passo JÁ em curso só PAUSA/RETOMA o cronômetro: nunca desmarca nem esconde o tempo. O mesmo passo acionado
+    de novo em menos de 0,6 s (duplo clique, tecla presa, Enter repetido) conta como uma ação só.
+    Shift+clique / Shift+tecla conclui ("feito") e pausa o tempo — é assim que se conclui o último passo; repetir em passo
+    feito desmarca (ação explícita e distinta). O botão "Desfazer" (linha do kicker) volta a última mudança de passo e o cronômetro.
+    Enter no passo focado equivale ao clique.
+    Reload: um passo gravado como "em curso" volta como "em curso (pausado)" — círculo com play vazado + rótulo "pausado" — e o
+    cronômetro reaparece pausado com o tempo do passo; o 1º clique/tecla retoma. O CSV continua "em-curso".
+
+  TABELA CSV: progresso (slide = id da seção · passo = 1..n · estado = feito | em-curso). Uma linha por passo com estado;
+    desmarcar remove a linha. O estado volta ao recarregar (camada SUMMIT.dados).
+
+  REGRAS E LIMITES DE TEXTO (validados com 4, 5 e 6 passos; estresse: textos +20% passam limpos em ambos os modelos; +30% só com 3 critérios; +40% estoura a coluna da condução)
+    - Regra do cliente: a plenária decide a espinha primeiro, depois os subgrupos detalham; SEMPRE reserve passo de repertório
+      e passo de votação ("propostas na mesa") explicitamente; a soma dos passos é EXATAMENTE o tempo do bloco.
+    - Objetivo: UMA frase, até ~85 caracteres em 1 linha (2 linhas cabem, mas tiram ~45px da tela: aí enxugue a condução).
+    - Passos: de 3 a 6. Nome até ~28 caracteres (1 linha; 2 linhas só com até 4 passos).
+      .passo-detalhe opcional, só com até 5 passos, 1 linha (~30 caracteres); com 6 passos OMITA o detalhe.
+    - Pronto quando: 2 a 4 critérios OBJETIVOS (dá para ver na tela), até ~48 caracteres, 1 linha cada.
+    - Tamanhos: nome do passo 30px, detalhe 24px (peso 400, cor --ink), condução e critérios 26px. Se o texto não couber, o JS
+      desce em degraus até o piso (nome 28px; condução e critérios 24px) e, se os passos ainda não couberem, omite o detalhe
+      (data-ajuste-passo / data-ajuste-apoio na tela). Abaixo do piso a auditoria acusa: corte o texto, não a fonte.
+    - Condução (texto 26px; os limites abaixo valem para o tamanho cheio): Abrir e Fechar até 2 linhas (~80 caracteres; 3 linhas só em um dos dois); Se travar: 2 a 3 alavancas de 1 linha (~42 caracteres).
+      Com 4 critérios, prefira 2 alavancas. A coluna direita não rola: estourou (já no piso de 24px), a auditoria acusa "fora-da-area" na
+      condução; corte o texto, não a fonte.
+    - Formato: o chip leva ícone + rótulo (Individual · Subgrupos · Plenária); os SVG de Individual e Subgrupos são inline neste
+      modelo (copie-os), Plenária usa #i-pessoas do sprite. O número do passo é automático (CSS counter).
+    - Conta errada (soma diferente de data-min): o rótulo "Passos" cede lugar ao aviso em vermelho com ícone de alerta e a barra
+      ganha contorno (faltam: segmento hachurado no fim). O montar.py reprova o build nesse caso.
+    - Não aninhe <section> dentro da tela: o montar.py lê os .passo até o primeiro </section>.
+-->
+<section class="slide" id="modelo-dinamica" data-layout="dinamica" data-bloco="b1" data-min="50" data-modelo>
+  <header class="cab">
+    <div class="dinamica-cab-topo">
+      <p class="kicker anim d1">Dinâmica · 50 min</p>
+      <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–4</kbd> para iniciar o tempo</p>
+    </div>
+    <h2 class="anim d2">Título da <em>dinâmica</em></h2>
+  </header>
+
+  <div class="corpo dinamica-corpo">
+    <div class="card card--destaque dinamica-objetivo anim d3" role="group" aria-label="Objetivo">
+      <h3 class="rotulo rotulo--laranja dinamica-rotulo">Objetivo</h3>
+      <p class="dinamica-frase">Ao final, a sala <em>escolhe uma opção</em> e sabe o que cada subgrupo entrega.</p>
+    </div>
+
+    <div class="dinamica-colunas">
+      <div class="dinamica-esq anim d4">
+        <div class="dinamica-resumo">
+          <h3 class="rotulo dinamica-rotulo">Passos · formato e tempo</h3>
+          <p class="dinamica-total" role="status"></p>
+        </div>
+        <div class="dinamica-barra" aria-hidden="true"></div>
+        <ol class="dinamica-passos">
+          <li class="passo" data-min="12">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt">
+                <span class="passo-nome">Repertório: apresentar opções</span>
+                <span class="passo-detalhe">Mostrar 2 ou 3 caminhos</span>
+              </span>
+              <span class="chip chip--plenaria"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Plenária</span>
+              <span class="passo-tempo">12 min</span>
+            </button>
+          </li>
+          <li class="passo" data-min="8">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt">
+                <span class="passo-nome">Propostas na mesa e votação</span>
+                <span class="passo-detalhe">Aceitar, ajustar ou recusar</span>
+              </span>
+              <span class="chip chip--plenaria"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Plenária</span>
+              <span class="passo-tempo">8 min</span>
+            </button>
+          </li>
+          <li class="passo" data-min="20">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt">
+                <span class="passo-nome">Detalhar em subgrupos</span>
+                <span class="passo-detalhe">Um pedaço da espinha por grupo</span>
+              </span>
+              <span class="chip chip--subgrupos"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="2.6"/><circle cx="6" cy="17" r="2.6"/><circle cx="18" cy="17" r="2.6"/><path d="M10.7 8.4L7.3 14.6M13.3 8.4l3.4 6.2M8.8 17h6.4"/></svg>Subgrupos</span>
+              <span class="passo-tempo">20 min</span>
+            </button>
+          </li>
+          <li class="passo" data-min="10">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt">
+                <span class="passo-nome">Fechar em plenária</span>
+                <span class="passo-detalhe">Grupos devolvem; a sala confirma</span>
+              </span>
+              <span class="chip chip--plenaria"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Plenária</span>
+              <span class="passo-tempo">10 min</span>
+            </button>
+          </li>
+        </ol>
+      </div>
+
+      <div class="dinamica-dir anim d5">
+        <div class="card dinamica-pronto" role="group" aria-label="Pronto quando">
+          <h3 class="rotulo rotulo--laranja dinamica-rotulo">Pronto quando</h3>
+          <ul class="lista dinamica-criterios">
+            <li>Opção escolhida e visível na tela</li>
+            <li>Cada subgrupo apresentou seu detalhamento</li>
+            <li>Próximo passo lido em voz alta</li>
+          </ul>
+        </div>
+
+        <div class="card dinamica-conducao" role="group" aria-label="Condução">
+          <h3 class="rotulo rotulo--laranja dinamica-rotulo">Condução</h3>
+          <dl class="dinamica-etapas">
+            <div class="etapa">
+              <dt>Abrir</dt>
+              <dd>Leia o objetivo e mostre os passos e os tempos.</dd>
+            </div>
+            <div class="etapa">
+              <dt>Se travar</dt>
+              <dd>
+                <ul class="etapa-alavancas">
+                  <li>Reduza a pergunta a duas opções</li>
+                  <li>Dê 1 minuto de silêncio para anotar</li>
+                  <li>Releia a opção mais simples</li>
+                </ul>
+              </dd>
+            </div>
+            <div class="etapa">
+              <dt>Fechar</dt>
+              <dd>Releia a decisão e confirme o registro.</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="modelo-dinamica-6" data-layout="dinamica" data-bloco="b1" data-min="55" data-modelo>
+  <header class="cab">
+    <div class="dinamica-cab-topo">
+      <p class="kicker anim d1">Dinâmica · 55 min</p>
+      <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–6</kbd> para iniciar o tempo</p>
+    </div>
+    <h2 class="anim d2">Título da dinâmica <em>com seis passos</em></h2>
+  </header>
+
+  <div class="corpo dinamica-corpo">
+    <div class="card card--destaque dinamica-objetivo anim d3" role="group" aria-label="Objetivo">
+      <h3 class="rotulo rotulo--laranja dinamica-rotulo">Objetivo</h3>
+      <p class="dinamica-frase">Ao final, a sala <em>decide a espinha</em> e os subgrupos saem com o detalhe de um pedaço.</p>
+    </div>
+
+    <div class="dinamica-colunas">
+      <div class="dinamica-esq anim d4">
+        <div class="dinamica-resumo">
+          <h3 class="rotulo dinamica-rotulo">Passos · formato e tempo</h3>
+          <p class="dinamica-total" role="status"></p>
+        </div>
+        <div class="dinamica-barra" aria-hidden="true"></div>
+        <ol class="dinamica-passos">
+          <li class="passo" data-min="10">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt"><span class="passo-nome">Repertório: apresentar opções</span></span>
+              <span class="chip chip--plenaria"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Plenária</span>
+              <span class="passo-tempo">10 min</span>
+            </button>
+          </li>
+          <li class="passo" data-min="5">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt"><span class="passo-nome">Anotar sozinho o que falta</span></span>
+              <span class="chip chip--individual"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-4 3.1-6.5 7-6.5s7 2.5 7 6.5"/></svg>Individual</span>
+              <span class="passo-tempo">5 min</span>
+            </button>
+          </li>
+          <li class="passo" data-min="8">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt"><span class="passo-nome">Propostas na mesa e votação</span></span>
+              <span class="chip chip--plenaria"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Plenária</span>
+              <span class="passo-tempo">8 min</span>
+            </button>
+          </li>
+          <li class="passo" data-min="17">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt"><span class="passo-nome">Detalhar em subgrupos</span></span>
+              <span class="chip chip--subgrupos"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="2.6"/><circle cx="6" cy="17" r="2.6"/><circle cx="18" cy="17" r="2.6"/><path d="M10.7 8.4L7.3 14.6M13.3 8.4l3.4 6.2M8.8 17h6.4"/></svg>Subgrupos</span>
+              <span class="passo-tempo">17 min</span>
+            </button>
+          </li>
+          <li class="passo" data-min="10">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt"><span class="passo-nome">Devolver e ajustar em plenária</span></span>
+              <span class="chip chip--plenaria"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Plenária</span>
+              <span class="passo-tempo">10 min</span>
+            </button>
+          </li>
+          <li class="passo" data-min="5">
+            <button type="button" class="passo-ac">
+              <span class="passo-num" aria-hidden="true"></span>
+              <span class="passo-txt"><span class="passo-nome">Fechar e registrar</span></span>
+              <span class="chip chip--plenaria"><svg class="ico" aria-hidden="true"><use href="#i-pessoas"/></svg>Plenária</span>
+              <span class="passo-tempo">5 min</span>
+            </button>
+          </li>
+        </ol>
+      </div>
+
+      <div class="dinamica-dir anim d5">
+        <div class="card dinamica-pronto" role="group" aria-label="Pronto quando">
+          <h3 class="rotulo rotulo--laranja dinamica-rotulo">Pronto quando</h3>
+          <ul class="lista dinamica-criterios">
+            <li>Espinha escolhida e visível na tela</li>
+            <li>Cada subgrupo devolveu seu detalhe</li>
+            <li>Ajustes da plenária anotados</li>
+            <li>Próximo passo lido em voz alta</li>
+          </ul>
+        </div>
+
+        <div class="card dinamica-conducao" role="group" aria-label="Condução">
+          <h3 class="rotulo rotulo--laranja dinamica-rotulo">Condução</h3>
+          <dl class="dinamica-etapas">
+            <div class="etapa">
+              <dt>Abrir</dt>
+              <dd>Leia o objetivo e mostre a barra de tempo.</dd>
+            </div>
+            <div class="etapa">
+              <dt>Se travar</dt>
+              <dd>
+                <ul class="etapa-alavancas">
+                  <li>Reduza a pergunta a duas opções</li>
+                  <li>Peça um exemplo concreto</li>
+                </ul>
+              </dd>
+            </div>
+            <div class="etapa">
+              <dt>Fechar</dt>
+              <dd>Releia a decisão e confirme o registro.</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

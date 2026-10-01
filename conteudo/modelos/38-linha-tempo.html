@@ -1,0 +1,172 @@
+<!--
+  LAYOUT  linha-tempo  — linha do tempo horizontal: como um esquema se comporta ao longo do tempo.
+  Caso de uso típico: versionamento (uma release stable por período e hotfixes numerados entre elas),
+  mas o layout é genérico: qualquer sequência com dois tipos de marco. É REPERTÓRIO: vem antes de qualquer pergunta à sala.
+  Estilos: assets/css/layouts/38-linha-tempo.css (escopado em .slide[data-layout="linha-tempo"]). Sem JS, sem CSV.
+
+  ANATOMIA
+    .cab    kicker · h2 (<em>) · .sub
+    .corpo  > .lt-quadro  (marcos + períodos)  ·  ul.lt-legenda (legenda fixa dos dois tipos)
+    .lt-quadro > ol.lt-marcos  (eixo com seta; 1 <li> por marco, em ordem cronológica)
+               > ol.lt-periodos (faixas sob o eixo, alinhadas às colunas de marco)
+               > p.lt-faixa × 2 (rótulos das faixas; só aparecem em duas-linhas)
+    marco:  li.lt-marco.lt-marco--oficial | .lt-marco--intermediario  [data-periodo="N"]
+              strong.lt-versao   rótulo de versão em mono ("X.1.0")
+              span.lt-no.lt-no--oficial | --intermediario  (nó; aria-hidden — a forma é decorativa, o texto carrega o sentido)
+              span.lt-rotulo     legenda do marco ("Release stable do período"); opcional
+              p.lt-chamada       balão opcional que aponta para o marco (uma frase)
+    período: li.lt-periodo  data-de="<coluna inicial>"  data-n="<quantos marcos cobre>"   (1 a 10)
+    legenda: li > span.lt-no (mesma forma do marco) + texto  — forma + rótulo, nunca só cor
+
+  ATRIBUTOS   id, data-layout="linha-tempo", data-bloco, [data-min], [data-modelo], [data-variante]
+    data-variante="uma-linha"      (padrão) todos os marcos no mesmo eixo
+    data-variante="duas-linhas"    release stable na faixa de cima, hotfixes na de baixo (classes --oficial e --intermediario); mesmas colunas de tempo.
+                                   Exige os dois <p class="lt-faixa"> (rótulos das faixas) dentro de .lt-quadro.
+    data-periodo="N" no marco: a qual período ele pertence (vínculo semântico; o alinhamento visual vem de data-de/data-n).
+
+  CLASSES PRÓPRIAS   .lt-quadro · .lt-marcos · .lt-marco(--oficial|--intermediario) · .lt-versao · .lt-no(--oficial|--intermediario)
+                     .lt-rotulo · .lt-chamada · .lt-periodos · .lt-periodo · .lt-faixa(--oficial|--intermediario) · .lt-legenda
+  ENTRADAS           .anim .d1…d7 (cab d1–d3; quadro d4; legenda d5)
+
+  DENSIDADE (automática por CSS, contando os <li> de ol.lt-marcos)
+    4 a 10 marcos cabem sem estourar. Com 7+ marcos os textos descem um degrau (rótulo de versão 44→36px na release stable,
+    30→28px no hotfix). Fora de 4–10 marcos o layout não é garantido: divida em duas telas.
+    Os períodos precisam cobrir as colunas: soma dos data-n = nº de marcos.
+
+  LIMITES DE TEXTO (testados com +40% de texto)
+    título: 1 linha (o quadro é alto; título em 2 linhas encosta na legenda em duas-linhas) · sub: 1 linha (2 linhas em uma-linha)
+    rótulo de versão (.lt-versao): uma linha, sem quebra — até 9 caracteres com até 6 marcos, até 8 com 7 a 10 marcos
+    legenda do marco (.lt-rotulo): até 3 linhas em uma-linha (~22 caracteres por linha com 6 marcos, ~14 com 10);
+        em duas-linhas só a release stable (--oficial) tem legenda (até 2 linhas); o hotfix (--intermediario) leva texto só para leitor de tela (.sr-only)
+    chamada (.lt-chamada): até 2 linhas (~60 caracteres); no máximo 2 por tela e nunca em marcos vizinhos (balões de 380px se tocam);
+        em uma-linha abre para cima; em duas-linhas abre para cima na release stable e para baixo no hotfix
+    período (.lt-periodo): rótulo curto, uma linha ("Período 1", "Mês 1")
+    legenda fixa: 2 itens de uma linha cada
+
+  REGRA: rótulos de versão e datas deste modelo ("X.1.0", "Período 1") são placeholders; nunca números reais no modelo.
+  Se a linha do tempo trouxer fato interno com número/data reais, acrescente <p class="fonte"> com origem e data no fim do .corpo.
+-->
+<section class="slide" id="modelo-linha-tempo" data-layout="linha-tempo" data-variante="uma-linha" data-bloco="b1" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título da tela em <em>uma linha</em></h2>
+    <p class="sub anim d3">Subtítulo que diz o que a sala deve perceber ao percorrer a linha do tempo.</p>
+  </header>
+  <div class="corpo">
+    <div class="lt-quadro anim d4">
+      <ol class="lt-marcos" aria-label="Marcos em ordem cronológica">
+        <li class="lt-marco lt-marco--oficial" data-periodo="1">
+          <strong class="lt-versao">X.1.0</strong>
+          <span class="lt-no lt-no--oficial" aria-hidden="true"></span>
+          <span class="lt-rotulo">Release stable do período</span>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="1">
+          <strong class="lt-versao">X.1.1</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="lt-rotulo">Hotfix</span>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="1">
+          <strong class="lt-versao">X.1.2</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="lt-rotulo">Hotfix</span>
+          <p class="lt-chamada">Chamada: uma frase curta que aponta para este marco.</p>
+        </li>
+        <li class="lt-marco lt-marco--oficial" data-periodo="2">
+          <strong class="lt-versao">X.2.0</strong>
+          <span class="lt-no lt-no--oficial" aria-hidden="true"></span>
+          <span class="lt-rotulo">Release stable do período</span>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="2">
+          <strong class="lt-versao">X.2.1</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="lt-rotulo">Hotfix</span>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="2">
+          <strong class="lt-versao">X.2.2</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="lt-rotulo">Hotfix</span>
+        </li>
+      </ol>
+      <ol class="lt-periodos" aria-label="Períodos">
+        <li class="lt-periodo" data-de="1" data-n="3">Período 1</li>
+        <li class="lt-periodo" data-de="4" data-n="3">Período 2</li>
+      </ol>
+    </div>
+    <ul class="lt-legenda anim d5" aria-label="Legenda">
+      <li><span class="lt-no lt-no--oficial" aria-hidden="true"></span><span><b>Release stable</b> · nó grande, rótulo em destaque</span></li>
+      <li><span class="lt-no lt-no--intermediario" aria-hidden="true"></span><span><b>Hotfix</b> · nó pequeno sobre o eixo</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" id="modelo-linha-tempo-duas-linhas" data-layout="linha-tempo" data-variante="duas-linhas" data-bloco="b1" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Kicker da tela</p>
+    <h2 class="anim d2">Título da tela em <em>duas faixas</em></h2>
+    <p class="sub anim d3">Stable em cima, hotfixes embaixo: o mesmo tempo.</p>
+  </header>
+  <div class="corpo">
+    <div class="lt-quadro anim d4">
+      <p class="lt-faixa lt-faixa--oficial">Stable</p>
+      <p class="lt-faixa lt-faixa--intermediario">Hotfixes</p>
+      <ol class="lt-marcos" aria-label="Marcos em ordem cronológica">
+        <li class="lt-marco lt-marco--oficial" data-periodo="1">
+          <strong class="lt-versao">X.1.0</strong>
+          <span class="lt-no lt-no--oficial" aria-hidden="true"></span>
+          <span class="lt-rotulo">Release stable do período</span>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="1">
+          <strong class="lt-versao">X.1.1</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="sr-only">Hotfix</span>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="1">
+          <strong class="lt-versao">X.1.2</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="sr-only">Hotfix</span>
+        </li>
+        <li class="lt-marco lt-marco--oficial" data-periodo="2">
+          <strong class="lt-versao">X.2.0</strong>
+          <span class="lt-no lt-no--oficial" aria-hidden="true"></span>
+          <span class="lt-rotulo">Release stable do período</span>
+          <p class="lt-chamada">Chamada: frase curta sobre este marco.</p>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="2">
+          <strong class="lt-versao">X.2.1</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="sr-only">Hotfix</span>
+          <p class="lt-chamada">Chamada: frase curta sobre este marco.</p>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="2">
+          <strong class="lt-versao">X.2.2</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="sr-only">Hotfix</span>
+        </li>
+        <li class="lt-marco lt-marco--oficial" data-periodo="3">
+          <strong class="lt-versao">X.3.0</strong>
+          <span class="lt-no lt-no--oficial" aria-hidden="true"></span>
+          <span class="lt-rotulo">Release stable do período</span>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="3">
+          <strong class="lt-versao">X.3.1</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="sr-only">Hotfix</span>
+        </li>
+        <li class="lt-marco lt-marco--intermediario" data-periodo="3">
+          <strong class="lt-versao">X.3.2</strong>
+          <span class="lt-no lt-no--intermediario" aria-hidden="true"></span>
+          <span class="sr-only">Hotfix</span>
+        </li>
+      </ol>
+      <ol class="lt-periodos" aria-label="Períodos">
+        <li class="lt-periodo" data-de="1" data-n="3">Período 1</li>
+        <li class="lt-periodo" data-de="4" data-n="3">Período 2</li>
+        <li class="lt-periodo" data-de="7" data-n="3">Período 3</li>
+      </ol>
+    </div>
+    <ul class="lt-legenda anim d5" aria-label="Legenda">
+      <li><span class="lt-no lt-no--oficial" aria-hidden="true"></span><span><b>Release stable</b> · faixa de cima</span></li>
+      <li><span class="lt-no lt-no--intermediario" aria-hidden="true"></span><span><b>Hotfix</b> · faixa de baixo</span></li>
+    </ul>
+  </div>
+</section>
