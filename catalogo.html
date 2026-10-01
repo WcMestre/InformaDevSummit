@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="assets/css/25-dados.css?v=fa6aafa1">
 <link rel="stylesheet" href="assets/css/30-componentes.css?v=eeff32c5">
 <link rel="stylesheet" href="assets/css/layouts/10-capa.css?v=d5103ba6">
-<link rel="stylesheet" href="assets/css/layouts/20-cronograma.css?v=bfa97d6a">
+<link rel="stylesheet" href="assets/css/layouts/20-cronograma.css?v=43c79c06">
 <link rel="stylesheet" href="assets/css/layouts/25-bloco.css?v=07903b23">
 <link rel="stylesheet" href="assets/css/layouts/30-conteudo.css?v=9e094519">
 <link rel="stylesheet" href="assets/css/layouts/32-duas-colunas.css?v=1a8e1695">
@@ -127,49 +127,91 @@
 <!--
   LAYOUT  cronograma  — a agenda do dia na tela. NÃO é digitada: é GERADA em runtime a partir de SUMMIT.blocos
   (registro dos data-bloco-* das telas), para nunca divergir do deck.   JS: assets/js/layouts/20-cronograma.js
+  UM cronograma só, no slide 2: cada assunto novo entra nele sozinho (basta a primeira tela do assunto ter data-bloco-*);
+  não se cria tela de cronograma por assunto.
 
-  Anatomia
-    .cab                      kicker · h2 · .sub  (o .sub some sozinho no modo colunas)
-    ol.cronograma-lista       GERADA. Até 9 blocos: uma li.cronograma-linha por bloco. 10 ou mais: DUAS COLUNAS (abaixo)
-    footer.cronograma-total   GERADO: horas efetivas (sem pausas), faixa do dia, legenda e aviso de horários
+  VARIANTES  (data-detalhe na <section>)
+    simples   PADRÃO (slide 2 do deck). Uma tela limpa, em DUAS COLUNAS, manhã | tarde: cada linha é só
+              horário (início – fim) · assunto · duração em minutos. Sem barras apresentação/definições, sem legenda, sem
+              horas efetivas; só um rodapé de uma linha ("Dia 09:00 – 17:00"). Para a sala LER de longe.
+    completa  A agenda detalhada: barras apresentação/definições (e rótulos), legenda, horas efetivas, aviso de horários.
+              Fica no catálogo (modelo abaixo) para quem quiser o detalhe: data-detalhe="completa".
 
-  Cada li.cronograma-linha (gerada)
-    .cronograma-hora          início (.cronograma-ini) – fim (.cronograma-fim), calculados de ini + min
-    .cronograma-nome          [ícone cafe|talher|cadeado] .cronograma-titulo [.cronograma-selo "Intocável"]
-    .cronograma-divisao       assuntos: .cronograma-barra (segmentos proporcionais .cronograma-seg--apres / --def) + rótulos
+  Anatomia (comum às duas)
+    .cab                      kicker · h2 · .sub   (na completa com 10 ou mais blocos o .sub some sozinho)
+    ol.cronograma-lista       GERADA
+    footer.cronograma-total   GERADO: simples = "Dia HH:MM – HH:MM" (+ aviso, só se houver lacuna/sobreposição);
+                              completa = horas efetivas, faixa do dia, legenda e aviso
+
+  SIMPLES  (data-densidade="simples")
+    ol.cronograma-lista[data-colunas="1|2"][data-divisoria="sim|nao"][data-escala="g|m|n|p|xp"]
+      > li.cronograma-grupo (manhã)  · li.cronograma-divisoria (o almoço, se sim)  · li.cronograma-grupo (tarde)
+    li.cronograma-grupo       p.cronograma-grupo-cab (período: Manhã | Tarde | Noite; "Parte 1/2" se as duas metades caírem no mesmo período)
+                              + ol.cronograma-grupo-lista > li.cronograma-linha
+    li.cronograma-linha       .cronograma-hora (.cronograma-ini – .cronograma-fim) · .cronograma-nome ([ícone] .cronograma-titulo) · .cronograma-min
+                              data-tipo="assunto | pausa | intocavel"; data-aviso="lacuna | sobreposicao" (só se os horários não encadeiam)
+    Divisória do almoço       a pausa mais longa (>= 30 min) vira o selo central (ícone talher/cafe, nome, horário, minutos) entre as colunas,
+                              desde que as colunas fiquem equilibradas (a mais cheia passa da metade por no máximo 1 linha). Senão o dia é
+                              cortado ao meio e TODAS as pausas viram linhas discretas dentro das colunas.
+    Pausas                    discretas: texto cinza-azulado, itálico, filete tracejado e o ícone (cafe | talher); não competem com os assuntos.
+    Fechamentos (5 min)       linhas normais. O bloco ativo NÃO é destacado (a tela é estática).
+    Texto por degrau (coluna mais cheia)       nome · horário · minutos
+      g   até 6 linhas por coluna              38 · 30 · 28 px
+      m   7 a 8                                36 · 28 · 26
+      n   9 a 10                               32 · 28 · 24
+      p   11 a 13                              28 · 26 · 24
+      xp  14 ou mais                           24 · 24 · 24
+    Limite (medido em 1920x1080 e 1366x768, auditoria 0): até 18 blocos, nome >= 32px, horário >= 28px e minutos >= 24px (pior caso: 10 linhas
+    na coluna mais cheia); de 19 a ~24 blocos o nome fica em 28px; de ~25 a ~36 blocos, em 24px (o piso, nunca menos); com 38 ou mais estoura
+    a área útil e a auditoria acusa "recortado": divida o dia ou use data-origem="manual". Testado com 5 a 36 blocos, com o almoço no meio e
+    desequilibrado, sem almoço e só à tarde. Nomes de até ~18 caracteres cabem em 1 linha nos degraus g/m; maiores quebram em 2 linhas
+    (a linha cresce até o teto do degrau). O aviso de "horários que não encadeiam" só aparece quando há lacuna ou sobreposição.
+
+  COMPLETA  (data-detalhe="completa")
+    Cada li.cronograma-linha tem
+      .cronograma-hora        início (.cronograma-ini) – fim (.cronograma-fim), calculados de ini + min
+      .cronograma-nome        [ícone cafe|talher|cadeado] .cronograma-titulo [.cronograma-selo "Intocável"]
+      .cronograma-divisao     assuntos: .cronograma-barra (segmentos proporcionais .cronograma-seg--apres / --def) + rótulos
                               .cronograma-par "Apresentação N min" · "Definições M min"; pausa: barra listrada
-    .cronograma-min           duração do bloco
-    Uma coluna: a barra é fina e os rótulos por extenso ficam abaixo dela.
-    Duas colunas: os minutos vão DENTRO dos segmentos (forma + número: quadrado = apresentação, círculo = definições; a legenda
-    traz "Números em minutos") e os rótulos por extenso viram texto só para leitor de tela (.sr-only).
+      .cronograma-min         duração do bloco
+    Até 9 blocos: uma coluna, a barra é fina e os rótulos por extenso ficam abaixo dela.
+    10 ou mais (data-densidade="colunas"): ol.cronograma-lista[data-faixa="sim|nao"] > li.cronograma-grupo (cabeçalho .cronograma-grupo-cab:
+    período · faixa de horas · horas efetivas; ol.cronograma-grupo-lista) · li.cronograma-linha[data-faixa="central"] · li.cronograma-grupo.
+    A pausa mais longa (>= 30 min, o almoço) vira a FAIXA vertical entre as colunas; manhã à esquerda, tarde à direita; os minutos vão DENTRO
+    dos segmentos (quadrado = apresentação, círculo = definições) e os rótulos por extenso viram texto só para leitor de tela (.sr-only).
+    Sem pausa longa (ou com mais de 7 linhas de um lado), o dia é cortado ao meio ("Parte 1" e "Parte 2"). data-cheio="sim" = 7 linhas numa coluna.
+    Limite: nomes até ~30 caracteres (1 coluna) e ~20 (duas colunas; corta com reticências e a auditoria acusa); testada de 1 a 14 blocos.
+    Acima de 14 estoura a área útil e a auditoria acusa. O aviso de horários que não encadeiam vai ao rodapé (em colunas, ao cabeçalho).
 
-  Modo colunas (10 ou mais blocos; data-densidade="colunas")
-    ol.cronograma-lista[data-faixa="sim|nao"] > li.cronograma-grupo (cabeçalho .cronograma-grupo-cab: período · faixa de horas ·
-    horas efetivas; ol.cronograma-grupo-lista com as linhas) · li.cronograma-linha[data-faixa="central"] · li.cronograma-grupo
-    A pausa mais longa (>= 30 min, o almoço) vira a FAIXA vertical entre as colunas; manhã à esquerda, tarde à direita.
-    Sem pausa longa (ou com mais de 7 linhas de um lado), o dia é cortado ao meio e as colunas viram "Parte 1" e "Parte 2".
-    Período do cabeçalho: Manhã (antes das 12h) · Tarde (12h às 18h) · Noite. data-cheio="sim" na lista = 7 linhas numa coluna
-    (14 blocos): linhas mais baixas. O aviso de horários que não encadeiam vai para o canto do cabeçalho (não rouba altura).
-
-  Atributos da li:   data-tipo="assunto | pausa | intocavel"   data-aviso="lacuna | sobreposicao" (só se os horários não encadeiam)
-  Atributos da tela: id, data-layout, data-bloco, [data-min], [data-modelo]
+  Atributos da tela:  id, data-layout, data-bloco, [data-min], [data-modelo]
+    data-detalhe="simples|completa"   variante (padrão: simples)
     data-origem="manual"    desliga a geração: o conteúdo de .cronograma-lista e .cronograma-total passa a ser escrito à mão
                             (mesmo markup acima). Sem esse atributo, o que estiver dentro é sobrescrito.
-    data-densidade          escrito pelo JS: amplo (até 6 blocos) · medio (7 a 9) · colunas (10 ou mais; esconde o .sub).
+    data-densidade          escrito pelo JS: simples · (completa) amplo (até 6 blocos) · medio (7 a 9) · colunas (10 ou mais).
                             data-linhas = nº de blocos.
 
-  Fonte dos dados (nos <section> de abertura de cada bloco):
+  Fonte dos dados (na PRIMEIRA tela de cada assunto, em geral a dinâmica; nas telas pausa/fechamento, na própria tela):
     data-bloco-nome · data-bloco-ini="HH:MM" · data-bloco-min · data-bloco-apres · data-bloco-def · data-bloco-tipo="pausa|intocavel"
-    Bloco sem ini encadeia no fim do anterior; bloco sem min é ignorado. Pausa com data-variante="almoco" (na tela pausa) usa o ícone talher.
+    Novo assunto = telas novas com esses atributos na primeira; ele entra no cronograma na ordem do deck. O horário de início de cada bloco é
+    declarado por ele (mude o início do seguinte se mudar a duração). Bloco sem ini encadeia no fim do anterior; bloco sem min é ignorado.
+    Pausa com data-variante="almoco" (na tela pausa) usa o ícone talher.
 
-  Tabela CSV: nenhuma (tela de leitura). Sem JS mostra só o cabeçalho.
-  Regras e limites: nomes de bloco até ~30 caracteres (amplo/médio quebram em 2 linhas) e até ~20 em colunas (corta com
-  reticências e a auditoria acusa); testado de 1 a 14 blocos (projeto: 13, em colunas). Acima de 14 (7 por coluna) estoura a área útil
-  e a auditoria acusa — nesse caso use data-origem="manual" ou divida o dia.
-  Um bloco sem data-bloco-min é ignorado; sem nenhum bloco a tela mostra um aviso ("Nenhum bloco com duração...").
-  Horários que não encadeiam (lacuna ou sobreposição) ganham ícone de alerta na linha e um aviso (no rodapé; em colunas, no cabeçalho).
+  Tabela CSV: nenhuma (tela de leitura). Sem JS mostra só o cabeçalho. Sem nenhum bloco a tela mostra "Nenhum bloco com duração...".
+  Horários que não encadeiam (lacuna ou sobreposição): ícone de alerta na linha e um aviso rotulado no rodapé (só aparece quando acontece).
 -->
-<section class="slide" id="modelo-cronograma" data-layout="cronograma" data-bloco="abertura" data-min="3" data-modelo>
+<section class="slide" id="modelo-cronograma" data-layout="cronograma" data-detalhe="simples" data-bloco="abertura" data-min="3" data-modelo>
+  <header class="cab">
+    <p class="kicker anim d1">Agenda do dia</p>
+    <h2 class="anim d2">O que vamos <em>decidir</em> hoje</h2>
+    <p class="sub anim d3">Os assuntos do dia, em ordem.</p>
+  </header>
+  <div class="corpo">
+    <ol class="cronograma-lista anim d4" aria-label="Agenda do dia"></ol>
+    <footer class="cronograma-total anim d5"></footer>
+  </div>
+</section>
+
+<section class="slide" id="modelo-cronograma-completa" data-layout="cronograma" data-detalhe="completa" data-bloco="abertura" data-min="3" data-modelo>
   <header class="cab">
     <p class="kicker anim d1">Agenda do dia</p>
     <h2 class="anim d2">Cronograma do <em>dia</em></h2>
@@ -3173,7 +3215,7 @@
 <script type="application/json" id="dados-sementes">{"brainstorming": "id;rodada;participante;tipo;texto;criticidade;atualizado_em\r\n", "anotacoes": "id;assunto;tipo;texto;votos;atualizado_em\r\n", "propostas": "id;assunto;proposta;enunciado;decisao;votos_aceitar;votos_ajustar;votos_recusar;ajuste;atualizado_em\r\n", "decisoes": "id;assunto;item;responsavel;prazo;status;observacao;atualizado_em\r\nseed-a1-pipeline;versionamento;Ajustar a pipeline ao novo padrão de versionamento;;;aberto;;\r\nseed-a1-repositorio;versionamento;Ajustar o repositório ao novo padrão de versionamento;;;aberto;;\r\nseed-a2-dotnet;pipeline;Fazer o upgrade do .NET Framework;;;aberto;;\r\nseed-a2-limpeza;pipeline;Limpar resquícios de releases depreciadas do repositório;;;aberto;;\r\nseed-a3-fluxo;operacao-inovacao;Colocar o novo fluxo em prática;;;aberto;;\r\nseed-a4-fluxo;ocorrencias;Colocar em operação o novo fluxo de ocorrências e priorização;;;aberto;;\r\nseed-a5-review;review-dos-prs;Colocar em prática o novo fluxo de review dos PRs;;;aberto;;\r\nseed-a7-acessos;ferramentas-e-ia;Providenciar GitHub pago e plano do Claude por usuário;;;aberto;;\r\nseed-a7-pipeline;ferramentas-e-ia;Logar a conta de Desenvolvimento na máquina da Pipeline;;;aberto;;\r\n", "progresso": "id;slide;passo;estado;atualizado_em\r\n"}</script>
 <script defer src="assets/js/10-nucleo.js?v=c2df8cbb"></script>
 <script defer src="assets/js/20-dados.js?v=9f2474de"></script>
-<script defer src="assets/js/layouts/20-cronograma.js?v=dafda0d4"></script>
+<script defer src="assets/js/layouts/20-cronograma.js?v=e6c6f5b1"></script>
 <script defer src="assets/js/layouts/25-bloco.js?v=5fb199dd"></script>
 <script defer src="assets/js/layouts/42-proposta.js?v=c0c4c021"></script>
 <script defer src="assets/js/layouts/50-dinamica.js?v=8b0a8711"></script>

@@ -1,9 +1,14 @@
 /* ==========================================================================
    LAYOUT cronograma — gera a agenda do dia a partir de SUMMIT.blocos.
-   Nada é digitado: horários (ini + min), divisão apresentação/definições, pausas e
-   blocos intocáveis vêm dos data-bloco-* das telas, então a agenda nunca diverge do deck.
-   Até 9 blocos: uma coluna (amplo/medio). Com 10 ou mais: DUAS COLUNAS (manhã | tarde) — a pausa mais longa
-   (>= 30 min, o almoço) vira uma faixa vertical entre as colunas; sem ela, o dia é cortado ao meio.
+   Nada é digitado: horários (ini + min), pausas e blocos intocáveis (e, na completa, a divisão apresentação/definições)
+   vêm dos data-bloco-* das telas, então a agenda nunca diverge do deck: assunto novo = telas com data-bloco-* na primeira.
+   DUAS VARIANTES, escolhidas por data-detalhe na <section>:
+     simples  (PADRÃO; slide 2 do deck) — uma tela limpa em DUAS COLUNAS, manhã | tarde: horário · assunto · minutos. Sem barras,
+              legenda nem horas efetivas. O almoço (pausa mais longa, >= 30 min) vira a divisória central se as colunas
+              ficarem equilibradas; senão o dia é cortado ao meio e as pausas viram linhas discretas dentro das colunas.
+              O texto encolhe em degraus (nome 40 > 36 > 32 > 28 > 24 px) conforme as linhas da coluna mais cheia.
+     completa — a agenda detalhada: barras apresentação/definições, legenda, horas efetivas (1 coluna até 9 blocos; com 10 ou
+              mais, duas colunas com o almoço como faixa vertical; sem ele, o dia é cortado ao meio).
    Reexecuta em 'summit:pronto' e 'summit:slide' e só toca no DOM quando algo mudou.
    Desliga com data-origem="manual" no <section>. Expõe window.SUMMIT.cronograma.
    ========================================================================== */
@@ -16,7 +21,8 @@ if(!S) return;
 const LAYOUT = 'cronograma';
 const DIA = 24 * 60;
 const MAX_UNICA = 9;        // acima disso a agenda vira duas colunas
-const MAX_COLUNA = 7;       // linhas por coluna que ainda cabem na área útil
+const MAX_COLUNA = 7;       // (completa) linhas por coluna que ainda cabem na área útil
+const FOLGA_DIVISORIA = 1;  // (simples) o almoço só divide as colunas se a mais cheia passar da metade por no máximo isto
 const PAUSA_LONGA = 30;     // minutos: a pausa mais longa a partir daqui vira a faixa central
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const assinaturas = new WeakMap();   // tela -> assinatura da última geração (evita refazer o DOM à toa)
@@ -85,7 +91,7 @@ function calcular(){
     const tipo = b.tipo === 'pausa' ? 'pausa' : (b.tipo === 'intocavel' ? 'intocavel' : 'assunto');
     if(tipo === 'pausa') pausas += b.min; else efetivos += b.min;
     linhas.push({
-      nome: b.nome, tipo, aviso, ini, fim, min: b.min,
+      nome: b.nome, curto: b.curto, tipo, aviso, ini, fim, min: b.min,
       apres: b.apres || 0, def: b.def || 0,
       variante: tipo === 'pausa' ? varianteDoBloco(b) : ''
     });
@@ -142,11 +148,8 @@ function montarDivisao(l, colunas, faixa){
   return div;
 }
 
-function montarLinha(l, colunas, faixa){
-  const li = el('li', 'cronograma-linha');
-  li.dataset.tipo = l.tipo;
-  if(l.aviso) li.dataset.aviso = l.aviso;
-
+/** Horário "início – fim" (com ícone de alerta quando não encadeia com o bloco anterior). */
+function montarHora(l){
   const hora = el('span', 'cronograma-hora');
   if(l.aviso){
     const a = icone('alerta');
@@ -157,21 +160,35 @@ function montarLinha(l, colunas, faixa){
   hora.appendChild(el('span', 'cronograma-ini', l.ini === null ? '--:--' : formatarHora(l.ini)));
   hora.appendChild(el('span', 'cronograma-ate', '–'));
   hora.appendChild(el('span', 'cronograma-fim', l.fim === null ? '--:--' : formatarHora(l.fim)));
-  li.appendChild(hora);
+  return hora;
+}
 
+/** Nome do bloco: [ícone cafe|talher|cadeado] título [selo "Intocável"]. */
+function montarNome(l, colunas){
   const nome = el('span', 'cronograma-nome');
   if(l.tipo === 'pausa') nome.appendChild(icone(l.variante === 'almoco' ? 'talher' : 'cafe'));
   else if(l.tipo === 'intocavel') nome.appendChild(icone('cadeado'));
-  nome.appendChild(el('span', 'cronograma-titulo', l.nome));
+  /* nome longo (> 24 caracteres) quebra e é cortado na linha: usa o nome CURTO do bloco quando houver */
+  nome.appendChild(el('span', 'cronograma-titulo', (l.nome.length > 24 && l.curto) ? l.curto : l.nome));
   if(l.tipo === 'intocavel') nome.appendChild(el('span', 'cronograma-selo' + (colunas ? ' sr-only' : ''), 'Intocável'));
-  li.appendChild(nome);
+  return nome;
+}
 
-  li.appendChild(montarDivisao(l, colunas, faixa));
-
+function montarMin(l){
   const min = el('span', 'cronograma-min');
   min.appendChild(el('b', null, String(l.min)));
   min.appendChild(document.createTextNode(' min'));
-  li.appendChild(min);
+  return min;
+}
+
+function montarLinha(l, colunas, faixa){
+  const li = el('li', 'cronograma-linha');
+  li.dataset.tipo = l.tipo;
+  if(l.aviso) li.dataset.aviso = l.aviso;
+  li.appendChild(montarHora(l));
+  li.appendChild(montarNome(l, colunas));
+  li.appendChild(montarDivisao(l, colunas, faixa));
+  li.appendChild(montarMin(l));
   return li;
 }
 
@@ -273,6 +290,93 @@ function montarColunas(lista, linhas){
   lista.appendChild(montarGrupo(dir, nomeB));
 }
 
+/* ---------- variante SIMPLES (padrão): duas colunas, só horário · assunto · minutos ---------- */
+/**
+ * Corta o dia em duas colunas. A pausa mais longa (>= PAUSA_LONGA, o almoço) vira a divisória central quando as colunas
+ * ficam equilibradas (a mais cheia passa da metade por no máximo FOLGA_DIVISORIA); senão o dia é cortado ao meio e todas
+ * as pausas (almoço inclusive) viram linhas discretas dentro das colunas.
+ */
+function dividirSimples(linhas){
+  const n = linhas.length;
+  let idx = -1, maior = 0;
+  linhas.forEach((l, i) => { if(l.tipo === 'pausa' && l.min >= PAUSA_LONGA && l.min > maior){ maior = l.min; idx = i; } });
+  if(idx > 0 && idx < n - 1){
+    const e = idx, d = n - idx - 1;
+    if(Math.max(e, d) <= Math.ceil((n - 1) / 2) + FOLGA_DIVISORIA)
+      return { esq: linhas.slice(0, idx), divisoria: linhas[idx], dir: linhas.slice(idx + 1) };
+  }
+  const m = Math.ceil(n / 2);
+  return { esq: linhas.slice(0, m), divisoria: null, dir: linhas.slice(m) };
+}
+
+/** Degrau do texto pela coluna mais cheia (linhas): g 40px (até 6) · m 36 (7-8) · n 32 (9-10) · p 28 (11-13) · xp 24 (14 ou mais). */
+function escalaSimples(r){ return r <= 6 ? 'g' : (r <= 8 ? 'm' : (r <= 10 ? 'n' : (r <= 13 ? 'p' : 'xp'))); }
+
+/** Linha enxuta: horário · nome · minutos (sem barra de divisão). */
+function montarItem(l){
+  const li = el('li', 'cronograma-linha');
+  li.dataset.tipo = l.tipo;
+  if(l.aviso) li.dataset.aviso = l.aviso;
+  li.appendChild(montarHora(l));
+  li.appendChild(montarNome(l, true));
+  li.appendChild(montarMin(l));
+  return li;
+}
+
+function montarColunaSimples(linhas, nomePeriodo){
+  const li = el('li', 'cronograma-grupo');
+  const cab = el('p', 'cronograma-grupo-cab');
+  cab.appendChild(el('span', 'cronograma-grupo-nome', nomePeriodo));
+  li.appendChild(cab);
+  const ol = el('ol', 'cronograma-grupo-lista');
+  linhas.forEach(l => ol.appendChild(montarItem(l)));
+  li.appendChild(ol);
+  return li;
+}
+
+/** O almoço entre as colunas: linha vertical com um selo (ícone · nome · horário · minutos). */
+function montarDivisoria(l){
+  const li = el('li', 'cronograma-divisoria');
+  li.dataset.tipo = l.tipo;
+  if(l.aviso) li.dataset.aviso = l.aviso;
+  const miolo = el('div', 'cronograma-divisoria-miolo');
+  miolo.appendChild(montarNome(l, true));
+  miolo.appendChild(montarHora(l));
+  miolo.appendChild(montarMin(l));
+  li.appendChild(miolo);
+  return li;
+}
+
+function montarSimples(lista, dados){
+  const { esq, divisoria, dir } = dividirSimples(dados.linhas);
+  const a = esq.find(l => l.ini !== null), b = dir.find(l => l.ini !== null);
+  /* rótulo de coluna só quando TODA a coluna é do mesmo período (manhã/tarde); senão "Parte 1/2" (corte que não coincide com o almoço) */
+  const periodoUnico = col => { const c = col.filter(l => l.ini !== null); if(!c.length) return null; const p = periodo(c[0].ini); return p === periodo(c[c.length - 1].ini) ? p : null; };
+  let nomeA = periodoUnico(esq) || 'Parte 1', nomeB = periodoUnico(dir) || 'Parte 2';
+  if(nomeA === nomeB && dir.length){ nomeA = 'Parte 1'; nomeB = 'Parte 2'; }
+  lista.dataset.escala = escalaSimples(Math.max(esq.length, dir.length));
+  lista.dataset.divisoria = divisoria ? 'sim' : 'nao';
+  lista.dataset.colunas = dir.length ? '2' : '1';
+  lista.appendChild(montarColunaSimples(esq, nomeA));
+  if(divisoria) lista.appendChild(montarDivisoria(divisoria));
+  if(dir.length) lista.appendChild(montarColunaSimples(dir, nomeB));
+}
+
+/** Rodapé de uma linha: o dia (primeiro início – último fim) e, só se houver lacuna ou sobreposição, um aviso rotulado. */
+function montarTotalSimples(dados){
+  const nos = [];
+  const { linhas, avisos } = dados;
+  const primeira = linhas.find(l => l.ini !== null), ultima = [...linhas].reverse().find(l => l.fim !== null);
+  if(primeira && ultima){
+    const dia = el('p', 'cronograma-dia');
+    dia.appendChild(el('span', 'cronograma-dia-rot', 'Dia'));
+    dia.appendChild(document.createTextNode(formatarHora(primeira.ini) + ' – ' + formatarHora(ultima.fim)));
+    nos.push(dia);
+  }
+  if(avisos) nos.push(montarAlerta(avisos));
+  return nos;
+}
+
 /** Gera (ou atualiza) a agenda de UMA tela de cronograma. Ignora telas com data-origem="manual". */
 function gerar(tela){
   if(tela.dataset.origem === 'manual') return;
@@ -281,22 +385,31 @@ function gerar(tela){
   if(!lista) return;
 
   const dados = calcular();
-  const assin = JSON.stringify(dados);
+  const simples = tela.dataset.detalhe !== 'completa';   // simples é o padrão; só "completa" traz as barras e as horas efetivas
+  const assin = (simples ? 'simples' : 'completa') + JSON.stringify(dados);
   if(assinaturas.get(tela) === assin) return;
   assinaturas.set(tela, assin);
 
-  const dens = densidade(dados.linhas.length);
+  const dens = simples ? 'simples' : densidade(dados.linhas.length);
   tela.dataset.densidade = dens;
   tela.dataset.linhas = String(dados.linhas.length);
 
   lista.replaceChildren();
   delete lista.dataset.faixa;
   delete lista.dataset.cheio;
+  delete lista.dataset.escala;
+  delete lista.dataset.divisoria;
+  delete lista.dataset.colunas;
   if(total) total.replaceChildren();
   const cab = tela.querySelector('.cab');
   if(cab) cab.querySelectorAll('.cronograma-alerta').forEach(n => n.remove());
   if(!dados.linhas.length){
     lista.appendChild(el('li', 'cronograma-vazio', 'Nenhum bloco com duração foi registrado no deck (data-bloco-min).'));
+    return;
+  }
+  if(simples){
+    montarSimples(lista, dados);
+    if(total) montarTotalSimples(dados).forEach(n => total.appendChild(n));
     return;
   }
   const colunas = dens === 'colunas';

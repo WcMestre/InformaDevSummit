@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="assets/css/25-dados.css?v=fa6aafa1">
 <link rel="stylesheet" href="assets/css/30-componentes.css?v=eeff32c5">
 <link rel="stylesheet" href="assets/css/layouts/10-capa.css?v=d5103ba6">
-<link rel="stylesheet" href="assets/css/layouts/20-cronograma.css?v=bfa97d6a">
+<link rel="stylesheet" href="assets/css/layouts/20-cronograma.css?v=43c79c06">
 <link rel="stylesheet" href="assets/css/layouts/25-bloco.css?v=07903b23">
 <link rel="stylesheet" href="assets/css/layouts/30-conteudo.css?v=9e094519">
 <link rel="stylesheet" href="assets/css/layouts/32-duas-colunas.css?v=1a8e1695">
@@ -106,11 +106,11 @@
 </section>
 
 <!-- ▼ conteudo/slides/12-abertura-cronograma.html -->
-<section class="slide" id="abertura-cronograma" data-layout="cronograma" data-bloco="abertura" data-min="12">
+<section class="slide" id="abertura-cronograma" data-layout="cronograma" data-detalhe="simples" data-bloco="abertura" data-min="12">
   <header class="cab">
     <p class="kicker anim d1">Agenda do dia</p>
     <h2 class="anim d2">O que vamos <em>decidir</em> hoje</h2>
-    <p class="sub anim d3">Cada assunto divide o tempo entre apresentação e definições.</p>
+    <p class="sub anim d3">Os assuntos do dia, em ordem.</p>
   </header>
   <div class="corpo">
     <ol class="cronograma-lista anim d4" aria-label="Agenda do dia"></ol>
@@ -118,78 +118,12 @@
   </div>
 </section>
 
-<!-- ▼ conteudo/slides/20-a0-bloco.html -->
-<section class="slide" id="a0-bloco" data-layout="bloco" data-bloco="a0" data-min="2"
-         data-bloco-nome="Brainstorming" data-bloco-curto="Brainstorm" data-bloco-ini="09:15" data-bloco-min="60" data-bloco-apres="5" data-bloco-def="55">
-  <div class="bloco-layout">
-
-    <aside class="bloco-relogio card card--forte anim d1" aria-label="Horário e divisão do tempo">
-      <div class="bloco-inicio">
-        <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-relogio"/></svg> Início</span>
-        <p class="bloco-hora" data-campo="inicio">09:15</p>
-      </div>
-
-      <dl class="bloco-dados">
-        <div><dt>Término</dt><dd data-campo="fim">10:15</dd></div>
-        <div><dt>Duração</dt><dd><span data-campo="duracao">60</span> min</dd></div>
-      </dl>
-
-      <div class="bloco-divisao">
-        <span class="rotulo">Divisão do tempo</span>
-        <div class="bloco-barra" role="img" aria-label="Apresentação 5 min, definições 55 min">
-          <span class="bloco-seg bloco-seg--apres" data-campo="barra-apres"></span>
-          <span class="bloco-seg bloco-seg--def" data-campo="barra-def"></span>
-        </div>
-        <ul class="bloco-legenda">
-          <li><span class="bloco-amostra bloco-amostra--apres" aria-hidden="true"></span>Apresentação<b><span data-campo="apres">5</span> min</b></li>
-          <li><span class="bloco-amostra bloco-amostra--def" aria-hidden="true"></span>Definições<b><span data-campo="def">55</span> min</b></li>
-        </ul>
-      </div>
-    </aside>
-
-    <div class="bloco-principal">
-      <header class="cab">
-        <p class="kicker anim d1">Assunto 0 · Visão geral</p>
-        <h1 class="anim d2">Brainstorming</h1>
-      </header>
-
-      <div class="corpo">
-        <div class="bloco-objetivo card card--destaque card--forte anim d3">
-          <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-alvo"/></svg> Objetivo</span>
-          <p class="bloco-objetivo-txt">Levantar, juntos, o que a engenharia faz bem e o que precisa melhorar — e enxergar o que mais pesa.</p>
-        </div>
-
-        <div class="bloco-duas">
-          <section class="anim d4" aria-label="Saímos daqui com">
-            <h2 class="rotulo">Saímos daqui com</h2>
-            <ol class="lista lista--numerada">
-              <li>Uma nuvem de palavras com o que é bom (azul) e o que melhorar (vermelho)</li>
-              <li>As melhorias mais críticas em evidência</li>
-              <li>Uma base (CSV) com todos os apontamentos, guardada no repositório</li>
-            </ol>
-          </section>
-
-          <section class="anim d5" aria-label="Quem está na sala">
-            <h2 class="rotulo">Quem está na sala</h2>
-            <ul class="bloco-perfis">
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>DEV</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>QA</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Tech Lead</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Gestão</li>
-            </ul>
-          </section>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- ▼ conteudo/slides/21-a0-dinamica.html -->
-<section class="slide" id="a0-dinamica" data-layout="dinamica" data-bloco="a0" data-min="60">
+<section class="slide" id="a0-dinamica" data-layout="dinamica" data-bloco="a0" data-min="60"
+         data-bloco-nome="Brainstorming" data-bloco-curto="Brainstorm" data-bloco-ini="09:15" data-bloco-min="60" data-bloco-apres="5" data-bloco-def="55">
   <header class="cab">
     <div class="dinamica-cab-topo">
-      <p class="kicker anim d1">Assunto 0 · Condução</p>
+      <p class="kicker anim d1">Assunto 0 · Brainstorming · Condução</p>
       <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–5</kbd> para iniciar o tempo</p>
     </div>
     <h2 class="anim d2">Como vamos <em>conduzir</em></h2>
@@ -510,78 +444,12 @@
 
 </section>
 
-<!-- ▼ conteudo/slides/30-a1-bloco.html -->
-<section class="slide" id="a1-bloco" data-layout="bloco" data-bloco="a1" data-min="2"
-         data-bloco-nome="Versionamento" data-bloco-curto="Versionamento" data-bloco-ini="10:15" data-bloco-min="45" data-bloco-apres="15" data-bloco-def="30">
-  <div class="bloco-layout">
-
-    <aside class="bloco-relogio card card--forte anim d1" aria-label="Horário e divisão do tempo">
-      <div class="bloco-inicio">
-        <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-relogio"/></svg> Início</span>
-        <p class="bloco-hora" data-campo="inicio">10:15</p>
-      </div>
-
-      <dl class="bloco-dados">
-        <div><dt>Término</dt><dd data-campo="fim">11:00</dd></div>
-        <div><dt>Duração</dt><dd><span data-campo="duracao">45</span> min</dd></div>
-      </dl>
-
-      <div class="bloco-divisao">
-        <span class="rotulo">Divisão do tempo</span>
-        <div class="bloco-barra" role="img" aria-label="Apresentação 15 min, definições 30 min">
-          <span class="bloco-seg bloco-seg--apres" data-campo="barra-apres"></span>
-          <span class="bloco-seg bloco-seg--def" data-campo="barra-def"></span>
-        </div>
-        <ul class="bloco-legenda">
-          <li><span class="bloco-amostra bloco-amostra--apres" aria-hidden="true"></span>Apresentação<b><span data-campo="apres">15</span> min</b></li>
-          <li><span class="bloco-amostra bloco-amostra--def" aria-hidden="true"></span>Definições<b><span data-campo="def">30</span> min</b></li>
-        </ul>
-      </div>
-    </aside>
-
-    <div class="bloco-principal">
-      <header class="cab">
-        <p class="kicker anim d1">Assunto 1 · Visão geral</p>
-        <h1 class="anim d2">Versionamento</h1>
-      </header>
-
-      <div class="corpo">
-        <div class="bloco-objetivo card card--destaque card--forte anim d3">
-          <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-alvo"/></svg> Objetivo</span>
-          <p class="bloco-objetivo-txt">Decidir o novo padrão de versionamento e sair com responsável e prazo para ajustar pipeline e repositório.</p>
-        </div>
-
-        <div class="bloco-duas">
-          <section class="anim d4" aria-label="Saímos daqui com">
-            <h2 class="rotulo">Saímos daqui com</h2>
-            <ol class="lista lista--numerada">
-              <li>Padrão de versionamento decidido (aceito, ajustado ou recusado)</li>
-              <li>Responsável e prazo para ajustar a pipeline</li>
-              <li>Responsável e prazo para ajustar o repositório</li>
-            </ol>
-          </section>
-
-          <section class="anim d5" aria-label="Quem está na sala">
-            <h2 class="rotulo">Quem está na sala</h2>
-            <ul class="bloco-perfis">
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>DEV</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>QA</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Tech Lead</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Gestão</li>
-            </ul>
-          </section>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- ▼ conteudo/slides/31-a1-dinamica.html -->
-<section class="slide" id="a1-dinamica" data-layout="dinamica" data-bloco="a1" data-min="45">
+<section class="slide" id="a1-dinamica" data-layout="dinamica" data-bloco="a1" data-min="45"
+         data-bloco-nome="Versionamento" data-bloco-curto="Versionamento" data-bloco-ini="10:15" data-bloco-min="45" data-bloco-apres="15" data-bloco-def="30">
   <header class="cab">
     <div class="dinamica-cab-topo">
-      <p class="kicker anim d1">Assunto 1 · Condução</p>
+      <p class="kicker anim d1">Assunto 1 · Versionamento · Condução</p>
       <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–4</kbd> para iniciar o tempo</p>
     </div>
     <h2 class="anim d2">Decidir o <em>novo versionamento</em></h2>
@@ -949,78 +817,12 @@
   </div>
 </section>
 
-<!-- ▼ conteudo/slides/50-a2-bloco.html -->
-<section class="slide" id="a2-bloco" data-layout="bloco" data-bloco="a2" data-min="2"
-         data-bloco-nome="Pipeline" data-bloco-curto="Pipeline" data-bloco-ini="11:10" data-bloco-min="45" data-bloco-apres="10" data-bloco-def="35">
-  <div class="bloco-layout">
-
-    <aside class="bloco-relogio card card--forte anim d1" aria-label="Horário e divisão do tempo">
-      <div class="bloco-inicio">
-        <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-relogio"/></svg> Início</span>
-        <p class="bloco-hora" data-campo="inicio">11:10</p>
-      </div>
-
-      <dl class="bloco-dados">
-        <div><dt>Término</dt><dd data-campo="fim">11:55</dd></div>
-        <div><dt>Duração</dt><dd><span data-campo="duracao">45</span> min</dd></div>
-      </dl>
-
-      <div class="bloco-divisao">
-        <span class="rotulo">Divisão do tempo</span>
-        <div class="bloco-barra" role="img" aria-label="Apresentação 10 min, definições 35 min">
-          <span class="bloco-seg bloco-seg--apres" data-campo="barra-apres"></span>
-          <span class="bloco-seg bloco-seg--def" data-campo="barra-def"></span>
-        </div>
-        <ul class="bloco-legenda">
-          <li><span class="bloco-amostra bloco-amostra--apres" aria-hidden="true"></span>Apresentação<b><span data-campo="apres">10</span> min</b></li>
-          <li><span class="bloco-amostra bloco-amostra--def" aria-hidden="true"></span>Definições<b><span data-campo="def">35</span> min</b></li>
-        </ul>
-      </div>
-    </aside>
-
-    <div class="bloco-principal">
-      <header class="cab">
-        <p class="kicker anim d1">Assunto 2 · Visão geral</p>
-        <h1 class="anim d2">Pipeline</h1>
-      </header>
-
-      <div class="corpo">
-        <div class="bloco-objetivo card card--destaque card--forte anim d3">
-          <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-alvo"/></svg> Objetivo</span>
-          <p class="bloco-objetivo-txt">Levantar melhorias na pipeline Jenkins e dar o start em duas frentes: upgrade do .NET Framework e limpeza de releases depreciadas.</p>
-        </div>
-
-        <div class="bloco-duas">
-          <section class="anim d4" aria-label="Saímos daqui com">
-            <h2 class="rotulo">Saímos daqui com</h2>
-            <ol class="lista lista--numerada">
-              <li>Sugestões de melhoria da pipeline registradas</li>
-              <li>Duas frentes definidas: upgrade do .NET Framework e limpeza do repositório</li>
-              <li>Responsável e prazo para cada frente</li>
-            </ol>
-          </section>
-
-          <section class="anim d5" aria-label="Quem está na sala">
-            <h2 class="rotulo">Quem está na sala</h2>
-            <ul class="bloco-perfis">
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>DEV</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>QA</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Tech Lead</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Gestão</li>
-            </ul>
-          </section>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- ▼ conteudo/slides/51-a2-dinamica.html -->
-<section class="slide" id="a2-dinamica" data-layout="dinamica" data-bloco="a2" data-min="45">
+<section class="slide" id="a2-dinamica" data-layout="dinamica" data-bloco="a2" data-min="45"
+         data-bloco-nome="Pipeline" data-bloco-curto="Pipeline" data-bloco-ini="11:10" data-bloco-min="45" data-bloco-apres="10" data-bloco-def="35">
   <header class="cab">
     <div class="dinamica-cab-topo">
-      <p class="kicker anim d1">Assunto 2 · Condução</p>
+      <p class="kicker anim d1">Assunto 2 · Pipeline · Condução</p>
       <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–6</kbd> para iniciar o tempo</p>
     </div>
     <h2 class="anim d2">Da pipeline às <em>duas frentes</em></h2>
@@ -1415,79 +1217,12 @@
   </div>
 </section>
 
-<!-- ▼ conteudo/slides/70-a3-bloco.html -->
-<section class="slide" id="a3-bloco" data-layout="bloco" data-bloco="a3" data-min="2"
-         data-bloco-nome="Operação Inovação" data-bloco-curto="Inovação" data-bloco-ini="14:00" data-bloco-min="40" data-bloco-apres="15" data-bloco-def="25">
-  <div class="bloco-layout">
-
-    <aside class="bloco-relogio card card--forte anim d1" aria-label="Horário e divisão do tempo">
-      <div class="bloco-inicio">
-        <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-relogio"/></svg> Início</span>
-        <p class="bloco-hora" data-campo="inicio">14:00</p>
-      </div>
-
-      <dl class="bloco-dados">
-        <div><dt>Término</dt><dd data-campo="fim">14:40</dd></div>
-        <div><dt>Duração</dt><dd><span data-campo="duracao">40</span> min</dd></div>
-      </dl>
-
-      <div class="bloco-divisao">
-        <span class="rotulo">Divisão do tempo</span>
-        <div class="bloco-barra" role="img" aria-label="Apresentação 15 min, definições 25 min">
-          <span class="bloco-seg bloco-seg--apres" data-campo="barra-apres"></span>
-          <span class="bloco-seg bloco-seg--def" data-campo="barra-def"></span>
-        </div>
-        <ul class="bloco-legenda">
-          <li><span class="bloco-amostra bloco-amostra--apres" aria-hidden="true"></span>Apresentação<b><span data-campo="apres">15</span> min</b></li>
-          <li><span class="bloco-amostra bloco-amostra--def" aria-hidden="true"></span>Definições<b><span data-campo="def">25</span> min</b></li>
-        </ul>
-      </div>
-    </aside>
-
-    <div class="bloco-principal">
-      <header class="cab">
-        <p class="kicker anim d1">Assunto 3 · Visão geral</p>
-        <h1 class="anim d2">Operação Inovação</h1>
-      </header>
-
-      <div class="corpo">
-        <div class="bloco-objetivo card card--destaque card--forte anim d3">
-          <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-alvo"/></svg> Objetivo</span>
-          <p class="bloco-objetivo-txt">Entender o novo fluxo da Inovação e os POs de cada produto ou frente, e decidir como ele começa.</p>
-        </div>
-
-        <div class="bloco-duas">
-          <section class="anim d4" aria-label="Saímos daqui com">
-            <h2 class="rotulo">Saímos daqui com</h2>
-            <ol class="lista lista--numerada">
-              <li>O funil de hoje e o novo fluxo entendidos</li>
-              <li>Os POs de cada produto ou frente conhecidos</li>
-              <li>Responsável e prazo para colocar o novo fluxo em prática</li>
-            </ol>
-          </section>
-
-          <section class="anim d5" aria-label="Quem está na sala">
-            <h2 class="rotulo">Quem está na sala</h2>
-            <ul class="bloco-perfis">
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Suporte</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>CS</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Comercial</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Implantação</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Gestão</li>
-            </ul>
-          </section>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- ▼ conteudo/slides/71-a3-dinamica.html -->
-<section class="slide" id="a3-dinamica" data-layout="dinamica" data-bloco="a3" data-min="40">
+<section class="slide" id="a3-dinamica" data-layout="dinamica" data-bloco="a3" data-min="40"
+         data-bloco-nome="Operação Inovação" data-bloco-curto="Inovação" data-bloco-ini="14:00" data-bloco-min="40" data-bloco-apres="15" data-bloco-def="25">
   <header class="cab">
     <div class="dinamica-cab-topo">
-      <p class="kicker anim d1">Assunto 3 · Condução</p>
+      <p class="kicker anim d1">Assunto 3 · Operação Inovação · Condução</p>
       <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–4</kbd> para iniciar o tempo</p>
     </div>
     <h2 class="anim d2">Decidir como o <em>novo fluxo</em> começa</h2>
@@ -1802,79 +1537,12 @@
   </div>
 </section>
 
-<!-- ▼ conteudo/slides/80-a4-bloco.html -->
-<section class="slide" id="a4-bloco" data-layout="bloco" data-bloco="a4" data-min="2"
-         data-bloco-nome="Ocorrências" data-bloco-curto="Ocorrências" data-bloco-ini="14:40" data-bloco-min="50" data-bloco-apres="15" data-bloco-def="35">
-  <div class="bloco-layout">
-
-    <aside class="bloco-relogio card card--forte anim d1" aria-label="Horário e divisão do tempo">
-      <div class="bloco-inicio">
-        <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-relogio"/></svg> Início</span>
-        <p class="bloco-hora" data-campo="inicio">14:40</p>
-      </div>
-
-      <dl class="bloco-dados">
-        <div><dt>Término</dt><dd data-campo="fim">15:30</dd></div>
-        <div><dt>Duração</dt><dd><span data-campo="duracao">50</span> min</dd></div>
-      </dl>
-
-      <div class="bloco-divisao">
-        <span class="rotulo">Divisão do tempo</span>
-        <div class="bloco-barra" role="img" aria-label="Apresentação 15 min, definições 35 min">
-          <span class="bloco-seg bloco-seg--apres" data-campo="barra-apres"></span>
-          <span class="bloco-seg bloco-seg--def" data-campo="barra-def"></span>
-        </div>
-        <ul class="bloco-legenda">
-          <li><span class="bloco-amostra bloco-amostra--apres" aria-hidden="true"></span>Apresentação<b><span data-campo="apres">15</span> min</b></li>
-          <li><span class="bloco-amostra bloco-amostra--def" aria-hidden="true"></span>Definições<b><span data-campo="def">35</span> min</b></li>
-        </ul>
-      </div>
-    </aside>
-
-    <div class="bloco-principal">
-      <header class="cab">
-        <p class="kicker anim d1">Assunto 4 · Visão geral</p>
-        <h1 class="anim d2">Novo fluxo de ocorrências e priorização</h1>
-      </header>
-
-      <div class="corpo">
-        <div class="bloco-objetivo card card--destaque card--forte anim d3">
-          <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-alvo"/></svg> Objetivo</span>
-          <p class="bloco-objetivo-txt">Entender o novo fluxo de ocorrências e priorização, da entrada à tarefa do desenvolvedor, e decidir como ele entra em operação.</p>
-        </div>
-
-        <div class="bloco-duas">
-          <section class="anim d4" aria-label="Saímos daqui com">
-            <h2 class="rotulo">Saímos daqui com</h2>
-            <ol class="lista lista--numerada">
-              <li>O fluxo entendido, passo a passo</li>
-              <li>Quem faz o quê: Atendimento, Comercial, Inovação, IA, QA e desenvolvedor</li>
-              <li>Dúvidas e ajustes registrados, com responsável e prazo para a operação</li>
-            </ol>
-          </section>
-
-          <section class="anim d5" aria-label="Quem está na sala">
-            <h2 class="rotulo">Quem está na sala</h2>
-            <ul class="bloco-perfis">
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Suporte</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>CS</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Comercial</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Implantação</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Gestão</li>
-            </ul>
-          </section>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- ▼ conteudo/slides/81-a4-dinamica.html -->
-<section class="slide" id="a4-dinamica" data-layout="dinamica" data-bloco="a4" data-min="50">
+<section class="slide" id="a4-dinamica" data-layout="dinamica" data-bloco="a4" data-min="50"
+         data-bloco-nome="Ocorrências" data-bloco-curto="Ocorrências" data-bloco-ini="14:40" data-bloco-min="50" data-bloco-apres="15" data-bloco-def="35">
   <header class="cab">
     <div class="dinamica-cab-topo">
-      <p class="kicker anim d1">Assunto 4 · Condução</p>
+      <p class="kicker anim d1">Assunto 4 · Ocorrências · Condução</p>
       <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–5</kbd> para iniciar o tempo</p>
     </div>
     <h2 class="anim d2">Do fluxo ao <em>compromisso</em></h2>
@@ -2300,79 +1968,12 @@
   </div>
 </section>
 
-<!-- ▼ conteudo/slides/90-a5-bloco.html -->
-<section class="slide" id="a5-bloco" data-layout="bloco" data-bloco="a5" data-min="2"
-         data-bloco-nome="Review dos PRs" data-bloco-curto="Review" data-bloco-ini="15:30" data-bloco-min="40" data-bloco-apres="15" data-bloco-def="25">
-  <div class="bloco-layout">
-
-    <aside class="bloco-relogio card card--forte anim d1" aria-label="Horário e divisão do tempo">
-      <div class="bloco-inicio">
-        <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-relogio"/></svg> Início</span>
-        <p class="bloco-hora" data-campo="inicio">15:30</p>
-      </div>
-
-      <dl class="bloco-dados">
-        <div><dt>Término</dt><dd data-campo="fim">16:10</dd></div>
-        <div><dt>Duração</dt><dd><span data-campo="duracao">40</span> min</dd></div>
-      </dl>
-
-      <div class="bloco-divisao">
-        <span class="rotulo">Divisão do tempo</span>
-        <div class="bloco-barra" role="img" aria-label="Apresentação 15 min, definições 25 min">
-          <span class="bloco-seg bloco-seg--apres" data-campo="barra-apres"></span>
-          <span class="bloco-seg bloco-seg--def" data-campo="barra-def"></span>
-        </div>
-        <ul class="bloco-legenda">
-          <li><span class="bloco-amostra bloco-amostra--apres" aria-hidden="true"></span>Apresentação<b><span data-campo="apres">15</span> min</b></li>
-          <li><span class="bloco-amostra bloco-amostra--def" aria-hidden="true"></span>Definições<b><span data-campo="def">25</span> min</b></li>
-        </ul>
-      </div>
-    </aside>
-
-    <div class="bloco-principal">
-      <header class="cab">
-        <p class="kicker anim d1">Assunto 5 · Visão geral</p>
-        <h1 class="anim d2">Novo fluxo de Review dos PRs</h1>
-      </header>
-
-      <div class="corpo">
-        <div class="bloco-objetivo card card--destaque card--forte anim d3">
-          <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-alvo"/></svg> Objetivo</span>
-          <p class="bloco-objetivo-txt">Entender o novo fluxo de review dos PRs e os papéis do Tech Lead e dos POs, e decidir como ele começa.</p>
-        </div>
-
-        <div class="bloco-duas">
-          <section class="anim d4" aria-label="Saímos daqui com">
-            <h2 class="rotulo">Saímos daqui com</h2>
-            <ol class="lista lista--numerada">
-              <li>O fluxo de review entendido, da issue à decisão sobre o PR</li>
-              <li>O papel do Tech Lead nas camadas críticas e a responsabilidade dos POs</li>
-              <li>Dúvidas registradas, com responsável e prazo para colocar em prática</li>
-            </ol>
-          </section>
-
-          <section class="anim d5" aria-label="Quem está na sala">
-            <h2 class="rotulo">Quem está na sala</h2>
-            <ul class="bloco-perfis">
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Suporte</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>CS</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Comercial</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Implantação</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Gestão</li>
-            </ul>
-          </section>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- ▼ conteudo/slides/91-a5-dinamica.html -->
-<section class="slide" id="a5-dinamica" data-layout="dinamica" data-bloco="a5" data-min="40">
+<section class="slide" id="a5-dinamica" data-layout="dinamica" data-bloco="a5" data-min="40"
+         data-bloco-nome="Review dos PRs" data-bloco-curto="Review" data-bloco-ini="15:30" data-bloco-min="40" data-bloco-apres="15" data-bloco-def="25">
   <header class="cab">
     <div class="dinamica-cab-topo">
-      <p class="kicker anim d1">Assunto 5 · Condução</p>
+      <p class="kicker anim d1">Assunto 5 · Review dos PRs · Condução</p>
       <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–5</kbd> para iniciar o tempo</p>
     </div>
     <h2 class="anim d2">Do fluxo à <em>decisão</em></h2>
@@ -2770,78 +2371,12 @@
   </div>
 </section>
 
-<!-- ▼ conteudo/slides/97-a6-1-bloco.html -->
-<section class="slide" id="a6-bloco" data-layout="bloco" data-bloco="a6" data-min="2"
-         data-bloco-nome="ShapeUp" data-bloco-curto="ShapeUp" data-bloco-ini="16:10" data-bloco-min="15" data-bloco-apres="10" data-bloco-def="5">
-  <div class="bloco-layout">
-
-    <aside class="bloco-relogio card card--forte anim d1" aria-label="Horário e divisão do tempo">
-      <div class="bloco-inicio">
-        <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-relogio"/></svg> Início</span>
-        <p class="bloco-hora" data-campo="inicio">16:10</p>
-      </div>
-
-      <dl class="bloco-dados">
-        <div><dt>Término</dt><dd data-campo="fim">16:25</dd></div>
-        <div><dt>Duração</dt><dd><span data-campo="duracao">15</span> min</dd></div>
-      </dl>
-
-      <div class="bloco-divisao">
-        <span class="rotulo">Divisão do tempo</span>
-        <div class="bloco-barra" role="img" aria-label="Apresentação 10 min, definições 5 min">
-          <span class="bloco-seg bloco-seg--apres" data-campo="barra-apres"></span>
-          <span class="bloco-seg bloco-seg--def" data-campo="barra-def"></span>
-        </div>
-        <ul class="bloco-legenda">
-          <li><span class="bloco-amostra bloco-amostra--apres" aria-hidden="true"></span>Apresentação<b><span data-campo="apres">10</span> min</b></li>
-          <li><span class="bloco-amostra bloco-amostra--def" aria-hidden="true"></span>Definições<b><span data-campo="def">5</span> min</b></li>
-        </ul>
-      </div>
-    </aside>
-
-    <div class="bloco-principal">
-      <header class="cab">
-        <p class="kicker anim d1">Assunto 6 · Visão geral</p>
-        <h1 class="anim d2">ShapeUp</h1>
-      </header>
-
-      <div class="corpo">
-        <div class="bloco-objetivo card card--destaque card--forte anim d3">
-          <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-alvo"/></svg> Objetivo</span>
-          <p class="bloco-objetivo-txt">Reforçar que seguimos com o ShapeUp: ciclos de 6 semanas e cooldown de 2 semanas.</p>
-        </div>
-
-        <div class="bloco-duas">
-          <section class="anim d4" aria-label="Saímos daqui com">
-            <h2 class="rotulo">Saímos daqui com</h2>
-            <ol class="lista lista--numerada">
-              <li>O ritmo do ShapeUp claro para todos: 6 semanas de ciclo e 2 de cooldown</li>
-              <li>Dúvidas sobre o ritmo registradas</li>
-            </ol>
-          </section>
-
-          <section class="anim d5" aria-label="Quem está na sala">
-            <h2 class="rotulo">Quem está na sala</h2>
-            <ul class="bloco-perfis">
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Suporte</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>CS</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Comercial</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Implantação</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Gestão</li>
-            </ul>
-          </section>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- ▼ conteudo/slides/97-a6-2-dinamica.html -->
-<section class="slide" id="a6-dinamica" data-layout="dinamica" data-bloco="a6" data-min="15">
+<section class="slide" id="a6-dinamica" data-layout="dinamica" data-bloco="a6" data-min="15"
+         data-bloco-nome="ShapeUp" data-bloco-curto="ShapeUp" data-bloco-ini="16:10" data-bloco-min="15" data-bloco-apres="10" data-bloco-def="5">
   <header class="cab">
     <div class="dinamica-cab-topo">
-      <p class="kicker anim d1">Assunto 6 · Condução</p>
+      <p class="kicker anim d1">Assunto 6 · ShapeUp · Condução</p>
       <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–3</kbd> para iniciar o tempo</p>
     </div>
     <h2 class="anim d2">Reforçar o <em>ritmo do ShapeUp</em></h2>
@@ -3030,79 +2565,12 @@
   </div>
 </section>
 
-<!-- ▼ conteudo/slides/98-a7-1-bloco.html -->
-<section class="slide" id="a7-bloco" data-layout="bloco" data-bloco="a7" data-min="2"
-         data-bloco-nome="Ferramentas e IA" data-bloco-curto="Ferramentas" data-bloco-ini="16:25" data-bloco-min="30" data-bloco-apres="10" data-bloco-def="20">
-  <div class="bloco-layout">
-
-    <aside class="bloco-relogio card card--forte anim d1" aria-label="Horário e divisão do tempo">
-      <div class="bloco-inicio">
-        <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-relogio"/></svg> Início</span>
-        <p class="bloco-hora" data-campo="inicio">16:25</p>
-      </div>
-
-      <dl class="bloco-dados">
-        <div><dt>Término</dt><dd data-campo="fim">16:55</dd></div>
-        <div><dt>Duração</dt><dd><span data-campo="duracao">30</span> min</dd></div>
-      </dl>
-
-      <div class="bloco-divisao">
-        <span class="rotulo">Divisão do tempo</span>
-        <div class="bloco-barra" role="img" aria-label="Apresentação 10 min, definições 20 min">
-          <span class="bloco-seg bloco-seg--apres" data-campo="barra-apres"></span>
-          <span class="bloco-seg bloco-seg--def" data-campo="barra-def"></span>
-        </div>
-        <ul class="bloco-legenda">
-          <li><span class="bloco-amostra bloco-amostra--apres" aria-hidden="true"></span>Apresentação<b><span data-campo="apres">10</span> min</b></li>
-          <li><span class="bloco-amostra bloco-amostra--def" aria-hidden="true"></span>Definições<b><span data-campo="def">20</span> min</b></li>
-        </ul>
-      </div>
-    </aside>
-
-    <div class="bloco-principal">
-      <header class="cab">
-        <p class="kicker anim d1">Assunto 7 · Visão geral</p>
-        <h1 class="anim d2">Ferramentas e IA</h1>
-      </header>
-
-      <div class="corpo">
-        <div class="bloco-objetivo card card--destaque card--forte anim d3">
-          <span class="rotulo rotulo--laranja"><svg class="ico"><use href="#i-alvo"/></svg> Objetivo</span>
-          <p class="bloco-objetivo-txt">Definir as ferramentas e a IA de cada usuário e de cada conta, e quem coloca em prática.</p>
-        </div>
-
-        <div class="bloco-duas">
-          <section class="anim d4" aria-label="Saímos daqui com">
-            <h2 class="rotulo">Saímos daqui com</h2>
-            <ol class="lista lista--numerada">
-              <li>Quem recebe GitHub pago e plano individual do Claude, definido</li>
-              <li>Uso das duas contas atuais definido: Desenvolvimento e Inovação</li>
-              <li>Responsável e prazo para providenciar os acessos</li>
-            </ol>
-          </section>
-
-          <section class="anim d5" aria-label="Quem está na sala">
-            <h2 class="rotulo">Quem está na sala</h2>
-            <ul class="bloco-perfis">
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Suporte</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>CS</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Comercial</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Implantação</li>
-              <li class="chip"><svg class="ico"><use href="#i-pessoas"/></svg>Gestão</li>
-            </ul>
-          </section>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- ▼ conteudo/slides/98-a7-2-dinamica.html -->
-<section class="slide" id="a7-dinamica" data-layout="dinamica" data-bloco="a7" data-min="30">
+<section class="slide" id="a7-dinamica" data-layout="dinamica" data-bloco="a7" data-min="30"
+         data-bloco-nome="Ferramentas e IA" data-bloco-curto="Ferramentas" data-bloco-ini="16:25" data-bloco-min="30" data-bloco-apres="10" data-bloco-def="20">
   <header class="cab">
     <div class="dinamica-cab-topo">
-      <p class="kicker anim d1">Assunto 7 · Condução</p>
+      <p class="kicker anim d1">Assunto 7 · Ferramentas e IA · Condução</p>
       <p class="dinamica-dica anim d1">clique no passo ou tecle <kbd class="dinamica-dica-n">1–3</kbd> para iniciar o tempo</p>
     </div>
     <h2 class="anim d2">Decidir <em>ferramentas e IA</em></h2>
@@ -3569,7 +3037,7 @@
 <script type="application/json" id="dados-sementes">{"brainstorming": "id;rodada;participante;tipo;texto;criticidade;atualizado_em\r\n", "anotacoes": "id;assunto;tipo;texto;votos;atualizado_em\r\n", "propostas": "id;assunto;proposta;enunciado;decisao;votos_aceitar;votos_ajustar;votos_recusar;ajuste;atualizado_em\r\n", "decisoes": "id;assunto;item;responsavel;prazo;status;observacao;atualizado_em\r\nseed-a1-pipeline;versionamento;Ajustar a pipeline ao novo padrão de versionamento;;;aberto;;\r\nseed-a1-repositorio;versionamento;Ajustar o repositório ao novo padrão de versionamento;;;aberto;;\r\nseed-a2-dotnet;pipeline;Fazer o upgrade do .NET Framework;;;aberto;;\r\nseed-a2-limpeza;pipeline;Limpar resquícios de releases depreciadas do repositório;;;aberto;;\r\nseed-a3-fluxo;operacao-inovacao;Colocar o novo fluxo em prática;;;aberto;;\r\nseed-a4-fluxo;ocorrencias;Colocar em operação o novo fluxo de ocorrências e priorização;;;aberto;;\r\nseed-a5-review;review-dos-prs;Colocar em prática o novo fluxo de review dos PRs;;;aberto;;\r\nseed-a7-acessos;ferramentas-e-ia;Providenciar GitHub pago e plano do Claude por usuário;;;aberto;;\r\nseed-a7-pipeline;ferramentas-e-ia;Logar a conta de Desenvolvimento na máquina da Pipeline;;;aberto;;\r\n", "progresso": "id;slide;passo;estado;atualizado_em\r\n"}</script>
 <script defer src="assets/js/10-nucleo.js?v=c2df8cbb"></script>
 <script defer src="assets/js/20-dados.js?v=9f2474de"></script>
-<script defer src="assets/js/layouts/20-cronograma.js?v=dafda0d4"></script>
+<script defer src="assets/js/layouts/20-cronograma.js?v=e6c6f5b1"></script>
 <script defer src="assets/js/layouts/25-bloco.js?v=5fb199dd"></script>
 <script defer src="assets/js/layouts/42-proposta.js?v=c0c4c021"></script>
 <script defer src="assets/js/layouts/50-dinamica.js?v=8b0a8711"></script>

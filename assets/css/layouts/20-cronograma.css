@@ -1,7 +1,8 @@
 /* ==========================================================================
    LAYOUT cronograma — agenda do dia (linhas geradas por assets/js/layouts/20-cronograma.js).
-   Cada bloco é uma linha: horário · nome · divisão apresentação/definições · duração.
-   Três modos automáticos, definidos pelo JS em data-densidade:
+   Duas variantes (data-detalhe na <section>): SIMPLES (padrão; data-densidade="simples"; bloco no FIM deste arquivo) e COMPLETA.
+   Na completa, cada bloco é uma linha: horário · nome · divisão apresentação/definições · duração.
+   Três modos automáticos da completa, definidos pelo JS em data-densidade:
      amplo (até 6 blocos) · medio (7 a 9) · colunas (10 ou mais: DUAS COLUNAS manhã | tarde, almoço como faixa
      central; cada linha tem duas fileiras — hora, nome e duração em cima, barra com os minutos embaixo).
    Marcações: pausa = listrado + ícone; intocável = cadeado + selo + filete laranja (como na trilha).
@@ -212,3 +213,82 @@
 .slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-efetivas .ico{font-size:36px}
 .slide[data-layout="cronograma"][data-densidade="colunas"] .cronograma-efetivas .num{font-size:var(--t-h3)}
 .slide[data-layout="cronograma"] .cronograma-leg--nota{font-style:italic}
+
+/* ==========================================================================
+   VARIANTE SIMPLES (data-detalhe="simples", padrão; o JS escreve data-densidade="simples")
+   Duas colunas, manhã | tarde, cada linha só horário · assunto · minutos. Sem barras, legenda nem horas efetivas.
+   O almoço vira a divisória central (.cronograma-divisoria) ou, com colunas desequilibradas, linha discreta como o intervalo.
+   Texto em 5 degraus pela coluna mais cheia (data-escala na lista): g = até 6 linhas · m = 7-8 · n = 9-10 · p = 11-13 · xp = 14 ou mais.
+   Nome (--cs-nome): 38 · 36 · 32 · 28 · 24 px. Horário (--cs-hora): 30 · 28 · 28 · 26 · 24. Minutos (--cs-min): 28 · 26 · 24 · 24 · 24.
+   Limite: xp (24px) cabe até ~16 linhas por coluna (~32 blocos); acima disso a auditoria acusa (fora da área / recortado).
+   ========================================================================== */
+.slide[data-layout="cronograma"][data-densidade="simples"]{--cs-div:192px;--cs-gap:40px}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cab{margin-bottom:var(--gap)}
+
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--cs-gap);align-items:stretch;overflow:hidden}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista[data-colunas="1"]{grid-template-columns:minmax(0,1fr)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista[data-divisoria="sim"]{
+  grid-template-columns:minmax(0,1fr) var(--cs-div) minmax(0,1fr);column-gap:0}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista[data-divisoria="sim"] .cronograma-grupo:first-child{padding-right:var(--gap)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista[data-divisoria="sim"] .cronograma-grupo:last-child{padding-left:var(--gap)}
+
+/* degraus de texto */
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista{--cs-nome:38px;--cs-hora:30px;--cs-min:28px;--cs-h:104px}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista[data-escala="m"]{--cs-nome:36px;--cs-hora:28px;--cs-min:26px;--cs-h:92px}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista[data-escala="n"]{--cs-nome:32px;--cs-hora:28px;--cs-min:24px;--cs-h:80px}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista[data-escala="p"]{--cs-nome:28px;--cs-hora:26px;--cs-min:24px;--cs-h:66px}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-lista[data-escala="xp"]{--cs-nome:24px;--cs-hora:24px;--cs-min:24px;--cs-h:54px}
+
+/* cabeçalho da coluna */
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-grupo-cab{margin-bottom:6px;padding:0 6px 10px}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-grupo-nome{font-size:var(--t-peq)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-grupo-lista{gap:0}
+
+/* linha: horário · nome · minutos, separadas por filete */
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-linha{
+  flex:1 1 0;min-height:0;max-height:var(--cs-h);display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+  column-gap:18px;align-items:center;padding:0 6px;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-hora{font-size:var(--cs-hora);gap:.1em}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-nome{gap:14px}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-titulo{font-size:var(--cs-nome);line-height:1.1}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-nome .ico{font-size:1em}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-min{font-size:var(--cs-min)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-min b{font-size:1em}
+
+/* pausa: discreta, sem listras e sem peso; o ícone (cafe | talher) basta para distinguir */
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-linha[data-tipo="pausa"]{
+  background:none;border-bottom:1px dashed var(--line)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-linha[data-tipo="pausa"] :is(.cronograma-ini,.cronograma-titulo,.cronograma-min b){
+  color:var(--ink-dim)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-linha[data-tipo="pausa"] .cronograma-nome .ico{color:var(--ink-dim)}
+/* intocável: só o cadeado (sem selo nem filete) */
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-linha[data-tipo="intocavel"]{border-bottom-color:var(--line)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-linha[data-tipo="intocavel"]::after{display:none}
+/* horário que não encadeia: ícone de alerta na linha (o rótulo está no rodapé) */
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-linha[data-aviso]{border-bottom-color:var(--alerta)}
+
+/* almoço como divisória central: linha vertical + selo */
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria{
+  position:relative;list-style:none;display:flex;align-items:center;justify-content:center;min-height:0}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria::before{
+  content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--line)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria-miolo{
+  position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 8px;
+  text-align:center;background:var(--azul-900);border:1px solid var(--card-brd);border-radius:var(--raio);color:var(--ink-dim)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria .cronograma-nome{flex-direction:column;gap:6px}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria .cronograma-nome .ico{font-size:44px;color:var(--ink-dim)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria .cronograma-titulo{
+  font-family:var(--serif);font-size:30px;font-weight:400;font-style:italic;color:var(--ink-dim)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria .cronograma-hora{font-size:24px;gap:.2em}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria .cronograma-ini{color:var(--ink-dim);font-weight:400}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria .cronograma-min{font-size:24px}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria .cronograma-min b{color:var(--ink-dim);font-weight:400}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-divisoria[data-aviso] .cronograma-divisoria-miolo{border-color:var(--alerta)}
+
+/* rodapé de uma linha: "Dia 09:00 – 17:00" (e, se houver lacuna/sobreposição, o aviso rotulado) */
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-total{
+  justify-content:center;margin-top:12px;padding-top:12px;column-gap:var(--gap-g);border-top:0}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-dia{margin-left:0;font-size:var(--t-peq)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-dia-rot{font-size:var(--t-rotulo)}
+.slide[data-layout="cronograma"][data-densidade="simples"] .cronograma-alerta{flex-basis:auto;font-size:var(--t-rotulo)}
