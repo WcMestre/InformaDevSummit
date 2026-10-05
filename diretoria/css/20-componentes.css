@@ -1,0 +1,70 @@
+/* ==========================================================================
+   20 · COMPONENTES — cabeçalho, cartões, rótulos, chips, barras (gráfico) e tiles de número.
+   Nada abaixo de 20px no palco.
+   ========================================================================== */
+.logo{display:block;height:44px;width:auto;margin-bottom:36px}
+.ico{width:1em;height:1em;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.125em}
+
+/* cabeçalho de tela */
+.cab{margin-bottom:40px}
+.kicker{font-family:var(--mono);font-size:var(--t-rotulo);letter-spacing:.18em;text-transform:uppercase;color:var(--laranja-claro);margin-bottom:16px}
+.cab h1,.cab h2{font-family:var(--serif);font-weight:500;line-height:1.08;letter-spacing:-.01em;max-width:1500px}
+.cab h1{font-size:var(--t-h1)}
+.cab h2{font-size:64px}
+.cab em{font-style:italic;color:var(--laranja-claro)}
+.sub{font-size:var(--t-lead);color:var(--ink-dim);margin-top:18px;max-width:1500px}
+
+.corpo{flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--gap)}
+
+/* cartões e rótulos */
+.card{background:var(--card);border:1px solid var(--card-brd);border-radius:var(--raio);padding:36px 40px}
+.card--forte{background:var(--card-forte)}
+.rotulo{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:var(--t-rotulo);font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:24px}
+.rotulo .ico{font-size:30px}
+.rotulo--azul{color:var(--bom)}
+.rotulo--laranja{color:var(--laranja-claro)}
+
+.lista{list-style:none;display:flex;flex-direction:column;gap:18px;font-size:var(--t-corpo)}
+.lista li{padding-left:28px;position:relative}
+.lista li::before{content:"";position:absolute;left:0;top:.55em;width:10px;height:10px;border-radius:50%;background:var(--bom)}
+.texto{font-size:var(--t-peq);color:var(--ink-dim)}
+.nota{display:flex;align-items:flex-start;gap:14px;font-size:var(--t-peq);color:var(--ink-dim);
+  border-top:1px solid var(--line);padding-top:22px;margin-top:auto}
+.nota .ico{font-size:30px;color:var(--alerta);margin-top:2px}
+.nota--solta{margin-top:24px}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;align-self:flex-start;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em;
+  color:var(--ink);background:rgba(255,255,255,.09);border:1px solid var(--card-brd);border-radius:999px;padding:4px 16px;white-space:nowrap}
+.chip.chip--risco{color:#1a1204;background:var(--laranja-claro);border-color:var(--laranja-claro);font-weight:600}
+
+/* tiles de número */
+.kpis{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+.kpi{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--card-brd);border-radius:var(--raio);padding:36px 36px 32px}
+.kpi--destaque{background:var(--card-forte);border-color:rgba(247,148,29,.55)}
+.kpi-num{font-family:var(--sans);font-size:96px;font-weight:600;line-height:1;letter-spacing:-.02em}
+.kpi--destaque .kpi-num{color:var(--laranja-claro)}
+.kpi-rot{font-size:var(--t-peq);color:var(--ink);line-height:1.25}
+.kpi-det{font-size:var(--t-min);font-family:var(--mono);color:var(--ink-dim);letter-spacing:.02em;margin-top:6px}
+
+/* gráfico de barras horizontais: marca fina, 2px de respiro entre segmentos, valor na ponta */
+.barras{list-style:none;display:flex;flex-direction:column;gap:30px}
+.barra-linha{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);align-items:center;column-gap:36px}
+.barra-rotulo{display:flex;flex-direction:column;gap:6px;min-width:0}
+.barra-rotulo b{font-size:var(--t-peq);font-weight:600;line-height:1.2}
+.barra-rotulo span{font-size:var(--t-min);color:var(--ink-dim);line-height:1.3}
+.barra-trilha{display:flex;align-items:center;gap:16px;padding-right:80px}
+.barra{display:flex;gap:2px;height:32px;width:calc(var(--v,0)*1%);min-width:0;border-radius:0 4px 4px 0;overflow:hidden}
+.seg{display:block;flex:var(--n,1) 1 0;min-width:0}
+.barra-valor{font-family:var(--sans);font-size:var(--t-peq);font-weight:600;font-variant-numeric:tabular-nums}
+.seg--critica{background:var(--laranja)}
+.seg--media{background:#8aa3b2}
+.seg--azul{background:var(--bom)}
+
+.legenda{list-style:none;display:flex;gap:40px;font-size:var(--t-min);color:var(--ink-dim);margin:-6px 0 28px}
+.legenda li{display:flex;align-items:center;gap:12px}
+.amostra{display:block;width:28px;height:14px;border-radius:3px}
+.amostra--critica{background:var(--laranja)}
+.amostra--media{background:#8aa3b2}
+.amostra--azul{background:var(--bom)}

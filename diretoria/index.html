@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resultados do Informa DEV Summit</title>
+  <meta name="description" content="Resultados do 1º Informa DEV Summit (02/10/2026) com o time de engenharia, para a diretoria.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; font-src 'self'; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'none'">
+  <link rel="stylesheet" href="../assets/fontes/fontes.css">
+  <link rel="stylesheet" href="../assets/css/00-tokens.css">
+  <link rel="stylesheet" href="css/10-palco.css">
+  <link rel="stylesheet" href="css/20-componentes.css">
+  <link rel="stylesheet" href="css/30-slides.css">
+  <link rel="stylesheet" href="css/90-impressao.css">
+  <script src="js/apresentacao.js" defer></script>
+</head>
+<body>
+<div id="stage">
+  <main id="deck">
+
+    <!-- 1 · Resumo -->
+    <section class="slide" id="resumo" aria-labelledby="resumo-t">
+      <header class="cab">
+        <img class="logo" src="../assets/img/logo-informa-branco.svg" alt="Informa Solutions">
+        <p class="kicker">1º Informa DEV Summit · 02/10/2026</p>
+        <h1 id="resumo-t">Resultados do encontro com o time de <em>Engenharia</em></h1>
+        <p class="sub">Para a diretoria: o que o time apontou, o que decidiu e o que ainda depende de nós.</p>
+      </header>
+
+      <div class="corpo">
+        <ul class="kpis">
+          <li class="kpi">
+            <b class="kpi-num">19</b>
+            <span class="kpi-rot">apontamentos no brainstorming</span>
+            <span class="kpi-det">5 pontos fortes · 14 a melhorar</span>
+          </li>
+          <li class="kpi">
+            <b class="kpi-num">13 × 0</b>
+            <span class="kpi-rot">votos pelo novo versionamento</span>
+            <span class="kpi-det">27.0.0.1 passa a 27.N.0</span>
+          </li>
+          <li class="kpi">
+            <b class="kpi-num">7</b>
+            <span class="kpi-rot">itens levantados para a pipeline</span>
+            <span class="kpi-det">6 sugestões · 1 risco</span>
+          </li>
+          <li class="kpi kpi--destaque">
+            <b class="kpi-num">8</b>
+            <span class="kpi-rot">compromissos com responsável e prazo</span>
+            <span class="kpi-det">1 decisão pendente da diretoria</span>
+          </li>
+        </ul>
+
+        <p class="resumo-frase">
+          O time reconhece o que funciona (comunicação, IA, mentoria), aponta <strong>planejamento, escopo e prazos</strong>
+          como a principal dor e saiu com <strong>8 compromissos de execução até 09/10</strong>.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2 · Brainstorming -->
+    <section class="slide" id="diagnostico" aria-labelledby="diagnostico-t">
+      <header class="cab">
+        <p class="kicker">1 · Diagnóstico do time</p>
+        <h2 id="diagnostico-t">Planejamento e prazos concentram <em>metade</em> das dores</h2>
+        <p class="sub">7 das 14 melhorias apontadas têm criticidade máxima; 5 delas estão nesse tema.</p>
+      </header>
+
+      <div class="corpo diag">
+        <section class="card diag-fortes" aria-labelledby="fortes-t">
+          <h3 class="rotulo rotulo--azul" id="fortes-t">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            5 pontos fortes
+          </h3>
+          <ul class="lista">
+            <li>Boa comunicação entre os membros</li>
+            <li>Uso de novas ferramentas de IA</li>
+            <li>Processos adaptados</li>
+            <li>Documentação recente, bem detalhada</li>
+            <li>Mentoria dos membros mais seniores</li>
+          </ul>
+        </section>
+
+        <section class="card diag-melhorar" aria-labelledby="melhorar-t">
+          <h3 class="rotulo rotulo--laranja" id="melhorar-t">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M12 19v.5"/></svg>
+            14 oportunidades de melhoria, por tema
+          </h3>
+
+          <ul class="legenda" aria-label="Legenda">
+            <li><i class="amostra amostra--critica"></i>Criticidade máxima (3)</li>
+            <li><i class="amostra amostra--media"></i>Média ou baixa (1–2)</li>
+          </ul>
+
+          <ol class="barras" data-max="7">
+            <li class="barra-linha" aria-label="Planejamento, escopo e prazos: 7 apontamentos, 5 de criticidade máxima">
+              <div class="barra-rotulo">
+                <b>Planejamento, escopo e prazos</b>
+                <span>Parar itens em andamento · distorção de escopo · prazos curtos · planejamento estratégico · prazo e IA</span>
+              </div>
+              <div class="barra-trilha">
+                <div class="barra" data-total="7">
+                  <i class="seg seg--critica" data-valor="5"></i><i class="seg seg--media" data-valor="2"></i>
+                </div>
+                <span class="barra-valor">7</span>
+              </div>
+            </li>
+            <li class="barra-linha" aria-label="Comunicação e documentação: 3 apontamentos, 1 de criticidade máxima">
+              <div class="barra-rotulo">
+                <b>Comunicação e documentação</b>
+                <span>Descrição de ocorrências · documentação dos processos · comunicação de novas ferramentas</span>
+              </div>
+              <div class="barra-trilha">
+                <div class="barra" data-total="3">
+                  <i class="seg seg--critica" data-valor="1"></i><i class="seg seg--media" data-valor="2"></i>
+                </div>
+                <span class="barra-valor">3</span>
+              </div>
+            </li>
+            <li class="barra-linha" aria-label="Pessoas e autonomia: 2 apontamentos, 1 de criticidade máxima">
+              <div class="barra-rotulo">
+                <b>Pessoas e autonomia</b>
+                <span>Mais autonomia · momento para desenvolver habilidades</span>
+              </div>
+              <div class="barra-trilha">
+                <div class="barra" data-total="2">
+                  <i class="seg seg--critica" data-valor="1"></i><i class="seg seg--media" data-valor="1"></i>
+                </div>
+                <span class="barra-valor">2</span>
+              </div>
+            </li>
+            <li class="barra-linha" aria-label="Esteira e versionamento: 2 apontamentos, nenhum de criticidade máxima">
+              <div class="barra-rotulo">
+                <b>Esteira e versionamento</b>
+                <span>Esteira de produção · versionamento de produtos e bibliotecas</span>
+              </div>
+              <div class="barra-trilha">
+                <div class="barra" data-total="2">
+                  <i class="seg seg--media" data-valor="2"></i>
+                </div>
+                <span class="barra-valor">2</span>
+              </div>
+            </li>
+          </ol>
+        </section>
+      </div>
+    </section>
+
+    <!-- 3 · Decisão e pipeline -->
+    <section class="slide" id="decisoes" aria-labelledby="decisoes-t">
+      <header class="cab">
+        <p class="kicker">2 · Decisões e prioridades técnicas</p>
+        <h2 id="decisoes-t">Versionamento aprovado e <em>pipeline</em> com sete frentes</h2>
+        <p class="sub">A sala votou o versionamento e listou o que precisa evoluir na pipeline.</p>
+      </header>
+
+      <div class="corpo decisoes">
+        <section class="card card--forte" aria-labelledby="versao-t">
+          <h3 class="rotulo rotulo--azul" id="versao-t">Versionamento · aprovado</h3>
+          <p class="versao-de-para"><span class="versao versao--antes">27.0.0.1</span><span class="seta" aria-hidden="true">→</span><span class="versao">27.N.0</span></p>
+          <p class="texto">Release stable mensal; só o último número cresce a cada hotfix.</p>
+
+          <div class="votos" role="img" aria-label="13 votos para aceitar, 0 para ajustar, 0 para recusar">
+            <div class="voto"><b>13</b><span>Aceitar</span></div>
+            <div class="voto voto--zero"><b>0</b><span>Ajustar</span></div>
+            <div class="voto voto--zero"><b>0</b><span>Recusar</span></div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="pipeline-t">
+          <h3 class="rotulo rotulo--laranja" id="pipeline-t">Pipeline · itens levantados e votos</h3>
+          <ul class="legenda" aria-label="Legenda">
+            <li><i class="amostra amostra--azul"></i>Sugestão (6)</li>
+            <li><i class="amostra amostra--critica"></i>Risco (1)</li>
+          </ul>
+          <ul class="barras barras--simples" data-max="10">
+            <li class="barra-linha barra-linha--item" aria-label="Estudar melhorias de segurança: 10 votos">
+              <div class="barra-rotulo"><b>Estudar melhorias de segurança</b></div>
+              <div class="barra-trilha"><div class="barra" data-total="10"><i class="seg seg--azul" data-valor="10"></i></div><span class="barra-valor">10</span></div>
+            </li>
+            <li class="barra-linha barra-linha--item" aria-label="Estruturar a pipeline no GitHub Actions: 10 votos">
+              <div class="barra-rotulo"><b>Estruturar a pipeline no GitHub Actions</b></div>
+              <div class="barra-trilha"><div class="barra" data-total="10"><i class="seg seg--azul" data-valor="10"></i></div><span class="barra-valor">10</span></div>
+            </li>
+            <li class="barra-linha barra-linha--item" aria-label="Incluir novos aplicativos no instalador: 10 votos">
+              <div class="barra-rotulo"><b>Incluir novos aplicativos no instalador</b></div>
+              <div class="barra-trilha"><div class="barra" data-total="10"><i class="seg seg--azul" data-valor="10"></i></div><span class="barra-valor">10</span></div>
+            </li>
+            <li class="barra-linha barra-linha--item" aria-label="Agente para distribuir instaladores: 10 votos">
+              <div class="barra-rotulo"><b>Agente de IA para distribuir instaladores</b></div>
+              <div class="barra-trilha"><div class="barra" data-total="10"><i class="seg seg--azul" data-valor="10"></i></div><span class="barra-valor">10</span></div>
+            </li>
+            <li class="barra-linha barra-linha--item" aria-label="Testes e2e nos repositórios premise: 10 votos">
+              <div class="barra-rotulo"><b>Testes e2e nos repositórios premise</b></div>
+              <div class="barra-trilha"><div class="barra" data-total="10"><i class="seg seg--azul" data-valor="10"></i></div><span class="barra-valor">10</span></div>
+            </li>
+            <li class="barra-linha barra-linha--item" aria-label="Rotina de backup da pipeline: 10 votos, risco">
+              <div class="barra-rotulo"><b>Rotina de backup da pipeline</b><span class="chip chip--risco">Risco</span></div>
+              <div class="barra-trilha"><div class="barra" data-total="10"><i class="seg seg--critica" data-valor="10"></i></div><span class="barra-valor">10</span></div>
+            </li>
+            <li class="barra-linha barra-linha--item" aria-label="Remover o SmartAssembly: 5 votos">
+              <div class="barra-rotulo"><b>Remover o SmartAssembly</b></div>
+              <div class="barra-trilha"><div class="barra" data-total="5"><i class="seg seg--azul" data-valor="5"></i></div><span class="barra-valor">5</span></div>
+            </li>
+          </ul>
+          <p class="nota nota--solta">Seis dos sete itens receberam o mesmo número de votos (10): a sala não os diferenciou.</p>
+        </section>
+      </div>
+    </section>
+
+    <!-- Fluxo: fluxo-ocorrencias -->
+    <section class="slide" id="fluxo-ocorrencias" aria-labelledby="fluxo-ocorrencias-t" data-fonte="Fonte: fluxos apresentados no Summit (02/10/2026) · compromissos em dados/decisoes.csv">
+      <header class="cab">
+        <p class="kicker">3 · Fluxo acordado · Ocorrências</p>
+        <h2 id="fluxo-ocorrencias-t">Da ocorrência à <em>tarefa</em></h2>
+        <p class="sub">Cinco etapas: quem age em cada uma e o que fica registrado. A triagem por tipo é a etapa 3.</p>
+      </header>
+      <div class="corpo corpo--fluxo">
+        <ol class="etapas" aria-label="Etapas do fluxo de ocorrências, da esquerda para a direita">
+          <li class="etapa">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">1</span><h3>Entrada</h3></header>
+            <p class="atores"><span class="ator">Atendimento</span><span class="ator">Comercial</span><span class="ator">Inovação</span></p>
+            <p class="etapa-modo">Um destes canais</p>
+            <ul class="nos"><li class="no">Qualquer um dos três <b>abre a ocorrência</b></li></ul>
+          </li>
+          <li class="etapa">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">2</span><h3>Coleta e análise</h3></header>
+            <p class="atores"><span class="ator">IA</span></p>
+            
+            <ul class="nos"><li class="no">Baixa as ocorrências <b>novas</b>, de um dia para o outro</li><li class="no">Analisa e gera o <b>relatório</b></li><li class="no no--artefato"><span class="no-tipo">Registro</span>Card no board do GitHub</li></ul>
+          </li>
+          <li class="etapa etapa--triagem">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">3</span><h3>Aviso por tipo</h3><span class="etapa-selo">Triagem</span></header>
+            <p class="atores"><span class="ator">IA</span></p>
+            <p class="etapa-modo">Um destes caminhos</p>
+            <ul class="nos"><li class="no"><b>Melhorias</b> e <b>Customizações</b>: avisa a <b>Inovação</b></li><li class="no"><b>Bugs</b>: avisa o <b>QA</b></li></ul>
+          </li>
+          <li class="etapa">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">4</span><h3>Estimativa</h3></header>
+            <p class="atores"><span class="ator">QA</span><span class="ator">Inovação</span></p>
+            
+            <ul class="nos"><li class="no">Rodam o fluxo de <b>estimativa</b> de liberação</li></ul>
+          </li>
+          <li class="etapa">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">5</span><h3>Saídas</h3></header>
+            <p class="atores"><span class="ator">QA</span><span class="ator">Inovação</span></p>
+            <p class="etapa-modo">As duas, em paralelo</p>
+            <ul class="nos"><li class="no no--artefato"><span class="no-tipo">Registro</span><b>Board de consulta</b>, para o Atendimento</li><li class="no">Atribuem a <b>tarefa</b> no GitHub ao desenvolvedor</li></ul>
+          </li>
+        </ol>
+      </div>
+      <p class="registro"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Acordado no Summit. Colocar em operação: <b>Wendel</b>, até <b>09/10</b>.</span></p>
+    </section>
+
+    <!-- Fluxo: Operação Inovação -->
+    <section class="slide" id="fluxo-inovacao" aria-labelledby="fluxo-inovacao-t" data-fonte="Fonte: fluxos apresentados no Summit (02/10/2026) · compromissos em dados/decisoes.csv">
+      <header class="cab">
+        <p class="kicker">3 · Fluxo acordado · Operação Inovação</p>
+        <h2 id="fluxo-inovacao-t">De um funil único para <em>um PO por produto</em></h2>
+        <p class="sub">Hoje, uma só validação para tudo. No novo fluxo, um PO por produto ou frente.</p>
+      </header>
+
+      <div class="corpo hoje-novo">
+        <section class="card hoje" aria-labelledby="hoje-t">
+          <h3 class="rotulo rotulo--laranja" id="hoje-t">Hoje · funil</h3>
+          <ul class="assuntos" aria-label="Todos os assuntos entram no mesmo funil">
+            <li>Assunto</li><li>Assunto</li><li>Assunto</li><li>Assunto</li><li>Assunto</li>
+          </ul>
+          <p class="seta-baixo" aria-hidden="true">↓</p>
+          <div class="gargalo">
+            <p class="gargalo-ator"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 017 0v3"/></svg>Gestor da Área</p>
+            <p class="gargalo-txt">Valida <b>todos</b> os assuntos</p>
+          </div>
+        </section>
+
+        <p class="seta-meio" aria-hidden="true">→</p>
+
+        <section class="card card--forte novo" aria-labelledby="novo-t">
+          <h3 class="rotulo rotulo--azul" id="novo-t">Novo · um PO por produto ou frente</h3>
+          <ul class="pos">
+            <li class="po"><b>InfoAudio</b><span>PO · Francisco Meneghetti</span></li>
+            <li class="po"><b>InfoRádio</b><span>PO · Gustavo Dias</span></li>
+            <li class="po"><b>SaaS</b><span>PO · Felipe Sanches</span></li>
+          </ul>
+          <p class="novo-nota"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M12 19v.5"/></svg><span>Em aberto: o papel do PO no novo fluxo ainda está <b>a definir</b>. O papel do Gestor da Área está no próximo slide.</span></p>
+        </section>
+      </div>
+
+      <p class="registro"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Acordado no Summit. Colocar o novo fluxo em prática: <b>Wendel</b>, até <b>09/10</b>.</span></p>
+    </section>
+
+    <!-- Gestor da Área -->
+    <section class="slide" id="fluxo-gestor" aria-labelledby="fluxo-gestor-t" data-fonte="Fonte: fluxos apresentados no Summit (02/10/2026) · papel do Gestor da Área definido pela Engenharia">
+      <header class="cab">
+        <p class="kicker">3 · Fluxos acordados · Gestor da Área</p>
+        <h2 id="fluxo-gestor-t">Gestor da Área: <em>governança, time e metas</em></h2>
+        <p class="sub">O papel do Gestor da Área no novo fluxo.</p>
+      </header>
+
+      <div class="corpo hoje-novo">
+        <section class="card hoje hoje--gestor" aria-labelledby="g-hoje-t">
+          <h3 class="rotulo rotulo--laranja" id="g-hoje-t">Hoje</h3>
+          <div class="gargalo">
+            <p class="gargalo-ator"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 017 0v3"/></svg>Gestor da Área</p>
+            <p class="gargalo-txt">Valida <b>todos</b> os assuntos</p>
+          </div>
+        </section>
+
+        <p class="seta-meio" aria-hidden="true">→</p>
+
+        <section class="card card--forte novo" aria-labelledby="g-novo-t">
+          <h3 class="rotulo rotulo--azul" id="g-novo-t">No novo fluxo, o Gestor da Área</h3>
+          <ul class="pilares">
+            <li class="pilar">
+              <span class="pilar-num" aria-hidden="true">1</span>
+              <h4>Garante a governança dos processos</h4>
+              <p>Zela para que os processos acordados sejam seguidos: ocorrências, Operação Inovação e review dos PRs.</p>
+            </li>
+            <li class="pilar">
+              <span class="pilar-num" aria-hidden="true">2</span>
+              <h4>Trabalha no desenvolvimento do time</h4>
+              <p>Atua no desenvolvimento das pessoas do time.</p>
+            </li>
+            <li class="pilar">
+              <span class="pilar-num" aria-hidden="true">3</span>
+              <h4>Trabalha no cumprimento das metas</h4>
+              <p>Atua para que as metas sejam cumpridas.</p>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <p class="registro"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M12 19v.5"/></svg><span>Em aberto: o papel do PO no novo fluxo ainda está <b>a definir</b>.</span></p>
+    </section>
+
+    <!-- Fluxo: fluxo-review -->
+    <section class="slide" id="fluxo-review" aria-labelledby="fluxo-review-t" data-fonte="Fonte: fluxos apresentados no Summit (02/10/2026) · compromissos em dados/decisoes.csv">
+      <header class="cab">
+        <p class="kicker">3 · Fluxo acordado · Review dos PRs</p>
+        <h2 id="fluxo-review-t">Da issue à <em>decisão</em> sobre o PR</h2>
+        <p class="sub">Cinco etapas: o Claude revisa, os Tech Leads fazem o review e, com os QAs, decidem se o PR é aceito.</p>
+      </header>
+      <div class="corpo corpo--fluxo">
+        <ol class="etapas" aria-label="Etapas do review dos PRs, da esquerda para a direita">
+          <li class="etapa">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">1</span><h3>Issue</h3></header>
+            <p class="atores atores--vazio"></p>
+            
+            <ul class="nos"><li class="no no--artefato"><span class="no-tipo">Registro</span><b>Issue</b> aberta no GitHub</li></ul>
+          </li>
+          <li class="etapa">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">2</span><h3>Desenvolver</h3></header>
+            <p class="atores"><span class="ator">Desenvolvedor</span></p>
+            
+            <ul class="nos"><li class="no"><b>Desenvolve</b> a demanda</li></ul>
+          </li>
+          <li class="etapa">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">3</span><h3>PR</h3></header>
+            <p class="atores"><span class="ator">Desenvolvedor</span></p>
+            
+            <ul class="nos"><li class="no"><b>Abre o PR</b></li><li class="no"><b>Anexa o PR</b> à issue</li></ul>
+          </li>
+          <li class="etapa">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">4</span><h3>Revisão</h3></header>
+            <p class="atores"><span class="ator">Claude</span></p>
+            
+            <ul class="nos"><li class="no"><b>Revisa</b> o desenvolvimento feito</li><li class="no no--artefato"><span class="no-tipo">Registro</span><b>Análise</b> do Claude</li></ul>
+          </li>
+          <li class="etapa">
+            <header class="etapa-cab"><span class="etapa-num" aria-hidden="true">5</span><h3>Review e decisão</h3></header>
+            <p class="atores"><span class="ator">QAs</span><span class="ator">Tech Leads</span></p>
+            
+            <ul class="nos"><li class="no">Os <b>Tech Leads</b> fazem o <b>review</b></li><li class="no no--decisao"><span class="no-tipo">Decisão</span><b>QAs e Tech Leads aceitam ou não</b> o PR, com base na análise do Claude</li></ul>
+          </li>
+        </ol>
+      </div>
+      <p class="registro"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Acordado no Summit. Colocar em prática: <b>Natan</b>, até <b>09/10</b>. Ponto levantado no review: alinhar scripts de banco por versão do instalador (<b>Giovana</b>, até <b>09/10</b>).</span></p>
+    </section>
+
+    <!-- Papéis -->
+    <section class="slide" id="fluxo-papeis" aria-labelledby="fluxo-papeis-t" data-fonte="Fonte: fluxos apresentados no Summit (02/10/2026) · compromissos em dados/decisoes.csv">
+      <header class="cab">
+        <p class="kicker">3 · Fluxos acordados · Papéis</p>
+        <h2 id="fluxo-papeis-t">Quem faz <em>o quê</em> em cada fluxo</h2>
+        <p class="sub">Cada papel nos três fluxos acordados. O traço indica que o papel não atua no fluxo.</p>
+      </header>
+      <div class="corpo">
+        <section class="card papeis-card">
+          <table class="tabela tabela--papeis">
+            <caption class="sr-only">Papéis de cada ator nos fluxos de ocorrências, Operação Inovação e review dos PRs</caption>
+            <thead>
+              <tr><th scope="col">Papel</th><th scope="col">Ocorrências</th><th scope="col">Operação Inovação</th><th scope="col">Review dos PRs</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Atendimento e Comercial</th><td>Abrem a ocorrência. O Atendimento consulta o board de consulta</td><td><span class="vazio">—</span></td><td><span class="vazio">—</span></td></tr>
+              <tr><th scope="row">Inovação</th><td>Abre a ocorrência, recebe Melhorias e Customizações; com o QA, estima e atribui a tarefa</td><td><span class="vazio">—</span></td><td><span class="vazio">—</span></td></tr>
+              <tr><th scope="row">QA</th><td>Recebe os Bugs; com a Inovação, estima e atribui a tarefa</td><td><span class="vazio">—</span></td><td>Aceita ou não o PR, com os Tech Leads</td></tr>
+              <tr><th scope="row">Desenvolvedor</th><td>Recebe a tarefa no GitHub</td><td><span class="vazio">—</span></td><td>Desenvolve, abre o PR e anexa à issue</td></tr>
+              <tr><th scope="row">IA / Claude</th><td>Baixa, analisa, gera o relatório, cria o card e avisa</td><td><span class="vazio">—</span></td><td>Revisa o PR e gera a análise</td></tr>
+              <tr><th scope="row">PO</th><td><span class="vazio">—</span></td><td>Um por produto ou frente; papel a definir</td><td>Responde pela integridade das aplicações em sua alçada</td></tr>
+              <tr><th scope="row">Gestor da Área</th><td colspan="3">Garante a <b>governança dos processos</b>, trabalha no <b>desenvolvimento do time</b> e no <b>cumprimento das metas</b>. Hoje valida todos os assuntos.</td></tr>
+              <tr><th scope="row">Tech Lead · Adriano</th><td><span class="vazio">—</span></td><td><span class="vazio">—</span></td><td>Faz o review e, com os QAs, aceita ou não o PR. Atua nas camadas críticas (áudio e disparos de satélite) e nas camadas gráficas, garantindo usabilidade e experiência de usuário</td></tr>
+              <tr><th scope="row">Tech Lead · Giovana</th><td><span class="vazio">—</span></td><td><span class="vazio">—</span></td><td>Faz o review e, com os QAs, aceita ou não o PR. Lidera as frentes de Banco de Dados e de versionamento de scripts de instaladores</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </section>
+
+    <!-- Tech Leads -->
+    <section class="slide" id="fluxo-techlead" aria-labelledby="fluxo-techlead-t" data-fonte="Fonte: fluxos apresentados no Summit (02/10/2026) · compromissos em dados/decisoes.csv">
+      <header class="cab">
+        <p class="kicker">3 · Fluxos acordados · Tech Leads</p>
+        <h2 id="fluxo-techlead-t">Dois <em>Tech Leads</em>, duas frentes</h2>
+        <p class="sub">Os dois fazem o review dos PRs e decidem se aceitam; cada um lidera uma área técnica.</p>
+      </header>
+
+      <div class="corpo lideres">
+        <section class="card card--forte resp-tl" aria-labelledby="tl1-t">
+          <h3 class="rotulo rotulo--laranja" id="tl1-t"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 017 0v3"/></svg>Tech Lead</h3>
+          <p class="resp-nome">Adriano Ribeiro</p>
+          <dl class="resp-lista">
+            <div><dt>Atua em</dt><dd>Demandas das <b>camadas críticas</b> (áudio e disparos de satélite) e das <b>camadas gráficas</b> da aplicação.</dd></div>
+            <div><dt>Garante</dt><dd>Padrões de <b>usabilidade</b> e de <b>experiência de usuário</b>.</dd></div>
+            <div><dt>No review</dt><dd>Faz o <b>review</b> e, com os QAs, <b>aceita ou não o PR</b>, com base na análise do Claude.</dd></div>
+            <div><dt>Compromisso</dt><dd>Upgrade do .NET Framework, até 09/10.</dd></div>
+          </dl>
+        </section>
+
+        <section class="card card--forte resp-tl" aria-labelledby="tl2-t">
+          <h3 class="rotulo rotulo--laranja" id="tl2-t"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 017 0v3"/></svg>Tech Lead</h3>
+          <p class="resp-nome">Giovana de Souza</p>
+          <dl class="resp-lista">
+            <div><dt>Atua em</dt><dd>Frentes de itens ligados a <b>Banco de Dados</b> e a <b>versionamento de scripts</b> para geração de instaladores.</dd></div>
+            <div><dt>No review</dt><dd>Faz o <b>review</b> e, com os QAs, <b>aceita ou não o PR</b>, com base na análise do Claude.</dd></div>
+            <div><dt>Compromissos</dt><dd>Pipeline no novo versionamento (06/10); backup da pipeline e scripts de banco por versão do instalador (09/10).</dd></div>
+          </dl>
+        </section>
+      </div>
+
+      <p class="pauta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M12 19v.5"/></svg>
+        <span>Pauta em aberto para discussão: <b>o reconhecimento do trabalho de Giovana de Souza</b>.</span></p>
+    </section>
+
+    <!-- 4 · Plano de ação -->
+    <section class="slide" id="acoes" aria-labelledby="acoes-t">
+      <header class="cab">
+        <p class="kicker">4 · Plano de ação</p>
+        <h2 id="acoes-t">Oito compromissos com dono, todos <em>até 09/10</em></h2>
+        <p class="sub">Prazos contados a partir do encontro (02/10): D+4 para o primeiro e D+7 para os demais.</p>
+      </header>
+
+      <div class="corpo">
+        <ul class="tarefas">
+          <li class="tarefa">
+            <span class="chip">Versionamento</span>
+            <time class="prazo" datetime="2026-10-06">06/10</time>
+            <p>Ajustar a pipeline ao novo padrão de versionamento</p>
+            <b class="resp">Giovana</b>
+          </li>
+          <li class="tarefa">
+            <span class="chip">Pipeline</span>
+            <time class="prazo" datetime="2026-10-09">09/10</time>
+            <p>Fazer o upgrade do .NET Framework</p>
+            <b class="resp">Adriano</b>
+          </li>
+          <li class="tarefa">
+            <span class="chip">Pipeline</span>
+            <time class="prazo" datetime="2026-10-09">09/10</time>
+            <p>Limpar resquícios de releases depreciadas do repositório</p>
+            <b class="resp">Vandrei</b>
+          </li>
+          <li class="tarefa">
+            <span class="chip">Operação Inovação</span>
+            <time class="prazo" datetime="2026-10-09">09/10</time>
+            <p>Colocar o novo fluxo em prática</p>
+            <b class="resp">Wendel</b>
+          </li>
+          <li class="tarefa">
+            <span class="chip">Ocorrências</span>
+            <time class="prazo" datetime="2026-10-09">09/10</time>
+            <p>Colocar em operação o novo fluxo de ocorrências e priorização</p>
+            <b class="resp">Wendel</b>
+          </li>
+          <li class="tarefa">
+            <span class="chip">Review dos PRs</span>
+            <time class="prazo" datetime="2026-10-09">09/10</time>
+            <p>Colocar em prática o novo fluxo de review dos PRs</p>
+            <b class="resp">Natan</b>
+          </li>
+          <li class="tarefa">
+            <span class="chip">Pipeline</span>
+            <time class="prazo" datetime="2026-10-09">09/10</time>
+            <p>Estruturar rotina de backup da pipeline</p>
+            <b class="resp">Giovana</b>
+          </li>
+          <li class="tarefa">
+            <span class="chip">Review dos PRs</span>
+            <time class="prazo" datetime="2026-10-09">09/10</time>
+            <p>Alinhar scripts de banco por versão do instalador</p>
+            <b class="resp">Giovana</b>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5 · Decisão -->
+    <section class="slide" id="decisao" aria-labelledby="decisao-t" data-fonte="Fonte: export de usuários da organização GitHub · github.com/pricing, 05/10/2026">
+      <header class="cab">
+        <p class="kicker">5 · Decisão da diretoria</p>
+        <h2 id="decisao-t">Aquisição do plano pago do <em>GitHub</em></h2>
+        <p class="sub">Necessidade de contratar o GitHub Organizations, plano Team, para a Informa Solutions.</p>
+      </header>
+
+      <div class="corpo decisao">
+        <section class="card card--forte custo" aria-labelledby="custo-t">
+          <h3 class="rotulo rotulo--laranja" id="custo-t">Plano Team · custo estimado</h3>
+
+          <div class="conta" role="group" aria-label="US$ 4 por usuário ao mês vezes 16 usuários">
+            <p class="conta-item"><b>US$ 4</b><span>por usuário, por mês</span></p>
+            <span class="conta-op" aria-hidden="true">×</span>
+            <p class="conta-item"><b>16</b><span>usuários</span></p>
+          </div>
+
+          <div class="totais">
+            <p class="total"><b>US$ 64</b><span>por mês</span></p>
+            <p class="total total--destaque"><b>US$ 768</b><span>por ano</span></p>
+          </div>
+        </section>
+
+        <section class="card usuarios" aria-labelledby="usuarios-t">
+          <h3 class="rotulo rotulo--azul" id="usuarios-t">16 usuários que receberão a assinatura</h3>
+          <ul class="usuarios-lista">
+            <li>FranciscoInforma</li>
+            <li>GilbertoPMariano</li>
+            <li>informa-cicero</li>
+            <li>InformaAdriano</li>
+            <li>InformaAlisson</li>
+            <li>InformaAndre</li>
+            <li>InformaChristopher</li>
+            <li>InformaDesenvolvimento</li>
+            <li>InformaFelipe</li>
+            <li>InformaGiovana</li>
+            <li>InformaGustavo</li>
+            <li>InformaMateus</li>
+            <li>InformaNatan</li>
+            <li>InformaVandrei</li>
+            <li>InformaWendel</li>
+            <li>marceloinformasolutions</li>
+          </ul>
+        </section>
+      </div>
+
+      <p class="fonte-valor">Valor: github.com/pricing, consultado em 05/10/2026, em dólar e sem impostos. O GitHub indica este preço para os primeiros 12 meses: confirmar a renovação.</p>
+
+      <p class="pedido"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        <span>Decisão solicitada: <b>aprovar 16 assinaturas GitHub Team</b> (US$ 768 por ano).</span></p>
+    </section>
+
+    <!-- 6 · Planos de IA -->
+    <section class="slide" id="ia" aria-labelledby="ia-t" data-fonte="Fonte: claude.com/pricing, 05/10/2026 · mesmos 16 usuários do GitHub">
+      <header class="cab">
+        <p class="kicker">6 · Decisão da diretoria</p>
+        <h2 id="ia-t">Planos de IA para os <em>desenvolvedores</em></h2>
+        <p class="sub">Necessidade de um plano Pro por desenvolvedor, no escopo empresarial da ferramenta.</p>
+      </header>
+
+      <div class="corpo decisao">
+        <section class="card card--forte custo custo--ia" aria-labelledby="ia-novo-t">
+          <h3 class="rotulo rotulo--laranja" id="ia-novo-t">Novo · plano Pro empresarial</h3>
+          <p class="plano-nome"><span class="chip">Claude Team</span><span class="plano-det">assento Standard · os mesmos 16 usuários do GitHub</span></p>
+
+          <div class="conta" role="group" aria-label="US$ 20 por usuário ao mês vezes 16 usuários">
+            <p class="conta-item"><b>US$ 20</b><span>por usuário, por mês</span></p>
+            <span class="conta-op" aria-hidden="true">×</span>
+            <p class="conta-item"><b>16</b><span>usuários</span></p>
+          </div>
+
+          <div class="totais">
+            <p class="total"><b>US$ 320</b><span>por mês</span></p>
+            <p class="total total--destaque"><b>US$ 3.840</b><span>por ano</span></p>
+          </div>
+        </section>
+
+        <section class="card mantido" aria-labelledby="ia-max-t">
+          <h3 class="rotulo rotulo--azul" id="ia-max-t">Mantidos · planos Max atuais</h3>
+          <p class="mantido-num"><b>2</b><span>planos Max</span></p>
+          <p class="texto">A partir de US$ 100 por mês cada, conforme a faixa de uso contratada.</p>
+          <p class="mantido-nota"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Já contratados: seguem como estão, sem custo novo.</p>
+        </section>
+      </div>
+
+      <p class="fonte-valor">Valores de claude.com/pricing em 05/10/2026, em dólar e sem impostos; a Anthropic pode alterar planos e preços. O plano Pro empresarial é o assento Standard do Claude Team. Com cobrança mensal em vez de anual: US$ 25 por usuário, US$ 400 por mês.</p>
+
+      <p class="pedido"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        <span>Decisão solicitada: <b>aprovar 16 assinaturas Claude Team</b> (US$ 3.840 por ano) e manter os 2 planos Max. <small>Com o GitHub, o novo investimento é de US$ 4.608 por ano.</small></span></p>
+    </section>
+
+    <!-- 7 · Migração: justificativa -->
+    <section class="slide" id="migracao" aria-labelledby="migracao-t" data-fonte="Fonte: avaliação da Engenharia · propostas PWS Cloud e Ascenty (via Rewire)">
+      <header class="cab">
+        <p class="kicker">7 · Infraestrutura · por que migrar</p>
+        <h2 id="migracao-t">Migrar as VPS para a <em>nuvem privada</em></h2>
+        <p class="sub">Três limites da estrutura atual que a Engenharia enfrenta hoje.</p>
+      </header>
+
+      <div class="corpo limites">
+        <article class="card limite">
+          <span class="limite-num" aria-hidden="true">1</span>
+          <h3>Escalar é difícil</h3>
+          <div class="limite-hoje">
+            <h4 class="rotulo rotulo--laranja">Hoje, com VPS</h4>
+            <p>A capacidade não acompanha a demanda: crescer um servidor é mais difícil do que deveria.</p>
+          </div>
+          <div class="limite-nuvem">
+            <h4 class="rotulo rotulo--azul">Na nuvem privada</h4>
+            <p>vCPU, memória e disco ajustados de forma granular, ampliados ou reduzidos pelo portal.</p>
+          </div>
+        </article>
+
+        <article class="card limite">
+          <span class="limite-num" aria-hidden="true">2</span>
+          <h3>Sem hardware dedicado</h3>
+          <div class="limite-hoje">
+            <h4 class="rotulo rotulo--laranja">Hoje, com VPS</h4>
+            <p>A falta de hardware dedicado prejudica a capacidade de processamento real.</p>
+          </div>
+          <div class="limite-nuvem">
+            <h4 class="rotulo rotulo--azul">Na nuvem privada</h4>
+            <p>Recursos dimensionados pela Informa e reservados em contrato.</p>
+          </div>
+        </article>
+
+        <article class="card limite">
+          <span class="limite-num" aria-hidden="true">3</span>
+          <h3>Ambiente compartilhado</h3>
+          <div class="limite-hoje">
+            <h4 class="rotulo rotulo--laranja">Hoje, com VPS</h4>
+            <p>Usamos a infraestrutura de forma compartilhada, dividindo o ambiente com outras cargas.</p>
+          </div>
+          <div class="limite-nuvem">
+            <h4 class="rotulo rotulo--azul">Na nuvem privada</h4>
+            <p>Ambiente próprio da Informa, com firewall virtual, IP válido e internet dedicada.</p>
+          </div>
+        </article>
+      </div>
+
+      <p class="escopo"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        <span>Escopo orçado: <b>3 máquinas virtuais</b> · 12 vCPU, 48 GB de RAM, 1,5 TB de disco.</span></p>
+    </section>
+
+    <!-- 8 · Migração: orçamentos -->
+    <section class="slide" id="orcamentos" aria-labelledby="orcamentos-t" data-fonte="Fonte: proposta PWS Cloud nº 12.514-1 (27/08/2026) · planos Ascenty apresentados pela Rewire">
+      <header class="cab">
+        <p class="kicker">8 · Infraestrutura · orçamentos</p>
+        <h2 id="orcamentos-t">Dois orçamentos para as mesmas <em>3 máquinas</em></h2>
+        <p class="sub">Valores mensais em reais. A Ascenty, via Rewire, tem três condições de reserva.</p>
+      </header>
+
+      <div class="corpo comparativo">
+        <section class="card totais-card" aria-labelledby="totais-t">
+          <h3 class="rotulo rotulo--azul" id="totais-t">Total mensal</h3>
+          <ul class="barras barras--totais" data-max="4401.3">
+            <li class="barra-linha" aria-label="PWS Cloud, contrato de 36 meses: R$ 4.401,30 por mês">
+              <div class="barra-rotulo"><b>PWS Cloud · 36 meses</b><span>contrato</span></div>
+              <div class="barra-trilha"><div class="barra" data-total="4401.3"><i class="seg seg--azul" data-valor="4401.3"></i></div><span class="barra-valor">4.401,30</span></div>
+            </li>
+            <li class="barra-linha" aria-label="Ascenty via Rewire, sem reserva: R$ 2.568,50 por mês">
+              <div class="barra-rotulo"><b>Ascenty · sem reserva</b><span>mensal</span></div>
+              <div class="barra-trilha"><div class="barra" data-total="2568.5"><i class="seg seg--agua" data-valor="2568.5"></i></div><span class="barra-valor">2.568,50</span></div>
+            </li>
+            <li class="barra-linha" aria-label="Ascenty via Rewire, reserva de 12 meses: R$ 2.183,23 por mês">
+              <div class="barra-rotulo"><b>Ascenty · 12 meses</b><span>15% de desconto</span></div>
+              <div class="barra-trilha"><div class="barra" data-total="2183.23"><i class="seg seg--agua" data-valor="2183.23"></i></div><span class="barra-valor">2.183,23</span></div>
+            </li>
+            <li class="barra-linha" aria-label="Ascenty via Rewire, reserva de 36 meses: R$ 1.669,53 por mês">
+              <div class="barra-rotulo"><b>Ascenty · 36 meses</b><span>35% de desconto</span></div>
+              <div class="barra-trilha"><div class="barra" data-total="1669.53"><i class="seg seg--agua" data-valor="1669.53"></i></div><span class="barra-valor">1.669,53</span></div>
+            </li>
+          </ul>
+          <p class="totais-nota">A PWS inclui R$ 910,00 que a Ascenty não lista: banda, EDR e sustentação do SO.</p>
+        </section>
+
+        <section class="card tabela-card" aria-labelledby="detalhe-t">
+          <h3 class="rotulo rotulo--azul" id="detalhe-t">Detalhe por item · R$ por mês</h3>
+          <table class="tabela">
+            <caption class="sr-only">Comparação por item entre a proposta PWS Cloud e os planos Ascenty apresentados pela Rewire</caption>
+            <thead>
+              <tr>
+                <th scope="col" rowspan="2">Item</th>
+                <th scope="col" rowspan="2">PWS Cloud<br><small>36 meses</small></th>
+                <th scope="colgroup" colspan="3" class="grupo">Ascenty · via Rewire</th>
+              </tr>
+              <tr>
+                <th scope="col">sem reserva</th>
+                <th scope="col">12 meses</th>
+                <th scope="col">36 meses</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">3 VMs · 12 vCPU, 48 GB, 1,5 TB</th><td>1.149,10</td><td>1.863,00</td><td>1.583,55</td><td>1.210,95</td></tr>
+              <tr><th scope="row">Firewall virtual pfSense</th><td>179,20</td><td>75,00</td><td>63,75</td><td>48,75</td></tr>
+              <tr><th scope="row">IP fixo</th><td>84,00</td><td>41,00</td><td>34,85</td><td>26,65</td></tr>
+              <tr><th scope="row">Backup · PWS diário, Ascenty semanal</th><td>567,00</td><td>292,50</td><td>248,63</td><td>190,13</td></tr>
+              <tr><th scope="row">Disaster recovery</th><td>1.512,00</td><td>297,00</td><td>252,45</td><td>193,05</td></tr>
+              <tr class="linha-extra"><th scope="row">Só na PWS: banda, EDR, sustentação</th><td>910,00</td><td>—</td><td>—</td><td>—</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><th scope="row">Total mensal</th><td>4.401,30</td><td>2.568,50</td><td>2.183,23</td><td>1.669,53</td></tr>
+            </tfoot>
+          </table>
+        </section>
+      </div>
+
+      <p class="condicoes">PWS Cloud: setup de R$ 4.401,30 (com migração), multa de 25% do residual, aviso prévio de 60 dias, reajuste por IGP-M, validade de 30 dias de 27/08/2026 (vencida em 26/09). Ascenty (Rewire): setup, impostos e contrato não informados. Hardware dedicado não confirmado em nenhuma proposta: a PWS cotou virtualização compartilhada (Cloud On Demand).</p>
+
+      <p class="pedido"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        <span>Decisão solicitada: <b>escolher o orçamento</b> e aprovar a migração das VPS para a nuvem privada.</span></p>
+    </section>
+
+    <!-- 9 · Futuro da CN -->
+    <section class="slide" id="cn" aria-labelledby="cn-t" data-fonte="Fonte: proposta da Engenharia, para decisão da diretoria · mockup ilustrativo, não é a tela final">
+      <header class="cab">
+        <p class="kicker">9 · Produto · decisão da diretoria</p>
+        <h2 id="cn-t">O futuro da <em>CN</em>: dois caminhos</h2>
+        <p class="sub">Manter o formato atual ou inserir a CN no instalador.</p>
+      </header>
+
+      <div class="corpo caminhos">
+        <article class="card caminho" aria-labelledby="cn-a-t">
+          <span class="caminho-letra" aria-hidden="true">A</span>
+          <h3 id="cn-a-t">Manter o formato atual</h3>
+          <p class="caminho-resumo">Seguir comercializando a CN como ferramenta, licenciando módulo a módulo.</p>
+          <dl class="caminho-lista">
+            <div><dt>Entrega</dt><dd>Ferramenta comercializada</dd></div>
+            <div><dt>Licença</dt><dd>Módulo a módulo</dd></div>
+            <div><dt>Mudança</dt><dd>Nenhuma: mantém o formato atual</dd></div>
+          </dl>
+        </article>
+
+        <article class="card card--forte caminho caminho--novo" aria-labelledby="cn-b-t">
+          <div class="caminho-cab">
+            <span class="caminho-letra" aria-hidden="true">B</span>
+            <h3 id="cn-b-t">Inserir no instalador</h3>
+          </div>
+          <p class="caminho-resumo caminho-resumo--curto">A CN no instalador, como opção à CA atual, em versão plus.</p>
+
+          <div class="janela janela--compacta" data-interativo role="group" aria-label="Mockup ilustrativo da tela de instalação do InfoAudio">
+            <div class="janela-barra">
+              <span class="janela-icone" aria-hidden="true"></span>
+              <span class="janela-titulo">Instalação do InfoAudio</span>
+              <span class="janela-ctrl" aria-hidden="true"><i>–</i><i>▢</i><i>×</i></span>
+            </div>
+            <div class="janela-principal">
+              <p class="janela-etapa">Etapa 3 de 6 · Experiência</p>
+              <h4>Escolha a experiência de uso</h4>
+              <fieldset class="opcoes">
+                <legend class="sr-only">Experiência de uso</legend>
+                <label class="opcao">
+                  <input type="radio" name="experiencia" value="ca" checked>
+                  <span class="opcao-marca" aria-hidden="true"></span>
+                  <span class="opcao-conteudo">
+                    <span class="opcao-topo"><b>Comportamento padrão</b><span class="selo selo--cinza">CA</span></span>
+                    <span class="opcao-desc">Comportamento atual da CA.</span>
+                  </span>
+                </label>
+                <label class="opcao">
+                  <input type="radio" name="experiencia" value="cn">
+                  <span class="opcao-marca" aria-hidden="true"></span>
+                  <span class="opcao-conteudo">
+                    <span class="opcao-topo"><b>Nova experiência</b><span class="selo selo--laranja">CN · Plus</span></span>
+                    <span class="opcao-desc">Nova experiência da CN.</span>
+                  </span>
+                </label>
+              </fieldset>
+              <div class="janela-rodape">
+                <span class="botao botao--sec">Cancelar</span>
+                <span class="janela-espaco"></span>
+                <span class="botao botao--sec">‹ Voltar</span>
+                <span class="botao botao--pri">Avançar ›</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <p class="pedido"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        <span>Decisão solicitada: <b>escolher o caminho da CN</b>, A ou B.</span></p>
+    </section>
+
+    <!-- 10 · Brainstorming trimestral -->
+    <section class="slide" id="brainstorm" aria-labelledby="brainstorm-t" data-fonte="Fonte: proposta da Engenharia, para opinião da diretoria">
+      <header class="cab">
+        <p class="kicker">10 · Próximo passo · opinião da diretoria</p>
+        <h2 id="brainstorm-t">Que tal um brainstorming <em>trimestral</em>?</h2>
+        <p class="sub">Uma reunião a cada trimestre para coletar ideias com os demais times e até com clientes. Queremos a opinião de vocês.</p>
+      </header>
+
+      <div class="corpo opinioes">
+        <section class="card card--forte" aria-labelledby="quem-t">
+          <h3 class="rotulo rotulo--laranja" id="quem-t">De quem coletar ideias</h3>
+          <ul class="lista lista--grande">
+            <li><b>Engenharia:</b> a base é o formato do Summit, que rendeu 19 apontamentos.</li>
+            <li><b>Demais times</b> da Informa.</li>
+            <li><b>Clientes.</b></li>
+          </ul>
+        </section>
+
+        <section class="card" aria-labelledby="perguntas-t">
+          <h3 class="rotulo rotulo--azul" id="perguntas-t">Opiniões que pedimos</h3>
+          <ol class="perguntas">
+            <li>A cadência trimestral faz sentido?</li>
+            <li>Quais times devem participar de cada edição?</li>
+            <li>Como e quando envolver os clientes?</li>
+          </ol>
+        </section>
+      </div>
+
+      <p class="pedido"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        <span>Opinião solicitada: a diretoria <b>apoia um brainstorming trimestral</b> com outros times e clientes?</span></p>
+    </section>
+
+  </main>
+
+  <footer class="moldura" aria-label="Navegação">
+    <span class="moldura-fonte" data-moldura-fonte>Fonte: planilhas do encontro (dados/*.csv) · 02/10/2026</span>
+    <span class="moldura-cont" aria-live="polite"><b data-moldura-atual>1</b> / <span data-moldura-total>5</span></span>
+    <div class="moldura-progresso" aria-hidden="true"><i data-moldura-progresso></i></div>
+  </footer>
+</div>
+</body>
+</html>

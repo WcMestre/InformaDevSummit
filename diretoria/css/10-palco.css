@@ -1,0 +1,36 @@
+/* ==========================================================================
+   10 · PALCO — 1920×1080 fixo, escalado para caber na janela (letterbox).
+   Tokens (cores, tipografia) vêm de ../assets/css/00-tokens.css.
+   ========================================================================== */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--azul-950)}
+body{font-family:var(--sans);color:var(--ink);overflow:hidden;font-size:var(--t-corpo);line-height:1.3;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+#stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;
+  transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center center;overflow:hidden;
+  background:
+    radial-gradient(1200px 800px at 82% -10%, rgba(247,148,29,.09), transparent 60%),
+    radial-gradient(1000px 700px at 0% 110%, rgba(0,86,121,.55), transparent 55%),
+    linear-gradient(160deg,#063a52 0%, var(--azul-900) 45%, var(--azul-950) 100%)}
+
+#deck{position:absolute;inset:0}
+.slide{position:absolute;inset:0;padding:72px 112px 112px;display:none;flex-direction:column;overflow:hidden}
+.slide.ativo{display:flex}
+
+/* entrada suave; desligada com prefers-reduced-motion e na impressão */
+.slide.ativo .cab,.slide.ativo .corpo,.slide.ativo .proximo{animation:subir .6s cubic-bezier(.2,.7,.2,1) both}
+.slide.ativo .corpo{animation-delay:.12s}
+.slide.ativo .proximo{animation-delay:.24s}
+@keyframes subir{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide.ativo .cab,.slide.ativo .corpo,.slide.ativo .proximo{animation:none}}
+
+/* moldura: fonte, contador e progresso */
+.moldura{position:absolute;left:0;right:0;bottom:0;height:80px;padding:0 112px;display:flex;align-items:center;
+  justify-content:space-between;gap:32px;font-family:var(--mono);font-size:var(--t-min);color:var(--ink-dim)}
+.moldura b{color:var(--ink);font-weight:500}
+.moldura-cont{white-space:nowrap;letter-spacing:.08em}
+.moldura-progresso{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(255,255,255,.08)}
+.moldura-progresso i{display:block;height:100%;width:calc(var(--p,0)*1%);background:var(--laranja);transition:width .35s}
+
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}

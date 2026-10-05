@@ -29,6 +29,7 @@ assets/
   js/                      10-nucleo · 20-dados · 90-auditoria · 99-iniciar
   js/layouts/              um arquivo por layout com comportamento, 9 no total  (NN-<layout>.js); os outros 10 (capa, conteudo, fluxo, ciclo, matriz…) são só HTML + CSS
   fontes/  img/            fontes woff2 + fontes.css (offline) · logo e ícones SVG
+diretoria/                 apresentação de 16 telas para a diretoria (resultados do Summit, fluxos acordados e papéis, decisões de GitHub, IA, infraestrutura e CN, brainstorming trimestral) (index.html + css/ + js/); reaproveita fontes, tokens e logo de assets/. Números escritos à mão a partir de dados/*.csv: se os CSV mudarem, revisar index.html. Abre por file://; Ctrl+P gera PDF 1920×1080
 conteudo/
   slides/                  as 47 telas do deck real (fragmentos HTML, 1 <section class="slide"> por arquivo; a ordem é a ordem alfabética dos arquivos)
   modelos/                 uma ou mais telas-modelo por layout (21 arquivos, 39 telas), com o comentário de ANATOMIA (vira catalogo.html)

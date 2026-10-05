@@ -1,1 +1,9 @@
 ﻿id;assunto;tipo;texto;votos;atualizado_em
+mur19ok9ofw4;pipeline;sugestao;Remover o SmartAssembly;5;2026-10-02 11:06:48
+mur1ea7kypff;pipeline;sugestao;Estudar melhorias de segurança;10;2026-10-02 11:07:14
+mur1ersgfiqb;pipeline;sugestao;Estruturar pipeline no github actions;10;2026-10-02 11:14:46
+mur1ohq1fvc7;pipeline;sugestao;Estruturar melhor forma de incluir novos aplicativos no instalador.;10;2026-10-02 11:15:26
+mur1pcxcpq5x;pipeline;risco;Estruturar rotina de backup da pipeline.;10;2026-10-02 11:17:24
+mur1ru6h2axi;pipeline;sugestao;Agente para automatizar a distribuição de instaladores.;10;2026-10-02 11:21:43
+mur1xl15rc4n;pipeline;sugestao;Inserir testes e2e nos repositórios premise;10;2026-10-02 11:25:10
+mur8ljlx5ben;review-dos-prs;risco;Alinhar scripts de banco por versão do instalador;0;2026-10-02 14:28:49

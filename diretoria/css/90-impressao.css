@@ -1,0 +1,14 @@
+/* ==========================================================================
+   90 · IMPRESSÃO — uma tela por página 1920×1080 (Ctrl+P → "Salvar como PDF", sem margens).
+   ========================================================================== */
+@page{size:1920px 1080px;margin:0}
+@media print{
+  html,body{height:auto;overflow:visible;background:var(--azul-950);
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #stage{position:static;transform:none;width:1920px;height:auto;overflow:visible}
+  #deck{position:static}
+  .slide{display:flex;position:relative;inset:auto;width:1920px;height:1080px;break-after:page;page-break-after:always;
+    background:linear-gradient(160deg,#063a52 0%,var(--azul-900) 45%,var(--azul-950) 100%)}
+  .slide .cab,.slide .corpo,.slide .proximo{animation:none}
+  .moldura{display:none}
+}

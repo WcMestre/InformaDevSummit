@@ -1,1 +1,2 @@
 ﻿id;assunto;proposta;enunciado;decisao;votos_aceitar;votos_ajustar;votos_recusar;ajuste;atualizado_em
+mur04a9xmhr2;versionamento;a1-proposta;Adotar 27.N.0 como release stable mensal e incrementar só o último número a cada hotfix.;aceitar;13;0;0;Acrescentar quarto digito para controle de depuração.;2026-10-02 10:31:42

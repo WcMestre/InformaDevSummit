@@ -1,10 +1,9 @@
 ﻿id;assunto;item;responsavel;prazo;status;observacao;atualizado_em
-seed-a1-pipeline;versionamento;Ajustar a pipeline ao novo padrão de versionamento;;;aberto;;
-seed-a1-repositorio;versionamento;Ajustar o repositório ao novo padrão de versionamento;;;aberto;;
-seed-a2-dotnet;pipeline;Fazer o upgrade do .NET Framework;;;aberto;;
-seed-a2-limpeza;pipeline;Limpar resquícios de releases depreciadas do repositório;;;aberto;;
-seed-a3-fluxo;operacao-inovacao;Colocar o novo fluxo em prática;;;aberto;;
-seed-a4-fluxo;ocorrencias;Colocar em operação o novo fluxo de ocorrências e priorização;;;aberto;;
-seed-a5-review;review-dos-prs;Colocar em prática o novo fluxo de review dos PRs;;;aberto;;
+seed-a1-pipeline;versionamento;Ajustar a pipeline ao novo padrão de versionamento;Giovana;2026-10-06;concluido;;2026-10-02 10:34:24
+seed-a2-dotnet;pipeline;Fazer o upgrade do .NET Framework;Adriano;2026-10-09;concluido;;2026-10-02 11:33:42
+seed-a2-limpeza;pipeline;Limpar resquícios de releases depreciadas do repositório;Vandrei;2026-10-09;concluido;;2026-10-02 11:33:27
+seed-a3-fluxo;operacao-inovacao;Colocar o novo fluxo em prática;Wendel;2026-10-09;concluido;;2026-10-02 11:57:38
+seed-a4-fluxo;ocorrencias;Colocar em operação o novo fluxo de ocorrências e priorização;Wendel;2026-10-09;concluido;;2026-10-02 14:15:11
+seed-a5-review;review-dos-prs;Colocar em prática o novo fluxo de review dos PRs;Natan;2026-10-09;concluido;;2026-10-02 14:29:41
 seed-a7-acessos;ferramentas-e-ia;Providenciar GitHub pago e plano do Claude por usuário;;;aberto;;
 seed-a7-pipeline;ferramentas-e-ia;Logar a conta de Desenvolvimento na máquina da Pipeline;;;aberto;;
